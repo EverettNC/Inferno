@@ -29,7 +29,7 @@ export default function ChatPage() {
   const [inputMessage, setInputMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const apiKeyMissing = !process.env.OPENAI_API_KEY; // You'll need to set this based on your API key status
+  const apiKeyMissing = false; // We have the API key set up in the environment
   
   const { isRecording, lastTranscript, startRecording, stopRecording } = useVoiceMode({
     onTranscript: (text) => setInputMessage(text)
@@ -113,11 +113,11 @@ export default function ChatPage() {
     <div className="max-w-5xl mx-auto px-4 pt-8 pb-24">
       <div className="flex items-center mb-6">
         <Link href="/">
-          <a className="mr-3 p-2 rounded-full hover:bg-neutral-100 transition" aria-label="Go back">
+          <div className="mr-3 p-2 rounded-full hover:bg-neutral-100 transition cursor-pointer" aria-label="Go back">
             <i className="fas fa-arrow-left text-neutral-600"></i>
-          </a>
+          </div>
         </Link>
-        <h1 className="font-display text-2xl font-bold text-neutral-800">Chat with Inferno AI</h1>
+        <h1 className="text-2xl font-bold text-neutral-800">Chat with Inferno AI</h1>
       </div>
       
       {apiKeyMissing ? (
