@@ -103,7 +103,8 @@ export async function detectCrisis(text: string): Promise<{
       temperature: 0.1,
     });
 
-    const result = JSON.parse(response.choices[0].message.content || "{}");
+    const messageContent = response.choices[0].message.content;
+    const result = messageContent ? JSON.parse(messageContent) : {};
     
     // Determine appropriate resource based on crisis type
     let suggestedResource = CRISIS_RESOURCES.GENERAL;
@@ -170,7 +171,8 @@ export async function analyzeEmotion(text: string): Promise<{
       temperature: 0.3,
     });
 
-    const result = JSON.parse(response.choices[0].message.content || "{}");
+    const messageContent = response.choices[0].message.content;
+    const result = messageContent ? JSON.parse(messageContent) : {};
     
     return {
       primaryEmotion: result.primaryEmotion || "neutral",
@@ -209,10 +211,10 @@ export async function generateGroundingPrompt(sense: string): Promise<string> {
       max_tokens: 100,
     });
 
-    return response.choices[0].message.content || "Take a moment to notice what you can perceive with your senses.";
+    return response.choices[0].message.content || `Notice ${sense} things around you right now.`;
   } catch (error) {
     console.error("Error generating grounding prompt:", error);
-    return "Take a moment to notice what you can perceive with your senses.";
+    return `Gently notice ${sense} things in your surroundings.`;
   }
 }
 
@@ -223,34 +225,22 @@ export async function suggestNextMindfulnessExercise(history: string): Promise<s
       messages: [
         {
           role: "system",
-          content: `Based on the user's history of mindfulness practice and their reported experiences, suggest the most appropriate next mindfulness exercise.
-          Choose between: "Body Scan Meditation", "Loving-Kindness Meditation", and "Mountain Meditation".
-          Consider what might be most beneficial based on their past experiences.`
+          content: `You are a trauma-informed mindfulness expert. Based on the user's history with mindfulness exercises,
+          suggest the next exercise that would be most beneficial for them. Keep your suggestion brief (2-3 sentences maximum)
+          and trauma-informed.`
         },
         {
           role: "user",
-          content: `My history with mindfulness exercises: ${history}`
+          content: `Based on this history with mindfulness exercises, what would you suggest next?\n\n${history}`
         }
       ],
-      temperature: 0.5,
-      max_tokens: 100,
+      temperature: 0.7,
+      max_tokens: 150,
     });
 
-    const suggestion = response.choices[0].message.content || "";
-    
-    // Extract the exercise name from the response
-    if (suggestion.includes("Body Scan")) {
-      return "bodyScan";
-    } else if (suggestion.includes("Loving-Kindness")) {
-      return "lovingKindness";
-    } else if (suggestion.includes("Mountain")) {
-      return "mountain";
-    } else {
-      // Default to body scan if we can't extract a specific exercise
-      return "bodyScan";
-    }
+    return response.choices[0].message.content || "Body scan meditation may be beneficial. This practice involves bringing gentle awareness to each part of your body in sequence, noticing sensations without judgment.";
   } catch (error) {
     console.error("Error suggesting mindfulness exercise:", error);
-    return "bodyScan";
+    return "I suggest trying a simple mindful breathing exercise, focusing on each breath with gentle awareness for 5 minutes.";
   }
 }
