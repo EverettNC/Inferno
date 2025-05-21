@@ -12,6 +12,8 @@ import {
   type Resource,
   type InsertResource
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, desc, and, gte } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -278,4 +280,231 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export class DatabaseStorage implements IStorage {
+  // User methods
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db.insert(users).values(insertUser).returning();
+    return user;
+  }
+  
+  async updateUser(id: number, data: Partial<InsertUser>): Promise<User | undefined> {
+    const [updatedUser] = await db
+      .update(users)
+      .set(data)
+      .where(eq(users.id, id))
+      .returning();
+    return updatedUser;
+  }
+
+  // Check-in methods
+  async getCheckIn(id: number): Promise<CheckIn | undefined> {
+    const [checkIn] = await db.select().from(checkIns).where(eq(checkIns.id, id));
+    return checkIn;
+  }
+  
+  async getCheckInsByUserId(userId: number): Promise<CheckIn[]> {
+    return db
+      .select()
+      .from(checkIns)
+      .where(eq(checkIns.userId, userId))
+      .orderBy(desc(checkIns.createdAt));
+  }
+  
+  async createCheckIn(insertCheckIn: InsertCheckIn): Promise<CheckIn> {
+    const [checkIn] = await db
+      .insert(checkIns)
+      .values(insertCheckIn)
+      .returning();
+    return checkIn;
+  }
+  
+  // Exercise methods
+  async getExercise(id: number): Promise<Exercise | undefined> {
+    const [exercise] = await db.select().from(exercises).where(eq(exercises.id, id));
+    return exercise;
+  }
+  
+  async getExercisesByUserId(userId: number): Promise<Exercise[]> {
+    return db
+      .select()
+      .from(exercises)
+      .where(eq(exercises.userId, userId))
+      .orderBy(desc(exercises.createdAt));
+  }
+  
+  async createExercise(insertExercise: InsertExercise): Promise<Exercise> {
+    const [exercise] = await db
+      .insert(exercises)
+      .values(insertExercise)
+      .returning();
+    return exercise;
+  }
+  
+  async updateExercise(id: number, data: Partial<InsertExercise>): Promise<Exercise | undefined> {
+    const [updatedExercise] = await db
+      .update(exercises)
+      .set(data)
+      .where(eq(exercises.id, id))
+      .returning();
+    return updatedExercise;
+  }
+  
+  // Resource methods
+  async getResource(id: number): Promise<Resource | undefined> {
+    const [resource] = await db.select().from(resources).where(eq(resources.id, id));
+    return resource;
+  }
+  
+  async getResourcesByCategory(category: string): Promise<Resource[]> {
+    return db
+      .select()
+      .from(resources)
+      .where(eq(resources.category, category));
+  }
+  
+  async getAllResources(): Promise<Resource[]> {
+    return db.select().from(resources);
+  }
+  
+  async createResource(insertResource: InsertResource): Promise<Resource> {
+    const [resource] = await db
+      .insert(resources)
+      .values(insertResource)
+      .returning();
+    return resource;
+  }
+  
+  // Statistics methods
+  async getCheckInStreak(userId: number): Promise<number> {
+    const userCheckIns = await this.getCheckInsByUserId(userId);
+    if (userCheckIns.length === 0) return 0;
+    
+    // Sort by date (newest first)
+    let streak = 1;
+    let currentDate = new Date(userCheckIns[0].createdAt!);
+    currentDate.setHours(0, 0, 0, 0);
+    
+    for (let i = 1; i < userCheckIns.length; i++) {
+      if (!userCheckIns[i].createdAt) continue;
+      
+      const checkInDate = new Date(userCheckIns[i].createdAt);
+      checkInDate.setHours(0, 0, 0, 0);
+      
+      const prevDate = new Date(currentDate);
+      prevDate.setDate(prevDate.getDate() - 1);
+      
+      if (checkInDate.getTime() === prevDate.getTime()) {
+        streak++;
+        currentDate = checkInDate;
+      } else {
+        break;
+      }
+    }
+    
+    return streak;
+  }
+  
+  async getLastCheckInDate(userId: number): Promise<Date | undefined> {
+    const [latestCheckIn] = await db
+      .select()
+      .from(checkIns)
+      .where(eq(checkIns.userId, userId))
+      .orderBy(desc(checkIns.createdAt))
+      .limit(1);
+    
+    return latestCheckIn?.createdAt ? new Date(latestCheckIn.createdAt) : undefined;
+  }
+
+  // Initialize resources if they don't exist
+  async initializeResourcesIfEmpty() {
+    const existingResources = await this.getAllResources();
+    
+    if (existingResources.length === 0) {
+      const defaultResources: InsertResource[] = [
+        {
+          title: "What is PTSD?",
+          description: "Learn about Post-Traumatic Stress Disorder, its symptoms, causes, and how it affects daily life.",
+          type: "article",
+          url: "https://www.ptsd.va.gov/understand/what/index.asp",
+          icon: "fas fa-book",
+          category: "education"
+        },
+        {
+          title: "The Science of Anxiety",
+          description: "Understand how anxiety affects your brain and body, and why certain techniques help reduce symptoms.",
+          type: "article",
+          url: "https://www.anxiety.org/science-of-anxiety",
+          icon: "fas fa-brain",
+          category: "education"
+        },
+        {
+          title: "How Grounding Techniques Work",
+          description: "Dr. Sarah Johnson explains the neuroscience behind grounding techniques and why they're effective for PTSD.",
+          type: "video",
+          url: "https://www.youtube.com/watch?v=example1",
+          icon: "fas fa-play-circle",
+          category: "education"
+        },
+        {
+          title: "Veterans Share Their Healing Journey",
+          description: "Three veterans discuss their experiences with PTSD and the techniques that helped them recover.",
+          type: "video",
+          url: "https://www.youtube.com/watch?v=example2",
+          icon: "fas fa-play-circle",
+          category: "stories"
+        },
+        {
+          title: "PTSD Foundation of America",
+          description: "Offering peer-to-peer mentoring and support groups for veterans and their families.",
+          type: "community",
+          url: "https://ptsdusa.org",
+          icon: "fas fa-users",
+          category: "support"
+        },
+        {
+          title: "Anxiety and Depression Association of America",
+          description: "Find support groups, therapist directories, and online communities for anxiety disorders.",
+          type: "community",
+          url: "https://adaa.org",
+          icon: "fas fa-users",
+          category: "support"
+        },
+        {
+          title: "National Center for PTSD",
+          description: "Educational resources and research from the U.S. Department of Veterans Affairs.",
+          type: "community",
+          url: "https://www.ptsd.va.gov",
+          icon: "fas fa-graduation-cap",
+          category: "support"
+        }
+      ];
+      
+      for (const resource of defaultResources) {
+        await this.createResource(resource);
+      }
+    }
+  }
+}
+
+// Create and initialize database storage
+export const storage = new DatabaseStorage();
+
+// Initialize default resources
+(async () => {
+  try {
+    await storage.initializeResourcesIfEmpty();
+    console.log("Database initialized with default resources if needed");
+  } catch (error) {
+    console.error("Error initializing database:", error);
+  }
+})();
