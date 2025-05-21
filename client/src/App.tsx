@@ -23,14 +23,13 @@ function Router() {
   const [location] = useLocation();
   const { user } = useUserContext();
   
-  // Show public routes if user is not authenticated
+  // Show sign-in page if user is not authenticated
   if (!user) {
     return (
       <Switch>
-        <Route path="/" component={LandingPage} />
-        <Route path="/signin" component={SignInPage} />
+        <Route path="/" component={SignInPage} />
         <Route path="/signup" component={SignInPage} /> {/* Reuse SignInPage for now */}
-        <Route component={LandingPage} /> {/* Redirect to landing page by default */}
+        <Route component={SignInPage} /> {/* Redirect to sign-in page by default */}
       </Switch>
     );
   }
