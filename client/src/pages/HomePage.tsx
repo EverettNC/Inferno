@@ -100,23 +100,23 @@ export default function HomePage() {
     <div className="max-w-5xl mx-auto px-4 pt-8">
       {/* Welcome Message */}
       <section className="mb-8">
-        <h1 className="font-display text-2xl sm:text-3xl font-bold text-neutral-800 mb-2">
-          Hello, <span>{user?.firstName || 'there'}</span>
+        <h1 className="font-display text-2xl sm:text-3xl font-bold mb-2">
+          Hello, <span className="text-accent">{user?.firstName || 'there'}</span>
         </h1>
-        <p className="text-neutral-600">
+        <p className="text-text-secondary">
           How are you feeling today? I'm here to support you.
         </p>
       </section>
       
       {/* Daily Check-in Card */}
-      <section className="bg-white rounded-xl shadow-soft mb-8 overflow-hidden border border-neutral-200">
+      <section className="card mb-8">
         <div className="p-5">
-          <h2 className="font-display text-lg font-semibold mb-3 text-neutral-800">Daily Check-in</h2>
+          <h2 className="font-display text-lg font-semibold mb-3">Daily Check-in</h2>
           
           <div className="flex flex-col sm:flex-row gap-4 items-center mb-4">
             {/* Mood Selection */}
             <div className="flex-1 w-full">
-              <p className="text-sm text-neutral-600 mb-2">How are you feeling right now?</p>
+              <p className="text-sm text-text-secondary mb-2">How are you feeling right now?</p>
               <div className="grid grid-cols-5 gap-2">
                 <EmojiButton 
                   emoji="😊" 
@@ -153,14 +153,14 @@ export default function HomePage() {
           </div>
           
           {/* Voice/Text Input Area */}
-          <div className="bg-neutral-50 rounded-lg p-4 mb-4">
-            <p className="text-sm text-neutral-600 mb-2">Would you like to share more about how you're feeling?</p>
+          <div className="bg-bg-tertiary rounded-lg p-4 mb-4 border border-border">
+            <p className="text-sm text-text-secondary mb-2">Would you like to share more about how you're feeling?</p>
             
             {/* Text Input (shown when voice mode is disabled) */}
             {!isVoiceModeEnabled && (
               <div className="mb-3">
                 <Textarea 
-                  className="w-full border border-neutral-300 rounded-lg p-3 text-neutral-700 focus:ring-2 focus:ring-primary-300 focus:border-primary-500 transition h-24"
+                  className="w-full bg-input-bg border-input-border rounded-lg p-3 focus:ring-2 focus:ring-accent focus:ring-opacity-30 focus:border-accent transition h-24"
                   placeholder="Type here..."
                   value={checkInText}
                   onChange={(e) => setCheckInText(e.target.value)}
@@ -172,24 +172,28 @@ export default function HomePage() {
             {isVoiceModeEnabled && (
               <div className="flex flex-col items-center py-4">
                 <button 
-                  className="w-16 h-16 rounded-full bg-primary-100 flex items-center justify-center mb-2 hover:bg-primary-200 transition"
+                  className={`w-16 h-16 rounded-full transition ${
+                    isRecording 
+                      ? 'bg-danger-light bg-opacity-20 animate-pulse' 
+                      : 'bg-accent bg-opacity-15 hover:bg-opacity-25'
+                  }`}
                   onMouseDown={startRecording}
                   onMouseUp={stopRecording}
                   onTouchStart={startRecording}
                   onTouchEnd={stopRecording}
                 >
-                  <i className={`fas fa-microphone text-2xl ${isRecording ? 'text-primary-600 animate-pulse' : 'text-primary-600'}`}></i>
+                  <i className={`fas fa-microphone text-2xl ${isRecording ? 'text-danger-light' : 'text-accent'}`}></i>
                 </button>
-                <p className="text-sm text-neutral-500 italic">Press and hold to speak</p>
+                <p className="text-sm text-text-secondary italic">Press and hold to speak</p>
                 {lastTranscript && (
-                  <p className="mt-3 text-neutral-700 bg-white p-2 rounded border border-neutral-200 w-full">{lastTranscript}</p>
+                  <p className="mt-3 bg-bg-primary p-3 rounded-md border border-border w-full">{lastTranscript}</p>
                 )}
               </div>
             )}
             
             <div className="flex justify-end">
               <Button 
-                className="px-4 py-2 rounded-lg bg-primary-600 text-white font-medium hover:bg-primary-700 transition shadow-sm"
+                className="px-4 py-2 rounded-lg bg-button-bg hover:bg-button-hover text-text-primary transition"
                 onClick={handleCheckInSubmit}
                 disabled={isSubmitting}
               >
@@ -201,11 +205,11 @@ export default function HomePage() {
           {/* Check-in Streak */}
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <span className="text-neutral-600 text-sm">Your check-in streak:</span>
-              <span className="font-semibold text-primary-700">{streakData?.streak || 0} days</span>
+              <span className="text-text-secondary text-sm">Your check-in streak:</span>
+              <span className="font-semibold text-accent">{streakData?.streak || 0} days</span>
             </div>
-            <div className="text-xs text-neutral-500">
-              Last check-in: <span>{formatLastCheckIn(streakData?.lastCheckIn)}</span>
+            <div className="text-xs text-text-secondary">
+              Last check-in: <span className="text-text-primary opacity-90">{formatLastCheckIn(streakData?.lastCheckIn)}</span>
             </div>
           </div>
         </div>
@@ -213,97 +217,97 @@ export default function HomePage() {
       
       {/* Quick Tools Grid */}
       <section className="mb-8">
-        <h2 className="font-display text-lg font-semibold mb-4 text-neutral-800">Quick Tools</h2>
+        <h2 className="font-display text-lg font-semibold mb-4">Quick Tools</h2>
         
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <Link href="/grounding">
-            <a className="block bg-white rounded-xl p-4 border border-neutral-200 shadow-sm hover:shadow-md transition text-center">
-              <div className="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center mx-auto mb-3">
-                <i className="fas fa-mountain text-primary-600"></i>
+            <a className="card block bg-bg-secondary rounded-xl p-4 border border-border hover:border-accent-subtle transition text-center">
+              <div className="w-12 h-12 rounded-full bg-primary bg-opacity-15 flex items-center justify-center mx-auto mb-3">
+                <i className="fas fa-mountain text-accent"></i>
               </div>
-              <h3 className="font-medium text-neutral-800 mb-1">Grounding</h3>
-              <p className="text-xs text-neutral-600">5-4-3-2-1 technique</p>
+              <h3 className="font-medium mb-1">Grounding</h3>
+              <p className="text-xs text-text-secondary">5-4-3-2-1 technique</p>
             </a>
           </Link>
           
           <Link href="/breathing">
-            <a className="block bg-white rounded-xl p-4 border border-neutral-200 shadow-sm hover:shadow-md transition text-center">
-              <div className="w-12 h-12 rounded-full bg-calm-100 flex items-center justify-center mx-auto mb-3">
-                <i className="fas fa-wind text-calm-600"></i>
+            <a className="card block bg-bg-secondary rounded-xl p-4 border border-border hover:border-accent-subtle transition text-center">
+              <div className="w-12 h-12 rounded-full bg-info bg-opacity-15 flex items-center justify-center mx-auto mb-3">
+                <i className="fas fa-wind text-info"></i>
               </div>
-              <h3 className="font-medium text-neutral-800 mb-1">Breathing</h3>
-              <p className="text-xs text-neutral-600">Guided breathing exercises</p>
+              <h3 className="font-medium mb-1">Breathing</h3>
+              <p className="text-xs text-text-secondary">Guided breathing exercises</p>
             </a>
           </Link>
           
           <Link href="/mindfulness">
-            <a className="block bg-white rounded-xl p-4 border border-neutral-200 shadow-sm hover:shadow-md transition text-center">
-              <div className="w-12 h-12 rounded-full bg-secondary-100 flex items-center justify-center mx-auto mb-3">
-                <i className="fas fa-brain text-secondary-600"></i>
+            <a className="card block bg-bg-secondary rounded-xl p-4 border border-border hover:border-accent-subtle transition text-center">
+              <div className="w-12 h-12 rounded-full bg-secondary bg-opacity-15 flex items-center justify-center mx-auto mb-3">
+                <i className="fas fa-brain text-secondary"></i>
               </div>
-              <h3 className="font-medium text-neutral-800 mb-1">Mindfulness</h3>
-              <p className="text-xs text-neutral-600">Guided meditation</p>
+              <h3 className="font-medium mb-1">Mindfulness</h3>
+              <p className="text-xs text-text-secondary">Guided meditation</p>
             </a>
           </Link>
           
           <Link href="/resources">
-            <a className="block bg-white rounded-xl p-4 border border-neutral-200 shadow-sm hover:shadow-md transition text-center">
-              <div className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center mx-auto mb-3">
-                <i className="fas fa-book-open text-neutral-600"></i>
+            <a className="card block bg-bg-secondary rounded-xl p-4 border border-border hover:border-accent-subtle transition text-center">
+              <div className="w-12 h-12 rounded-full bg-accent-subtle bg-opacity-15 flex items-center justify-center mx-auto mb-3">
+                <i className="fas fa-book-open text-accent-subtle"></i>
               </div>
-              <h3 className="font-medium text-neutral-800 mb-1">Resources</h3>
-              <p className="text-xs text-neutral-600">Educational materials</p>
+              <h3 className="font-medium mb-1">Resources</h3>
+              <p className="text-xs text-text-secondary">Educational materials</p>
             </a>
           </Link>
         </div>
       </section>
       
       {/* Crisis Support Section */}
-      <section className="bg-white rounded-xl shadow-soft p-5 mb-8 border border-neutral-200">
-        <h2 className="font-display text-lg font-semibold mb-3 text-neutral-800">Crisis Support</h2>
+      <section className="card p-5 mb-8">
+        <h2 className="font-display text-lg font-semibold mb-3">Crisis Support</h2>
         
         <div className="flex flex-col gap-3">
-          <div className="flex items-center bg-neutral-50 p-3 rounded-lg">
-            <div className="w-10 h-10 rounded-full bg-warning-100 flex items-center justify-center mr-3">
-              <i className="fas fa-phone text-warning-600"></i>
+          <div className="flex items-center bg-bg-tertiary p-3 rounded-lg border border-border">
+            <div className="w-10 h-10 rounded-full bg-warning bg-opacity-15 flex items-center justify-center mr-3">
+              <i className="fas fa-phone text-warning"></i>
             </div>
             <div className="flex-1">
-              <h3 className="font-medium text-neutral-800">National Crisis Helpline</h3>
-              <a href="tel:988" className="text-primary-600 font-medium text-sm">988</a>
+              <h3 className="font-medium">National Crisis Helpline</h3>
+              <a href="tel:988" className="text-accent font-medium text-sm">988</a>
             </div>
-            <a href="tel:988" className="px-4 py-2 bg-warning-100 text-warning-800 rounded-lg font-medium text-sm hover:bg-warning-200 transition">
+            <a href="tel:988" className="px-4 py-2 bg-warning bg-opacity-15 text-warning rounded-lg font-medium text-sm hover:bg-opacity-25 transition">
               Call Now
             </a>
           </div>
           
-          <div className="flex items-center bg-neutral-50 p-3 rounded-lg">
-            <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center mr-3">
-              <i className="fas fa-comment-dots text-primary-600"></i>
+          <div className="flex items-center bg-bg-tertiary p-3 rounded-lg border border-border">
+            <div className="w-10 h-10 rounded-full bg-accent bg-opacity-15 flex items-center justify-center mr-3">
+              <i className="fas fa-comment-dots text-accent"></i>
             </div>
             <div className="flex-1">
-              <h3 className="font-medium text-neutral-800">Crisis Text Line</h3>
-              <p className="text-neutral-600 text-sm">Text HOME to 741741</p>
+              <h3 className="font-medium">Crisis Text Line</h3>
+              <p className="text-text-secondary text-sm">Text HOME to 741741</p>
             </div>
-            <a href="sms:741741?body=HOME" className="px-4 py-2 bg-primary-100 text-primary-800 rounded-lg font-medium text-sm hover:bg-primary-200 transition">
+            <a href="sms:741741?body=HOME" className="px-4 py-2 bg-accent bg-opacity-15 text-accent rounded-lg font-medium text-sm hover:bg-opacity-25 transition">
               Text Now
             </a>
           </div>
           
-          <div className="flex items-center bg-neutral-50 p-3 rounded-lg">
-            <div className="w-10 h-10 rounded-full bg-success-100 flex items-center justify-center mr-3">
-              <i className="fas fa-user-friends text-success-600"></i>
+          <div className="flex items-center bg-bg-tertiary p-3 rounded-lg border border-border">
+            <div className="w-10 h-10 rounded-full bg-success bg-opacity-15 flex items-center justify-center mr-3">
+              <i className="fas fa-user-friends text-success"></i>
             </div>
             <div className="flex-1">
-              <h3 className="font-medium text-neutral-800">Veterans Crisis Line</h3>
-              <a href="tel:988" className="text-primary-600 font-medium text-sm">988, Press 1</a>
+              <h3 className="font-medium">Veterans Crisis Line</h3>
+              <a href="tel:988" className="text-accent font-medium text-sm">988, Press 1</a>
             </div>
-            <a href="tel:988,1" className="px-4 py-2 bg-success-100 text-success-800 rounded-lg font-medium text-sm hover:bg-success-200 transition">
+            <a href="tel:988,1" className="px-4 py-2 bg-success bg-opacity-15 text-success rounded-lg font-medium text-sm hover:bg-opacity-25 transition">
               Call Now
             </a>
           </div>
         </div>
         
-        <p className="text-xs text-neutral-500 mt-4">
+        <p className="text-xs text-text-secondary mt-4">
           If you're experiencing a life-threatening emergency, please call 911 or go to your nearest emergency room.
         </p>
       </section>
@@ -311,46 +315,65 @@ export default function HomePage() {
       {/* Recent Activity Section */}
       <section className="mb-8">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="font-display text-lg font-semibold text-neutral-800">Recent Activity</h2>
+          <h2 className="font-display text-lg font-semibold">Recent Activity</h2>
           <Link href="/activity">
-            <a className="text-sm text-primary-600 hover:text-primary-700">View all</a>
+            <a className="text-sm text-accent hover:text-accent-subtle transition-colors">View all</a>
           </Link>
         </div>
         
         <div className="space-y-3">
           {recentActivities && recentActivities.length > 0 ? (
             recentActivities.slice(0, 3).map((activity) => (
-              <div key={activity.id} className="bg-white rounded-lg p-4 border border-neutral-200">
+              <div key={activity.id} className="card bg-bg-secondary rounded-lg p-4 border border-border">
                 <div className="flex justify-between items-start">
                   <div className="flex items-center">
-                    <div className={`w-10 h-10 rounded-full bg-${activity.type === 'mindfulness' ? 'secondary' : activity.type === 'breathing' ? 'calm' : 'primary'}-100 flex items-center justify-center mr-3`}>
-                      <i className={`fas fa-${activity.type === 'mindfulness' ? 'brain' : activity.type === 'breathing' ? 'wind' : 'clipboard-check'} text-${activity.type === 'mindfulness' ? 'secondary' : activity.type === 'breathing' ? 'calm' : 'primary'}-600`}></i>
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center mr-3"
+                      style={{
+                        backgroundColor: activity.type === 'mindfulness' ? 'rgba(66, 72, 116, 0.15)' : 
+                                         activity.type === 'breathing' ? 'rgba(90, 137, 173, 0.15)' : 
+                                         'rgba(166, 177, 225, 0.15)'
+                      }}
+                    >
+                      <i className="fas fa-brain text-accent"
+                        style={{
+                          color: activity.type === 'mindfulness' ? 'var(--secondary)' : 
+                                activity.type === 'breathing' ? 'var(--info)' : 
+                                'var(--accent)'
+                        }}
+                      ></i>
                     </div>
                     <div>
-                      <h3 className="font-medium text-neutral-800">
+                      <h3 className="font-medium">
                         {activity.type === 'grounding' ? 'Grounding Exercise' : 
                          activity.type === 'breathing' ? 'Breathing Exercise' :
                          activity.type === 'mindfulness' ? `Mindfulness: ${activity.subtype}` :
                          'Activity'}
                       </h3>
-                      <p className="text-sm text-neutral-500">
+                      <p className="text-sm text-text-secondary">
                         {formatLastCheckIn(activity.createdAt)}
                         {activity.duration && ` • ${Math.floor(activity.duration / 60)} minutes`}
                       </p>
                     </div>
                   </div>
-                  <span className={`text-xs bg-${activity.type === 'mindfulness' ? 'secondary' : activity.type === 'breathing' ? 'calm' : 'primary'}-100 text-${activity.type === 'mindfulness' ? 'secondary' : activity.type === 'breathing' ? 'calm' : 'primary'}-800 px-2 py-1 rounded-full`}>
+                  <span className="text-xs px-2 py-1 rounded-full" 
+                    style={{
+                      backgroundColor: activity.type === 'mindfulness' ? 'rgba(66, 72, 116, 0.15)' : 
+                                       activity.type === 'breathing' ? 'rgba(90, 137, 173, 0.15)' : 
+                                       'rgba(166, 177, 225, 0.15)',
+                      color: activity.type === 'mindfulness' ? 'var(--secondary)' : 
+                             activity.type === 'breathing' ? 'var(--info)' : 
+                             'var(--accent)'
+                    }}
+                  >
                     {activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}
                   </span>
                 </div>
               </div>
             ))
           ) : (
-            <Card>
-              <CardContent className="p-6">
-                <p className="text-neutral-600 text-center">No recent activity. Try some exercises to get started!</p>
-              </CardContent>
-            </Card>
+            <div className="card p-6">
+              <p className="text-text-secondary text-center">No recent activity. Try some exercises to get started!</p>
+            </div>
           )}
         </div>
       </section>

@@ -1,0 +1,82 @@
+Inferno AI Backend Scaffold
+Overview
+This is the backend scaffold for Inferno AI, a trauma-informed AI companion for PTSD and anxiety support. It uses FastAPI and Python to deliver real-time emotional regulation and grounding exercises, aligning with The Christman AI Project’s mission to empower and heal. This replaces any React/TSX-based approaches, as Inferno AI requires a backend-first, AI-driven architecture for scalability, security, and offline capability.
+Why FastAPI Over React/TSX?
+
+React/TSX Limitations: React is for frontend UIs, not for NLP, crisis intervention, or HIPAA-compliant data handling. It risks performance and security issues for Inferno’s core needs.
+FastAPI Benefits: Lightweight, async-capable, and ideal for secure APIs that integrate NLP models, handle biometrics, and support offline functionality. It’s HIPAA-compliant with AWS and suits our AWS ECS deployment.
+
+Prerequisites
+
+OS: macOS 15.4
+Tools: Docker Desktop, Python 3.11, awscli, VS Code
+AWS Access: Configure awscli with aws-vault or SSO
+
+Setup
+
+Clone the Repository:
+git clone <repo-url>
+cd inferno-ai-backend
+
+
+Install Dependencies:
+brew install docker awscli
+pip install -r requirements.txt
+
+
+Run Locally:
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+Access Swagger UI at http://localhost:8000/docs to test the /grounding endpoint.
+
+
+Testing
+
+Local Testing: Send a POST request to http://localhost:8000/grounding:
+curl -X POST http://localhost:8000/grounding -H "Content-Type: application/json" -d '{"text": "I’m spiraling"}'
+
+ Expected response:
+{
+  "message": "I hear you’re struggling. I’m here to help you through this.",
+  "exercise": "Let’s ground together. Name 5 things you can see, 4 you can touch, 3 you can hear, 2 you can smell, and 1 you can taste.",
+  "sentiment_score": { "neg": 0.5, "neu": 0.5, "pos": 0.0, "compound": -0.4 }
+}
+
+
+Docker Testing:
+docker build -t inferno-ai-backend .
+docker run -p 8000:8000 inferno-ai-backend
+
+
+
+Deployment
+
+Build and Push Docker Image:
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <account-id>.dkr.ecr.us-east-1.amazonaws.com
+docker tag inferno-ai-backend:latest <account-id>.dkr.ecr.us-east-1.amazonaws.com/inferno-ai-backend:latest
+docker push <account-id>.dkr.ecr.us-east-1.amazonaws.com/inferno-ai-backend:latest
+
+
+Deploy to ECS:
+
+Create an ECS task definition using the pushed image.
+Deploy to a Fargate cluster with CloudWatch logging enabled.
+Configure IAM roles for least-privilege access.
+
+
+
+Next Steps
+
+Expand NLP: Integrate fine-tuned BERT or Llama models for advanced sentiment and crisis detection.
+Add Biometrics: Use AWS IoT Core for heart rate integration.
+User Testing: Pilot with therapists and trauma survivors by June 1, 2025.
+Offline Support: Implement local caching for mobile app.
+
+Notes for the Team
+Everett, our CEO and Founder, has emphasized that Inferno AI is a lifeline for those with PTSD and anxiety. Every line of code must answer, “How can we help you love yourself more?” React/TSX cannot deliver the secure, AI-driven backend we need. Focus on:
+
+Building robust APIs with FastAPI.
+Ensuring HIPAA compliance and offline capability.
+Testing with real users to validate trauma-informed design.
+
+Let’s make Inferno AI the anchor it’s meant to be. Reach out to Everett (lumacognify@thechristmanaiproject.com) with progress updates by May 23, 2025.
