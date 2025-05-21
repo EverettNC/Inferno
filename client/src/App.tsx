@@ -9,6 +9,7 @@ import GroundingExercise from "@/pages/GroundingExercise";
 import BreathingExercise from "@/pages/BreathingExercise";
 import MindfulnessExercise from "@/pages/MindfulnessExercise";
 import ResourcesPage from "@/pages/ResourcesPage";
+import ChatPage from "@/pages/ChatPage";
 import Header from "@/components/Header";
 import Navigation from "@/components/Navigation";
 import VoiceFeedback from "@/components/VoiceFeedback";
@@ -24,6 +25,7 @@ function Router() {
       <Route path="/grounding" component={GroundingExercise} />
       <Route path="/breathing" component={BreathingExercise} />
       <Route path="/mindfulness" component={MindfulnessExercise} />
+      <Route path="/chat" component={ChatPage} />
       <Route path="/resources" component={ResourcesPage} />
       <Route component={NotFound} />
     </Switch>

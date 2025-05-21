@@ -14,17 +14,17 @@ export default function Navigation() {
             </a>
           </Link>
           
-          <Link href="/tools">
-            <a className={`flex flex-col items-center p-2 ${location === "/tools" ? "text-primary-600" : "text-neutral-500 hover:text-primary-600"} transition`}>
-              <i className="fas fa-tools text-xl"></i>
-              <span className="text-xs mt-1">Tools</span>
+          <Link href="/grounding">
+            <a className={`flex flex-col items-center p-2 ${location === "/grounding" ? "text-primary-600" : "text-neutral-500 hover:text-primary-600"} transition`}>
+              <i className="fas fa-hand-sparkles text-xl"></i>
+              <span className="text-xs mt-1">Ground</span>
             </a>
           </Link>
           
-          <Link href="/journal">
-            <a className={`flex flex-col items-center p-2 ${location === "/journal" ? "text-primary-600" : "text-neutral-500 hover:text-primary-600"} transition`}>
-              <i className="fas fa-book-open text-xl"></i>
-              <span className="text-xs mt-1">Journal</span>
+          <Link href="/chat">
+            <a className={`flex flex-col items-center p-2 ${location === "/chat" ? "text-primary-600" : "text-neutral-500 hover:text-primary-600"} transition`}>
+              <i className="fas fa-comment-alt text-xl"></i>
+              <span className="text-xs mt-1">Chat</span>
             </a>
           </Link>
           
