@@ -3,8 +3,380 @@
 @tailwind utilities;
 
 :root {
-  --background: 0 0% 100%;
-  --foreground: 240 10% 20%;
+  /* Base colors */
+  --primary: #2D3250;      /* Deep navy blue - stable, authoritative */
+  --primary-dark: #1A1E30; /* Darker navy for depth */
+  --secondary: #424874;    /* Muted purple - calm, thoughtful */
+  --accent: #A6B1E1;       /* Soft lavender - gentle highlight */
+  --accent-subtle: #DCD6F7; /* Very light lavender - extremely subtle */
+  
+  /* Text colors */
+  --text-primary: #E4E6F0;  /* Off-white for main text */
+  --text-secondary: #B8BDD9; /* Muted lavender-gray for secondary text */
+  --text-dark: #343752;     /* Dark navy for text on light backgrounds */
+  
+  /* Semantic colors */
+  --danger: #A13545;       /* Muted red - less alarming than bright red */
+  --danger-light: #CD6B7B; /* Lighter variant for highlights */
+  --warning: #AD7D52;      /* Muted amber - warm, attention without alarm */
+  --success: #4A7C59;      /* Muted forest green - calming, positive */
+  --info: #5A89AD;         /* Muted blue - informative, calm */
+
+  /* Crisis levels */
+  --crisis-mild: #4A7C59;  /* Muted green - mild concern */
+  --crisis-moderate: #7C7A4A; /* Muted olive - moderate concern */
+  --crisis-severe: #AD7D52; /* Muted amber - serious concern */
+  --crisis-emergency: #A13545; /* Muted red - emergency situation */
+  
+  /* Emotional intensities */
+  --emotion-low: #4A7C59;  /* Muted green for low intensity */
+  --emotion-medium: #7C7A4A; /* Muted olive for medium intensity */
+  --emotion-high: #AD7D52; /* Muted amber for high intensity */
+  --emotion-extreme: #A13545; /* Muted red for extreme intensity */
+  
+  /* Backgrounds */
+  --bg-primary: #1A1E30;   /* Dark navy main background */
+  --bg-secondary: #242738; /* Slightly lighter navy for cards */
+  --bg-tertiary: #2D3250;  /* Medium navy for nested elements */
+  
+  /* Interface elements */
+  --border: #424874;       /* Borders - subtle purple */
+  --input-bg: #252941;     /* Slightly lighter than bg for inputs */
+  --input-border: #3D426B; /* Subtle border for inputs */
+  --button-bg: #424874;    /* Button background - muted purple */
+  --button-hover: #535CA8; /* Button hover - slightly brighter */
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+  
+  /* Transitions */
+  --transition-slow: 0.5s ease-in-out;
+  --transition-normal: 0.3s ease-in-out;
+  --transition-fast: 0.2s ease-in-out;
+}
+
+.dark {
+  color-scheme: dark;
+  
+  /* All the same variables as above since this is already dark-themed */
+  --primary: #2D3250;
+  --primary-dark: #1A1E30;
+  --secondary: #424874;
+  --accent: #A6B1E1;
+  --accent-subtle: #DCD6F7;
+  
+  --text-primary: #E4E6F0;
+  --text-secondary: #B8BDD9;
+  --text-dark: #343752;
+  
+  --danger: #A13545;
+  --danger-light: #CD6B7B;
+  --warning: #AD7D52;
+  --success: #4A7C59;
+  --info: #5A89AD;
+
+  --crisis-mild: #4A7C59;
+  --crisis-moderate: #7C7A4A;
+  --crisis-severe: #AD7D52;
+  --crisis-emergency: #A13545;
+  
+  --emotion-low: #4A7C59;
+  --emotion-medium: #7C7A4A;
+  --emotion-high: #AD7D52;
+  --emotion-extreme: #A13545;
+  
+  --bg-primary: #1A1E30;
+  --bg-secondary: #262A40;
+  --bg-tertiary: #2D3250;
+  
+  --border: #424874;
+  --input-bg: #252941;
+  --input-border: #3D426B;
+  --button-bg: #424874;
+  --button-hover: #535CA8;
+}
+
+/* For light mode capability in the future */
+@media (prefers-color-scheme: light) {
+  :root {
+    --primary: #424874;
+    --primary-dark: #2D3250;
+    --secondary: #5A5E8C;
+    --accent: #7984D1;
+    --accent-subtle: #DCD6F7;
+    
+    --text-primary: #1A1E30;
+    --text-secondary: #424874;
+    --text-dark: #1A1E30;
+    
+    --danger: #A13545;
+    --danger-light: #CD6B7B;
+    --warning: #AD7D52;
+    --success: #4A7C59;
+    --info: #5A89AD;
+
+    --crisis-mild: #4A7C59;
+    --crisis-moderate: #7C7A4A;
+    --crisis-severe: #AD7D52;
+    --crisis-emergency: #A13545;
+    
+    --emotion-low: #4A7C59;
+    --emotion-medium: #7C7A4A;
+    --emotion-high: #AD7D52;
+    --emotion-extreme: #A13545;
+    
+    --bg-primary: #F5F5F8;
+    --bg-secondary: #ECEDF7;
+    --bg-tertiary: #DCD6F7;
+    
+    --border: #B8BDD9;
+    --input-bg: #FFFFFF;
+    --input-border: #B8BDD9;
+    --button-bg: #424874;
+    --button-hover: #535CA8;
+  }
+}
+
+/* Base styles */
+body {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color var(--transition-normal), color var(--transition-normal);
+  min-height: 100vh;
+  letter-spacing: 0.015em;
+  line-height: 1.5;
+}
+
+/* Common elements */
+h1, h2, h3, h4, h5 {
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
+}
+
+a {
+  color: var(--accent);
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--accent-subtle);
+}
+
+input, textarea, select {
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  color: var(--text-primary);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(166, 177, 225, 0.25);
+}
+
+button {
+  background-color: var(--button-bg);
+  color: var(--text-primary);
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+button:hover {
+  background-color: var(--button-hover);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+/* Utility classes for crisis levels */
+.crisis-mild {
+  color: var(--crisis-mild);
+}
+
+.crisis-moderate {
+  color: var(--crisis-moderate);
+}
+
+.crisis-severe {
+  color: var(--crisis-severe);
+}
+
+.crisis-emergency {
+  color: var(--crisis-emergency);
+}
+
+.bg-crisis-mild {
+  background-color: var(--crisis-mild);
+}
+
+.bg-crisis-moderate {
+  background-color: var(--crisis-moderate);
+}
+
+.bg-crisis-severe {
+  background-color: var(--crisis-severe);
+}
+
+.bg-crisis-emergency {
+  background-color: var(--crisis-emergency);
+}
+
+/* Emotion intensity indicators */
+.emotion-indicator {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+}
+
+.emotion-low {
+  background-color: var(--emotion-low);
+}
+
+.emotion-medium {
+  background-color: var(--emotion-medium);
+}
+
+.emotion-high {
+  background-color: var(--emotion-high);
+}
+
+.emotion-extreme {
+  background-color: var(--emotion-extreme);
+}
+
+/* Card and container styles */
+.card {
+  background-color: var(--bg-secondary);
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Subtle animations for breathing exercise */
+@keyframes breatheIn {
+  from { transform: scale(0.97); opacity: 0.9; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes breatheOut {
+  from { transform: scale(1); opacity: 1; }
+  to { transform: scale(0.97); opacity: 0.9; }
+}
+
+.breathe-in {
+  animation: breatheIn 4s ease-in-out;
+}
+
+.breathe-out {
+  animation: breatheOut 4s ease-in-out;
+}
+
+/* Pulse animation for heartbeat or alerts (very subtle) */
+@keyframes subtlePulse {
+  0% { opacity: 0.9; }
+  50% { opacity: 1; }
+  100% { opacity: 0.9; }
+}
+
+.subtle-pulse {
+  animation: subtlePulse 4s infinite ease-in-out;
+}
+
+/* Voice feedback indicator */
+.voice-active {
+  position: relative;
+}
+
+.voice-active::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--accent);
+  animation: subtlePulse 2s infinite;
+}
+
+/* Chat message styles */
+.message {
+  padding: 1rem;
+  border-radius: 1rem;
+  margin-bottom: 1rem;
+  max-width: 85%;
+}
+
+.message-user {
+  background-color: var(--primary);
+  color: var(--text-primary);
+  border-bottom-right-radius: 0.25rem;
+  margin-left: auto;
+}
+
+.message-ai {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  border-bottom-left-radius: 0.25rem;
+  margin-right: auto;
+}
+
+/* Emotional indicator in messages */
+.emotion-tag {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+  opacity: 0.9;
+}
+
+/* Custom scrollbar styles */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(66, 72, 116, 0.1);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+  transition: var(--transition-normal);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* shadcn variables - keeping these but using our custom variables instead */
+:root {
+  --background: 222 20% 14%;
+  --foreground: 226 70% 95%;
   --muted: 240 5% 96%;
   --muted-foreground: 240 5% 45%;
   --popover: 0 0% 100%;
