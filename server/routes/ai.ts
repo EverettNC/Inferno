@@ -28,13 +28,13 @@ router.post("/chat", async (req: Request, res: Response) => {
 // Analyze emotion
 router.post("/analyze-emotion", async (req: Request, res: Response) => {
   try {
-    const { text } = req.body;
+    const { message } = req.body;
     
-    if (!text) {
-      return res.status(400).json({ error: "Text is required" });
+    if (!message) {
+      return res.status(400).json({ error: "Message is required" });
     }
     
-    const analysis = await analyzeEmotion(text);
+    const analysis = await analyzeEmotion(message);
     res.json(analysis);
   } catch (error) {
     console.error("Error in emotion analysis endpoint:", error);

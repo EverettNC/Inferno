@@ -103,7 +103,7 @@ export async function detectCrisis(text: string): Promise<{
       temperature: 0.1,
     });
 
-    const result = JSON.parse(response.choices[0].message.content);
+    const result = JSON.parse(response.choices[0].message.content || "{}");
     
     // Determine appropriate resource based on crisis type
     let suggestedResource = CRISIS_RESOURCES.GENERAL;
@@ -138,20 +138,28 @@ export async function analyzeEmotion(text: string): Promise<{
   primaryEmotion: string;
   intensity: number;
   suggestion: string;
+  crisisLevel: number;
 }> {
   try {
+    // First, check for crisis level
+    const crisisAssessment = await detectCrisis(text);
+    
+    // Then, analyze emotional content
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
         {
           role: "system",
-          content: `Analyze the emotional content of the following text from someone who may be experiencing PTSD or anxiety symptoms.
-          Identify:
-          1. The primary emotion (e.g., anxiety, sadness, anger, fear, calm, etc.)
+          content: `You are a trauma-informed emotion analysis expert specialized in PTSD and anxiety.
+          Analyze the following text and identify:
+          1. The primary emotion being expressed (e.g., fear, anxiety, sadness, anger, numbness, hope)
           2. The intensity of the emotion on a scale of 1-10
-          3. A brief, trauma-informed suggestion for a coping mechanism that might help
+          3. A brief therapeutic suggestion that would be helpful for someone experiencing this emotion
           
-          Format your response as JSON with keys: primaryEmotion, intensity, suggestion.`
+          Respond in JSON format with the following fields:
+          - primaryEmotion (string): The main emotion detected
+          - intensity (number): A number from 1-10 indicating intensity
+          - suggestion (string): A brief, supportive therapeutic suggestion (max 100 characters)`
         },
         {
           role: "user",
@@ -162,19 +170,21 @@ export async function analyzeEmotion(text: string): Promise<{
       temperature: 0.3,
     });
 
-    const result = JSON.parse(response.choices[0].message.content);
-
+    const result = JSON.parse(response.choices[0].message.content || "{}");
+    
     return {
       primaryEmotion: result.primaryEmotion || "neutral",
-      intensity: result.intensity || 5,
-      suggestion: result.suggestion || "Consider taking a few deep breaths."
+      intensity: result.intensity || 0,
+      suggestion: result.suggestion || "Take a moment to breathe and notice your surroundings",
+      crisisLevel: crisisAssessment.severity
     };
   } catch (error) {
     console.error("Error analyzing emotion:", error);
     return {
-      primaryEmotion: "neutral",
-      intensity: 5,
-      suggestion: "Consider practicing a grounding technique like the 5-4-3-2-1 exercise."
+      primaryEmotion: "unknown",
+      intensity: 0,
+      suggestion: "Practice gentle self-care and consider reaching out for support",
+      crisisLevel: 0
     };
   }
 }
