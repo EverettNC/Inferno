@@ -3,53 +3,53 @@
 @tailwind utilities;
 
 :root {
-  /* Base colors */
-  --primary: #2D3250;      /* Deep navy blue - stable, authoritative */
-  --primary-dark: #1A1E30; /* Darker navy for depth */
-  --secondary: #424874;    /* Muted purple - calm, thoughtful */
-  --accent: #A6B1E1;       /* Soft lavender - gentle highlight */
+  /* Base colors - Lightened theme */
+  --primary: #3D4282;      /* Medium navy blue - stable, authoritative */
+  --primary-dark: #2D3250; /* Darker navy for depth but still lighter than before */
+  --secondary: #5C68BF;    /* Brighter purple - calm, thoughtful */
+  --accent: #8E9CE3;       /* Brighter medium lavender - gentle highlight */
   --accent-subtle: #DCD6F7; /* Very light lavender - extremely subtle */
   
   /* Text colors */
-  --text-primary: #E4E6F0;  /* Off-white for main text */
-  --text-secondary: #B8BDD9; /* Muted lavender-gray for secondary text */
+  --text-primary: #FFFFFF;  /* Pure white for main text - better contrast */
+  --text-secondary: #CCD1E9; /* Lighter lavender-gray for secondary text */
   --text-dark: #343752;     /* Dark navy for text on light backgrounds */
   
-  /* Semantic colors */
-  --danger: #A13545;       /* Muted red - less alarming than bright red */
-  --danger-light: #CD6B7B; /* Lighter variant for highlights */
-  --warning: #AD7D52;      /* Muted amber - warm, attention without alarm */
-  --success: #4A7C59;      /* Muted forest green - calming, positive */
-  --info: #5A89AD;         /* Muted blue - informative, calm */
+  /* Semantic colors - Brightened for better visibility */
+  --danger: #E74C67;       /* Brighter red - more visible but still not harsh */
+  --danger-light: #F38A9C; /* Lighter variant for highlights */
+  --warning: #F0A868;      /* Brighter amber - warm, attention without alarm */
+  --success: #4FC07D;      /* Brighter forest green - calming, positive */
+  --info: #6EADDE;         /* Brighter blue - informative, calm */
 
-  /* Crisis levels */
-  --crisis-mild: #4A7C59;  /* Muted green - mild concern */
-  --crisis-moderate: #7C7A4A; /* Muted olive - moderate concern */
-  --crisis-severe: #AD7D52; /* Muted amber - serious concern */
-  --crisis-emergency: #A13545; /* Muted red - emergency situation */
+  /* Crisis levels - Brightened for better visibility */
+  --crisis-mild: #4FC07D;  /* Brighter green - mild concern */
+  --crisis-moderate: #C9C857; /* Brighter olive - moderate concern */
+  --crisis-severe: #F0A868; /* Brighter amber - serious concern */
+  --crisis-emergency: #E74C67; /* Brighter red - emergency situation */
   
-  /* Emotional intensities */
-  --emotion-low: #4A7C59;  /* Muted green for low intensity */
-  --emotion-medium: #7C7A4A; /* Muted olive for medium intensity */
-  --emotion-high: #AD7D52; /* Muted amber for high intensity */
-  --emotion-extreme: #A13545; /* Muted red for extreme intensity */
+  /* Emotional intensities - Brightened for better visibility */
+  --emotion-low: #4FC07D;  /* Brighter green for low intensity */
+  --emotion-medium: #C9C857; /* Brighter olive for medium intensity */
+  --emotion-high: #F0A868; /* Brighter amber for high intensity */
+  --emotion-extreme: #E74C67; /* Brighter red for extreme intensity */
   
-  /* Backgrounds */
-  --bg-primary: #1A1E30;   /* Dark navy main background */
-  --bg-secondary: #242738; /* Slightly lighter navy for cards */
-  --bg-tertiary: #2D3250;  /* Medium navy for nested elements */
+  /* Backgrounds - Lightened */
+  --bg-primary: #2A3154;   /* Medium navy main background - lighter than before */
+  --bg-secondary: #353B66; /* Medium-light navy for cards */
+  --bg-tertiary: #3D4282;  /* Medium navy for nested elements */
   
-  /* Interface elements */
-  --border: #424874;       /* Borders - subtle purple */
-  --input-bg: #252941;     /* Slightly lighter than bg for inputs */
-  --input-border: #3D426B; /* Subtle border for inputs */
-  --button-bg: #424874;    /* Button background - muted purple */
-  --button-hover: #535CA8; /* Button hover - slightly brighter */
+  /* Interface elements - Brightened for better visibility */
+  --border: #5C68BF;       /* Borders - brighter purple */
+  --input-bg: #353B66;     /* Slightly lighter than bg for inputs */
+  --input-border: #5C68BF; /* More visible border for inputs */
+  --button-bg: #5C68BF;    /* Button background - brighter purple */
+  --button-hover: #7580D8; /* Button hover - brighter */
   
   /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3);
   
   /* Transitions */
   --transition-slow: 0.5s ease-in-out;
@@ -60,82 +60,83 @@
 .dark {
   color-scheme: dark;
   
-  /* All the same variables as above since this is already dark-themed */
-  --primary: #2D3250;
-  --primary-dark: #1A1E30;
-  --secondary: #424874;
-  --accent: #A6B1E1;
+  /* All the same variables as above since we're using a medium-dark theme */
+  --primary: #3D4282;
+  --primary-dark: #2D3250;
+  --secondary: #5C68BF;
+  --accent: #8E9CE3;
   --accent-subtle: #DCD6F7;
   
-  --text-primary: #E4E6F0;
-  --text-secondary: #B8BDD9;
+  --text-primary: #FFFFFF;
+  --text-secondary: #CCD1E9;
   --text-dark: #343752;
   
-  --danger: #A13545;
-  --danger-light: #CD6B7B;
-  --warning: #AD7D52;
-  --success: #4A7C59;
-  --info: #5A89AD;
+  --danger: #E74C67;
+  --danger-light: #F38A9C;
+  --warning: #F0A868;
+  --success: #4FC07D;
+  --info: #6EADDE;
 
-  --crisis-mild: #4A7C59;
-  --crisis-moderate: #7C7A4A;
-  --crisis-severe: #AD7D52;
-  --crisis-emergency: #A13545;
+  --crisis-mild: #4FC07D;
+  --crisis-moderate: #C9C857;
+  --crisis-severe: #F0A868;
+  --crisis-emergency: #E74C67;
   
-  --emotion-low: #4A7C59;
-  --emotion-medium: #7C7A4A;
-  --emotion-high: #AD7D52;
-  --emotion-extreme: #A13545;
+  --emotion-low: #4FC07D;
+  --emotion-medium: #C9C857;
+  --emotion-high: #F0A868;
+  --emotion-extreme: #E74C67;
   
-  --bg-primary: #1A1E30;
-  --bg-secondary: #262A40;
-  --bg-tertiary: #2D3250;
+  --bg-primary: #2A3154;
+  --bg-secondary: #353B66;
+  --bg-tertiary: #3D4282;
   
-  --border: #424874;
-  --input-bg: #252941;
-  --input-border: #3D426B;
-  --button-bg: #424874;
-  --button-hover: #535CA8;
+  --border: #5C68BF;
+  --input-bg: #353B66;
+  --input-border: #5C68BF;
+  --button-bg: #5C68BF;
+  --button-hover: #7580D8;
 }
 
 /* For light mode capability in the future */
 @media (prefers-color-scheme: light) {
   :root {
-    --primary: #424874;
-    --primary-dark: #2D3250;
-    --secondary: #5A5E8C;
-    --accent: #7984D1;
-    --accent-subtle: #DCD6F7;
+    --primary: #5C68BF;         /* Medium purple */
+    --primary-dark: #3D4282;    /* Medium navy */
+    --secondary: #7580D8;       /* Lighter purple */
+    --accent: #8E9CE3;          /* Light lavender */
+    --accent-subtle: #DCD6F7;   /* Very light lavender */
     
-    --text-primary: #1A1E30;
-    --text-secondary: #424874;
-    --text-dark: #1A1E30;
+    --text-primary: #333647;    /* Dark gray-blue for text on light bg */
+    --text-secondary: #5C68BF;  /* Medium purple for secondary text */
+    --text-dark: #1A1E30;       /* Very dark navy for emphasis */
     
-    --danger: #A13545;
-    --danger-light: #CD6B7B;
-    --warning: #AD7D52;
-    --success: #4A7C59;
-    --info: #5A89AD;
+    --danger: #E74C67;          /* Same as dark but works on light too */
+    --danger-light: #F38A9C;    /* Lighter variant for highlights */
+    --warning: #F0A868;         /* Same as dark but works on light too */
+    --success: #4FC07D;         /* Same as dark but works on light too */
+    --info: #6EADDE;            /* Same as dark but works on light too */
 
-    --crisis-mild: #4A7C59;
-    --crisis-moderate: #7C7A4A;
-    --crisis-severe: #AD7D52;
-    --crisis-emergency: #A13545;
+    --crisis-mild: #4FC07D;     /* Same as dark but works on light too */
+    --crisis-moderate: #C9C857; /* Same as dark but works on light too */
+    --crisis-severe: #F0A868;   /* Same as dark but works on light too */
+    --crisis-emergency: #E74C67; /* Same as dark but works on light too */
     
-    --emotion-low: #4A7C59;
-    --emotion-medium: #7C7A4A;
-    --emotion-high: #AD7D52;
-    --emotion-extreme: #A13545;
+    --emotion-low: #4FC07D;      /* Same as dark but works on light too */
+    --emotion-medium: #C9C857;   /* Same as dark but works on light too */
+    --emotion-high: #F0A868;     /* Same as dark but works on light too */
+    --emotion-extreme: #E74C67;  /* Same as dark but works on light too */
     
-    --bg-primary: #F5F5F8;
-    --bg-secondary: #ECEDF7;
-    --bg-tertiary: #DCD6F7;
+    /* Light backgrounds instead of dark */
+    --bg-primary: #F0F2FF;       /* Very light lavender-white */
+    --bg-secondary: #E4E8FD;     /* Light lavender */
+    --bg-tertiary: #D5DBFB;      /* Medium-light lavender */
     
-    --border: #B8BDD9;
-    --input-bg: #FFFFFF;
-    --input-border: #B8BDD9;
-    --button-bg: #424874;
-    --button-hover: #535CA8;
+    --border: #8E9CE3;           /* Light lavender border */
+    --input-bg: #FFFFFF;         /* White input backgrounds */
+    --input-border: #8E9CE3;     /* Light lavender input borders */
+    --button-bg: #5C68BF;        /* Medium purple buttons */
+    --button-hover: #7580D8;     /* Lighter purple hover */
   }
 }
 
