@@ -10,15 +10,32 @@ import BreathingExercise from "@/pages/BreathingExercise";
 import MindfulnessExercise from "@/pages/MindfulnessExercise";
 import ResourcesPage from "@/pages/ResourcesPage";
 import ChatPage from "@/pages/ChatPage";
+import LandingPage from "@/pages/LandingPage";
+import SignInPage from "@/pages/SignInPage";
 import Header from "@/components/Header";
 import Navigation from "@/components/Navigation";
 import VoiceFeedback from "@/components/VoiceFeedback";
 import PrivacyConsent from "@/components/PrivacyConsent";
 import { useVoiceContext } from "@/contexts/VoiceContext";
+import { useUserContext } from "@/contexts/UserContext";
 
 function Router() {
   const [location] = useLocation();
+  const { user } = useUserContext();
+  
+  // Show public routes if user is not authenticated
+  if (!user) {
+    return (
+      <Switch>
+        <Route path="/" component={LandingPage} />
+        <Route path="/signin" component={SignInPage} />
+        <Route path="/signup" component={SignInPage} /> {/* Reuse SignInPage for now */}
+        <Route component={LandingPage} /> {/* Redirect to landing page by default */}
+      </Switch>
+    );
+  }
 
+  // Show authenticated routes if user is logged in
   return (
     <Switch>
       <Route path="/" component={HomePage} />
@@ -34,16 +51,18 @@ function Router() {
 
 function App() {
   const { isListening } = useVoiceContext();
+  const { user } = useUserContext();
 
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <div className="min-h-screen flex flex-col">
-          <Header />
-          <main className="flex-grow pb-20">
+          {/* Only show header and navigation for authenticated users */}
+          {user && <Header />}
+          <main className={`flex-grow ${user ? 'pb-20' : ''}`}>
             <Router />
           </main>
-          <Navigation />
+          {user && <Navigation />}
           {isListening && <VoiceFeedback />}
           <PrivacyConsent />
           <Toaster />
