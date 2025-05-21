@@ -49,7 +49,7 @@ export default function HomePage() {
     if (!user) return;
     
     if (!selectedMood) {
-      alert('Please select how you're feeling today');
+      alert("Please select how you're feeling today");
       return;
     }
     

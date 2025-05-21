@@ -7,8 +7,11 @@ import {
   insertExerciseSchema 
 } from "@shared/schema";
 import { z } from "zod";
+import aiRoutes from "./routes/ai";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Mount AI routes
+  app.use('/api/ai', aiRoutes);
   // Auth routes
   app.post("/api/auth/register", async (req: Request, res: Response) => {
     try {
