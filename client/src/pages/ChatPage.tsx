@@ -5,6 +5,9 @@ import { useUserContext } from '@/contexts/UserContext';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertCircle, Info } from 'lucide-react';
 import useVoiceMode from '@/hooks/useVoiceMode';
 import { apiRequest } from '@/lib/queryClient';
 
@@ -13,6 +16,12 @@ type Message = {
   content: string;
   sender: 'user' | 'ai';
   timestamp: Date;
+  emotion?: {
+    primaryEmotion: string;
+    intensity: number;
+    suggestion: string;
+  };
+  crisisLevel?: number;
 };
 
 export default function ChatPage() {
@@ -63,10 +72,34 @@ export default function ChatPage() {
     setIsSending(true);
     
     try {
-      // Make API call to get AI response
+      // First, analyze the emotion and crisis potential
+      const emotionResponse = await apiRequest('POST', '/api/ai/analyze-emotion', {
+        message: inputMessage
+      });
+      
+      const emotionData = await emotionResponse.json();
+      
+      // Update the user message with emotion data
+      if (emotionData && emotionData.primaryEmotion) {
+        userMessage.emotion = {
+          primaryEmotion: emotionData.primaryEmotion,
+          intensity: emotionData.intensity || 0,
+          suggestion: emotionData.suggestion || ''
+        };
+        userMessage.crisisLevel = emotionData.crisisLevel || 0;
+        
+        // Update the message in the state
+        setMessages(prev => 
+          prev.map(msg => msg.id === userMessage.id ? userMessage : msg)
+        );
+      }
+      
+      // Make API call to get AI response with the emotional context
       const response = await apiRequest('POST', '/api/ai/chat', {
         message: inputMessage,
-        context: user ? `The user's name is ${user.firstName || 'Friend'}.` : ''
+        context: user 
+          ? `The user's name is ${user.firstName || 'Friend'}. Their primary emotion appears to be ${emotionData?.primaryEmotion || 'unknown'} with intensity ${emotionData?.intensity || 'unknown'}.`
+          : `The user's primary emotion appears to be ${emotionData?.primaryEmotion || 'unknown'} with intensity ${emotionData?.intensity || 'unknown'}.`
       });
       
       const data = await response.json();
@@ -173,6 +206,32 @@ export default function ChatPage() {
                     }`}
                   >
                     <p className="text-sm">{message.content}</p>
+                    
+                    {/* Emotion indicator for user messages */}
+                    {message.sender === 'user' && message.emotion && (
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        <Badge 
+                          variant={message.emotion.intensity > 6 ? "destructive" : 
+                                 message.emotion.intensity > 3 ? "outline" : "secondary"}
+                          className="text-xs py-0"
+                        >
+                          {message.emotion.primaryEmotion} ({message.emotion.intensity}/10)
+                        </Badge>
+                      </div>
+                    )}
+                    
+                    {/* Crisis warning for high crisis levels */}
+                    {message.crisisLevel && message.crisisLevel >= 3 && (
+                      <Alert className="mt-2 py-2 bg-red-50 border-red-200">
+                        <AlertCircle className="h-4 w-4 text-red-600" />
+                        <AlertDescription className="text-xs text-red-800">
+                          {message.crisisLevel >= 4 
+                            ? "Emergency support resources recommended" 
+                            : "Support resources available"}
+                        </AlertDescription>
+                      </Alert>
+                    )}
+                    
                     <div className="mt-1 text-xs text-right opacity-70">
                       {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </div>

@@ -6,18 +6,47 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY 
 });
 
+// Crisis detection thresholds
+const CRISIS_SEVERITY = {
+  NONE: 0,
+  MILD: 1,
+  MODERATE: 2,
+  SEVERE: 3,
+  EMERGENCY: 4
+};
+
+// Emergency resources
+const CRISIS_RESOURCES = {
+  SUICIDE_PREVENTION: "988 Suicide & Crisis Lifeline: Call or text 988",
+  CRISIS_TEXT: "Crisis Text Line: Text HOME to 741741",
+  VETERANS_CRISIS: "Veterans Crisis Line: Call 1-800-273-8255 and Press 1",
+  DOMESTIC_VIOLENCE: "National Domestic Violence Hotline: 1-800-799-7233",
+  GENERAL: "Call 911 if you're in immediate danger"
+};
+
 export async function generateResponse(input: string, context: string = ""): Promise<string> {
   try {
+    // First, perform crisis detection
+    const crisisAssessment = await detectCrisis(input);
+    let systemPrompt = `You are Inferno AI, a trauma-informed AI companion for people with PTSD and anxiety.
+    Your responses should be empathetic, supportive, and never dismissive.
+    Always use a calm, reassuring tone and avoid alarming language.
+    ${context}`;
+    
+    // Add crisis-specific instructions based on severity
+    if (crisisAssessment.severity >= CRISIS_SEVERITY.MODERATE) {
+      systemPrompt += `\nIMPORTANT: The user may be experiencing a ${crisisAssessment.severityLabel} crisis related to ${crisisAssessment.crisisType}.
+      Use a gentle, supportive approach. Validate their feelings without judgment.
+      Remind them that help is available. Suggest the following resource: ${crisisAssessment.suggestedResource}
+      Focus on immediate grounding and safety rather than long-term solutions.`;
+    }
+
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
         {
           role: "system",
-          content: `You are Inferno AI, a trauma-informed AI companion for people with PTSD and anxiety.
-          Your responses should be empathetic, supportive, and never dismissive.
-          Always use a calm, reassuring tone and avoid alarming language.
-          If the user appears to be in crisis, gently suggest resources like the Crisis Text Line (Text HOME to 741741) or the National Suicide Prevention Lifeline (988).
-          ${context}`
+          content: systemPrompt
         },
         {
           role: "user",
@@ -28,10 +57,80 @@ export async function generateResponse(input: string, context: string = ""): Pro
       max_tokens: 500,
     });
 
-    return response.choices[0].message.content || "I'm sorry, I'm having trouble generating a response right now.";
+    let aiResponse = response.choices[0].message.content || "I'm sorry, I'm having trouble generating a response right now.";
+    
+    // For emergency situations, append crisis resources regardless of AI response
+    if (crisisAssessment.severity === CRISIS_SEVERITY.EMERGENCY) {
+      aiResponse += `\n\nI'm concerned about what you're sharing. Please consider reaching out for immediate help:\n${crisisAssessment.suggestedResource}`;
+    }
+
+    return aiResponse;
   } catch (error) {
     console.error("Error generating OpenAI response:", error);
     return "I apologize, but I'm having trouble connecting right now. Please try again in a moment.";
+  }
+}
+
+export async function detectCrisis(text: string): Promise<{
+  severity: number;
+  severityLabel: string;
+  crisisType: string;
+  suggestedResource: string;
+}> {
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: `You are a trauma-informed risk assessment expert. Analyze the following text for signs of crisis or distress.
+          Rate the severity on the following scale:
+          0 - No crisis detected
+          1 - Mild distress (general anxiety, sadness)
+          2 - Moderate distress (heightened anxiety, specific triggers activated)
+          3 - Severe distress (panic attack, flashback, intense emotional pain)
+          4 - Emergency (suicidal ideation, self-harm intent, immediate danger)
+          
+          Also identify the primary type of crisis (e.g., "suicidal thoughts", "panic attack", "flashback", "grief", etc.)
+          Respond in JSON format with the following fields: severity (number), severityLabel (string), crisisType (string).`
+        },
+        {
+          role: "user",
+          content: text
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.1,
+    });
+
+    const result = JSON.parse(response.choices[0].message.content);
+    
+    // Determine appropriate resource based on crisis type
+    let suggestedResource = CRISIS_RESOURCES.GENERAL;
+    if (result.crisisType?.toLowerCase().includes("suicid")) {
+      suggestedResource = CRISIS_RESOURCES.SUICIDE_PREVENTION;
+    } else if (result.crisisType?.toLowerCase().includes("veteran") || result.crisisType?.toLowerCase().includes("military")) {
+      suggestedResource = CRISIS_RESOURCES.VETERANS_CRISIS;
+    } else if (result.crisisType?.toLowerCase().includes("domestic") || result.crisisType?.toLowerCase().includes("abuse")) {
+      suggestedResource = CRISIS_RESOURCES.DOMESTIC_VIOLENCE;
+    } else if (result.severity >= 2) {
+      suggestedResource = CRISIS_RESOURCES.CRISIS_TEXT;
+    }
+
+    return {
+      severity: result.severity || 0,
+      severityLabel: result.severityLabel || "none",
+      crisisType: result.crisisType || "general distress",
+      suggestedResource
+    };
+  } catch (error) {
+    console.error("Error detecting crisis:", error);
+    return {
+      severity: 0,
+      severityLabel: "none",
+      crisisType: "unknown",
+      suggestedResource: CRISIS_RESOURCES.GENERAL
+    };
   }
 }
 

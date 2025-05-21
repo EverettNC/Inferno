@@ -42,7 +42,7 @@ export default function PrivacyConsent() {
   
   return (
     <Dialog open={showPrivacyDialog} onOpenChange={setShowPrivacyDialog}>
-      <DialogContent className="sm:max-w-lg" showClose={false}>
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-neutral-800">Your Privacy Matters</DialogTitle>
           <DialogDescription className="text-neutral-700">
