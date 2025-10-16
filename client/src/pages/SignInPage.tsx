@@ -67,13 +67,23 @@ export default function SignInPage() {
       <div className="max-w-2xl w-full space-y-8 relative z-10" data-testid="signin-container">
         {/* Header */}
         <div className="text-center space-y-4">
-          <h1 
-            className="text-6xl md:text-7xl font-black tracking-wider glow-text" 
-            style={{ fontFamily: 'Orbitron, Rajdhani, sans-serif' }}
-            data-testid="text-app-title"
-          >
-            INFERNO
-          </h1>
+          <div className="inline-block">
+            <h1 
+              className="text-6xl md:text-7xl font-black tracking-wider glow-text" 
+              style={{ fontFamily: 'Orbitron, Rajdhani, sans-serif' }}
+              data-testid="text-app-title"
+            >
+              INFERNO
+            </h1>
+            {/* Orange underline */}
+            <div 
+              className="h-1 w-full mt-2 rounded-full"
+              style={{ 
+                background: 'linear-gradient(90deg, transparent, var(--flame-orange), transparent)',
+                boxShadow: '0 0 10px var(--flame-orange)'
+              }}
+            />
+          </div>
           
           <p className="text-sm md:text-base tracking-widest text-text-secondary uppercase" data-testid="text-platform-subtitle">
             Trauma-Aware AI Platform
@@ -88,13 +98,14 @@ export default function SignInPage() {
         <div className="flex justify-center my-8">
           <div className="relative">
             <Flame 
-              className="w-24 h-24 fire-glow" 
+              className="w-24 h-24 opacity-70" 
+              style={{ color: '#D85A2E' }}
               strokeWidth={1.5}
               data-testid="icon-flame"
             />
             <div className="absolute inset-0 animate-pulse">
               <Flame 
-                className="w-24 h-24 opacity-50" 
+                className="w-24 h-24 opacity-30" 
                 style={{ color: 'var(--flame-orange)' }}
                 strokeWidth={1}
               />
@@ -105,11 +116,21 @@ export default function SignInPage() {
         {/* Ground and Reflect Icons */}
         <div className="flex justify-center gap-16 mb-8">
           <div className="text-center" data-testid="feature-ground">
-            <Hand className="w-12 h-12 mx-auto mb-2 fire-glow" strokeWidth={1.5} data-testid="icon-ground" />
+            <Hand 
+              className="w-12 h-12 mx-auto mb-2 opacity-80" 
+              style={{ color: '#D85A2E' }}
+              strokeWidth={1.5} 
+              data-testid="icon-ground" 
+            />
             <p className="text-text-secondary text-sm uppercase tracking-wide">Ground</p>
           </div>
           <div className="text-center" data-testid="feature-reflect">
-            <Brain className="w-12 h-12 mx-auto mb-2 fire-glow" strokeWidth={1.5} data-testid="icon-reflect" />
+            <Brain 
+              className="w-12 h-12 mx-auto mb-2 opacity-80" 
+              style={{ color: '#D85A2E' }}
+              strokeWidth={1.5} 
+              data-testid="icon-reflect" 
+            />
             <p className="text-text-secondary text-sm uppercase tracking-wide">Reflect</p>
           </div>
         </div>
