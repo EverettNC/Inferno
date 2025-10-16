@@ -23,20 +23,10 @@ function Router() {
   const [location] = useLocation();
   const { user } = useUserContext();
   
-  // Show sign-in page if user is not authenticated
-  if (!user) {
-    return (
-      <Switch>
-        <Route path="/" component={SignInPage} />
-        <Route path="/signup" component={SignInPage} /> {/* Reuse SignInPage for now */}
-        <Route component={SignInPage} /> {/* Redirect to sign-in page by default */}
-      </Switch>
-    );
-  }
-
-  // Show authenticated routes if user is logged in
+  // BYPASS MODE: Allow access to all modules without authentication
   return (
     <Switch>
+      <Route path="/signin" component={SignInPage} />
       <Route path="/" component={HomePage} />
       <Route path="/grounding" component={GroundingExercise} />
       <Route path="/breathing" component={BreathingExercise} />
@@ -51,17 +41,21 @@ function Router() {
 function App() {
   const { isListening } = useVoiceContext();
   const { user } = useUserContext();
+  const [location] = useLocation();
+
+  // Hide header/nav on sign-in page
+  const isSignInPage = location === '/signin';
 
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <div className="min-h-screen flex flex-col">
-          {/* Only show header and navigation for authenticated users */}
-          {user && <Header />}
-          <main className={`flex-grow ${user ? 'pb-20' : ''}`}>
+          {/* Show header and navigation except on sign-in page */}
+          {!isSignInPage && <Header />}
+          <main className={`flex-grow ${!isSignInPage ? 'pb-20' : ''}`}>
             <Router />
           </main>
-          {user && <Navigation />}
+          {!isSignInPage && <Navigation />}
           {isListening && <VoiceFeedback />}
           <PrivacyConsent />
           <Toaster />
