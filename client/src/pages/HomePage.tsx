@@ -23,14 +23,14 @@ export default function HomePage() {
   });
   
   // Fetch check-in streak data if user is logged in
-  const { data: streakData } = useQuery({
-    queryKey: user ? [`/api/users/${user.id}/check-in-streak`] : null,
+  const { data: streakData } = useQuery<{ streak: number; lastCheckIn: string }>({
+    queryKey: [`/api/users/${user?.id || 'none'}/check-in-streak`],
     enabled: !!user
   });
   
   // Fetch recent activities if user is logged in
-  const { data: recentActivities } = useQuery({
-    queryKey: user ? [`/api/users/${user.id}/exercises`] : null,
+  const { data: recentActivities } = useQuery<any[]>({
+    queryKey: [`/api/users/${user?.id || 'none'}/exercises`],
     enabled: !!user
   });
   
