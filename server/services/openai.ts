@@ -1,10 +1,17 @@
 import OpenAI from "openai";
 
-// Initialize OpenAI client
+// Initialize OpenAI client lazily
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-const openai = new OpenAI({ 
-  apiKey: process.env.OPENAI_API_KEY 
-});
+let openai: OpenAI | null = null;
+
+function getOpenAI(): OpenAI {
+  if (!openai) {
+    openai = new OpenAI({ 
+      apiKey: process.env.OPENAI_API_KEY || ""
+    });
+  }
+  return openai;
+}
 
 // Crisis detection thresholds
 const CRISIS_SEVERITY = {
@@ -41,7 +48,7 @@ export async function generateResponse(input: string, context: string = ""): Pro
       Focus on immediate grounding and safety rather than long-term solutions.`;
     }
 
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAI().chat.completions.create({
       model: "gpt-4o",
       messages: [
         {
@@ -78,7 +85,7 @@ export async function detectCrisis(text: string): Promise<{
   suggestedResource: string;
 }> {
   try {
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAI().chat.completions.create({
       model: "gpt-4o",
       messages: [
         {
@@ -146,7 +153,7 @@ export async function analyzeEmotion(text: string): Promise<{
     const crisisAssessment = await detectCrisis(text);
     
     // Then, analyze emotional content
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAI().chat.completions.create({
       model: "gpt-4o",
       messages: [
         {
@@ -193,7 +200,7 @@ export async function analyzeEmotion(text: string): Promise<{
 
 export async function generateGroundingPrompt(sense: string): Promise<string> {
   try {
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAI().chat.completions.create({
       model: "gpt-4o",
       messages: [
         {
@@ -220,7 +227,7 @@ export async function generateGroundingPrompt(sense: string): Promise<string> {
 
 export async function suggestNextMindfulnessExercise(history: string): Promise<string> {
   try {
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAI().chat.completions.create({
       model: "gpt-4o",
       messages: [
         {
