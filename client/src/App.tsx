@@ -12,6 +12,7 @@ import ResourcesPage from "@/pages/ResourcesPage";
 import ChatPage from "@/pages/ChatPage";
 import LandingPage from "@/pages/LandingPage";
 import SignInPage from "@/pages/SignInPage";
+import { VoiceModePage } from "@/pages/VoiceModePage";
 import Header from "@/components/Header";
 import Navigation from "@/components/Navigation";
 import VoiceFeedback from "@/components/VoiceFeedback";
@@ -32,6 +33,7 @@ function Router() {
       <Route path="/breathing" component={BreathingExercise} />
       <Route path="/mindfulness" component={MindfulnessExercise} />
       <Route path="/chat" component={ChatPage} />
+      <Route path="/voice" component={VoiceModePage} />
       <Route path="/resources" component={ResourcesPage} />
       <Route component={NotFound} />
     </Switch>
