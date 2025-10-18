@@ -8,6 +8,7 @@ import {
 } from "@shared/schema";
 import { z } from "zod";
 import aiRoutes from "./routes/ai";
+import { setupRealtimeVoiceWebSocket } from "./routes/realtime-voice";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Mount AI routes
@@ -223,5 +224,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   const httpServer = createServer(app);
+  
+  // Setup WebSocket for Realtime Voice API
+  setupRealtimeVoiceWebSocket(httpServer);
+  
   return httpServer;
 }
