@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Home, Hand, MessageCircle, BookOpen, Mic2 } from "lucide-react";
+import { Home, Hand, MessageCircle, UserCircle, Mic2 } from "lucide-react";
 
 export default function Navigation() {
   const [location] = useLocation();
@@ -9,7 +9,7 @@ export default function Navigation() {
     { href: "/grounding", icon: Hand, label: "Ground", testId: "nav-grounding" },
     { href: "/voice", icon: Mic2, label: "Voice", testId: "nav-voice" },
     { href: "/chat", icon: MessageCircle, label: "Chat", testId: "nav-chat" },
-    { href: "/resources", icon: BookOpen, label: "Learn", testId: "nav-resources" }
+    { href: "/profile", icon: UserCircle, label: "Profile", testId: "nav-profile" }
   ];
 
   return (

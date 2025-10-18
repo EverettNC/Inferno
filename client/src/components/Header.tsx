@@ -69,18 +69,30 @@ export default function Header() {
                 style={{ background: 'rgba(10, 10, 15, 0.95)', backdropFilter: 'blur(10px)' }}
               >
                 <DropdownMenuItem asChild>
-                  <Link href="/profile">
-                    <a className="w-full cursor-pointer text-text-primary hover:text-electric-cyan">Profile</a>
+                  <Link 
+                    href="/profile"
+                    className="w-full cursor-pointer text-text-primary hover:text-electric-cyan"
+                    data-testid="menu-profile"
+                  >
+                    Profile
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/settings">
-                    <a className="w-full cursor-pointer text-text-primary hover:text-electric-cyan">Settings</a>
+                  <Link 
+                    href="/settings"
+                    className="w-full cursor-pointer text-text-primary hover:text-electric-cyan"
+                    data-testid="menu-settings"
+                  >
+                    Settings
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/help">
-                    <a className="w-full cursor-pointer text-text-primary hover:text-electric-cyan">Help</a>
+                  <Link 
+                    href="/help"
+                    className="w-full cursor-pointer text-text-primary hover:text-electric-cyan"
+                    data-testid="menu-help"
+                  >
+                    Help
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="bg-border" />

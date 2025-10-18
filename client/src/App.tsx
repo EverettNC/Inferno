@@ -13,6 +13,8 @@ import ChatPage from "@/pages/ChatPage";
 import LandingPage from "@/pages/LandingPage";
 import SignInPage from "@/pages/SignInPage";
 import { VoiceModePage } from "@/pages/VoiceModePage";
+import ProfilePage from "@/pages/ProfilePage";
+import SettingsPage from "@/pages/SettingsPage";
 import Header from "@/components/Header";
 import Navigation from "@/components/Navigation";
 import VoiceFeedback from "@/components/VoiceFeedback";
@@ -35,6 +37,8 @@ function Router() {
       <Route path="/chat" component={ChatPage} />
       <Route path="/voice" component={VoiceModePage} />
       <Route path="/resources" component={ResourcesPage} />
+      <Route path="/profile" component={ProfilePage} />
+      <Route path="/settings" component={SettingsPage} />
       <Route component={NotFound} />
     </Switch>
   );
