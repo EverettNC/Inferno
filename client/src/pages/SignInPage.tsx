@@ -204,44 +204,58 @@ export default function SignInPage() {
         {/* Sacred Flame - Professional Generated Image */}
         <div className="flex justify-center my-16 relative">
           <div className="relative w-48 h-48 md:w-56 md:h-56 flex items-center justify-center">
-            {/* Outer glow rings for depth */}
+            {/* Intense outer glow rings for seamless blending */}
             <div 
               className="absolute inset-0 rounded-full"
               style={{
-                background: 'radial-gradient(circle, rgba(255, 106, 46, 0.15) 0%, transparent 70%)',
+                background: 'radial-gradient(circle, rgba(255, 106, 46, 0.25) 0%, rgba(255, 106, 46, 0.12) 40%, transparent 70%)',
                 animation: 'flameRing1 3s ease-in-out infinite',
                 transformOrigin: 'center',
+                filter: 'blur(8px)',
               }}
             />
             <div 
               className="absolute inset-0 rounded-full"
               style={{
-                background: 'radial-gradient(circle, rgba(255, 140, 66, 0.1) 0%, transparent 60%)',
+                background: 'radial-gradient(circle, rgba(255, 140, 66, 0.2) 0%, rgba(255, 140, 66, 0.08) 50%, transparent 70%)',
                 animation: 'flameRing2 4s ease-in-out 0.5s infinite',
                 transformOrigin: 'center',
+                filter: 'blur(12px)',
               }}
             />
             
-            {/* Professional Flame Image - Blended seamlessly */}
+            {/* Extended atmospheric glow - bridges flame to background */}
+            <div 
+              className="absolute inset-0 rounded-full"
+              style={{
+                background: 'radial-gradient(circle, rgba(255, 106, 46, 0.15) 0%, rgba(255, 106, 46, 0.05) 60%, transparent 85%)',
+                transform: 'scale(1.8)',
+                filter: 'blur(25px)',
+                opacity: 0.7,
+              }}
+            />
+            
+            {/* Professional Flame Image - BRIGHTER with seamless blend */}
             <img
               src={flameImage}
               alt="Sacred Flame"
               className="relative z-10 w-full h-full object-contain"
               style={{
-                filter: 'drop-shadow(0 0 40px rgba(255, 106, 46, 0.6)) drop-shadow(0 0 80px rgba(255, 140, 66, 0.3))',
+                filter: 'drop-shadow(0 0 50px rgba(255, 106, 46, 0.9)) drop-shadow(0 0 100px rgba(255, 140, 66, 0.5)) brightness(1.15) contrast(1.1)',
                 animation: 'flameFloat 4s ease-in-out infinite',
                 mixBlendMode: 'screen',
-                opacity: 0.95,
+                opacity: 1,
               }}
               data-testid="icon-flame"
             />
             
-            {/* Warm ambient glow beneath */}
+            {/* Warm ambient glow beneath - stronger connection to background */}
             <div 
-              className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-40 h-20 rounded-full opacity-40"
+              className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-48 h-24 rounded-full"
               style={{
-                background: 'radial-gradient(ellipse, rgba(255, 106, 46, 0.4) 0%, transparent 70%)',
-                filter: 'blur(20px)',
+                background: 'radial-gradient(ellipse, rgba(255, 106, 46, 0.5) 0%, rgba(255, 106, 46, 0.2) 50%, transparent 80%)',
+                filter: 'blur(30px)',
+                opacity: 0.6,
               }}
             />
           </div>
