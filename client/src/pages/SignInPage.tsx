@@ -30,17 +30,44 @@ export default function SignInPage() {
     setIsLoading(true);
     
     try {
-      await login(name.toLowerCase().replace(/\s+/g, ''), 'demo123');
+      const username = name.toLowerCase().replace(/\s+/g, '');
+      const password = 'inferno2024';
+      
+      try {
+        await login(username, password);
+      } catch (loginError) {
+        try {
+          const registerResponse = await fetch('/api/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              username,
+              password,
+              firstName: name.split(' ')[0] || name,
+              lastName: name.split(' ').slice(1).join(' ') || '',
+            }),
+          });
+          
+          if (!registerResponse.ok) {
+            throw new Error('Registration failed');
+          }
+          
+          await login(username, password);
+        } catch (registerError) {
+          throw new Error('Unable to initialize account');
+        }
+      }
+      
       toast({
         title: "System Initialized",
-        description: `Welcome, ${name}.`,
+        description: `Welcome to Inferno AI, ${name}.`,
       });
       navigate('/');
     } catch (error) {
       console.error('Initialization error:', error);
       toast({
         title: "Initialization Failed",
-        description: "Unable to initialize system. Please try again.",
+        description: error instanceof Error ? error.message : "Unable to initialize system. Please try again.",
         variant: "destructive"
       });
     } finally {
