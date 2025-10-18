@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Check, Shield, Lock, Eye, Heart } from "lucide-react";
+import { useUserContext } from "@/contexts/UserContext";
 
 export default function PrivacyConsent() {
   const [showPrivacyDialog, setShowPrivacyDialog] = useState(false);
+  const [, navigate] = useLocation();
+  const { user } = useUserContext();
   
   useEffect(() => {
     const privacyAccepted = localStorage.getItem("privacyAccepted");
@@ -15,6 +19,11 @@ export default function PrivacyConsent() {
   const handleAcceptPrivacy = () => {
     localStorage.setItem("privacyAccepted", "true");
     setShowPrivacyDialog(false);
+    
+    // If user is not logged in, redirect to sign-in page
+    if (!user) {
+      navigate('/signin');
+    }
   };
   
   if (!showPrivacyDialog) {
