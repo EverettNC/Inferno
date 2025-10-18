@@ -220,44 +220,48 @@ export default function HomePage() {
         <h2 className="font-display text-lg font-semibold mb-4">Quick Tools</h2>
         
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <Link href="/grounding">
-            <a className="card block bg-bg-secondary rounded-xl p-4 border border-border hover:border-accent-subtle transition text-center">
-              <div className="w-12 h-12 rounded-full bg-primary bg-opacity-15 flex items-center justify-center mx-auto mb-3">
-                <i className="fas fa-mountain text-accent"></i>
-              </div>
-              <h3 className="font-medium mb-1">Grounding</h3>
-              <p className="text-xs text-text-secondary">5-4-3-2-1 technique</p>
-            </a>
+          <Link 
+            href="/grounding"
+            className="card block bg-bg-secondary rounded-xl p-4 border border-border hover:border-accent-subtle transition text-center"
+          >
+            <div className="w-12 h-12 rounded-full bg-primary bg-opacity-15 flex items-center justify-center mx-auto mb-3">
+              <i className="fas fa-mountain text-accent"></i>
+            </div>
+            <h3 className="font-medium mb-1">Grounding</h3>
+            <p className="text-xs text-text-secondary">5-4-3-2-1 technique</p>
           </Link>
           
-          <Link href="/breathing">
-            <a className="card block bg-bg-secondary rounded-xl p-4 border border-border hover:border-accent-subtle transition text-center">
-              <div className="w-12 h-12 rounded-full bg-info bg-opacity-15 flex items-center justify-center mx-auto mb-3">
-                <i className="fas fa-wind text-info"></i>
-              </div>
-              <h3 className="font-medium mb-1">Breathing</h3>
-              <p className="text-xs text-text-secondary">Guided breathing exercises</p>
-            </a>
+          <Link 
+            href="/breathing"
+            className="card block bg-bg-secondary rounded-xl p-4 border border-border hover:border-accent-subtle transition text-center"
+          >
+            <div className="w-12 h-12 rounded-full bg-info bg-opacity-15 flex items-center justify-center mx-auto mb-3">
+              <i className="fas fa-wind text-info"></i>
+            </div>
+            <h3 className="font-medium mb-1">Breathing</h3>
+            <p className="text-xs text-text-secondary">Guided breathing exercises</p>
           </Link>
           
-          <Link href="/mindfulness">
-            <a className="card block bg-bg-secondary rounded-xl p-4 border border-border hover:border-accent-subtle transition text-center">
-              <div className="w-12 h-12 rounded-full bg-secondary bg-opacity-15 flex items-center justify-center mx-auto mb-3">
-                <i className="fas fa-brain text-secondary"></i>
-              </div>
-              <h3 className="font-medium mb-1">Mindfulness</h3>
-              <p className="text-xs text-text-secondary">Guided meditation</p>
-            </a>
+          <Link 
+            href="/mindfulness"
+            className="card block bg-bg-secondary rounded-xl p-4 border border-border hover:border-accent-subtle transition text-center"
+          >
+            <div className="w-12 h-12 rounded-full bg-secondary bg-opacity-15 flex items-center justify-center mx-auto mb-3">
+              <i className="fas fa-brain text-secondary"></i>
+            </div>
+            <h3 className="font-medium mb-1">Mindfulness</h3>
+            <p className="text-xs text-text-secondary">Guided meditation</p>
           </Link>
           
-          <Link href="/resources">
-            <a className="card block bg-bg-secondary rounded-xl p-4 border border-border hover:border-accent-subtle transition text-center">
-              <div className="w-12 h-12 rounded-full bg-accent-subtle bg-opacity-15 flex items-center justify-center mx-auto mb-3">
-                <i className="fas fa-book-open text-accent-subtle"></i>
-              </div>
-              <h3 className="font-medium mb-1">Resources</h3>
-              <p className="text-xs text-text-secondary">Educational materials</p>
-            </a>
+          <Link 
+            href="/resources"
+            className="card block bg-bg-secondary rounded-xl p-4 border border-border hover:border-accent-subtle transition text-center"
+          >
+            <div className="w-12 h-12 rounded-full bg-accent-subtle bg-opacity-15 flex items-center justify-center mx-auto mb-3">
+              <i className="fas fa-book-open text-accent-subtle"></i>
+            </div>
+            <h3 className="font-medium mb-1">Resources</h3>
+            <p className="text-xs text-text-secondary">Educational materials</p>
           </Link>
         </div>
       </section>
@@ -316,8 +320,11 @@ export default function HomePage() {
       <section className="mb-8">
         <div className="flex justify-between items-center mb-4">
           <h2 className="font-display text-lg font-semibold">Recent Activity</h2>
-          <Link href="/activity">
-            <a className="text-sm text-accent hover:text-accent-subtle transition-colors">View all</a>
+          <Link 
+            href="/activity"
+            className="text-sm text-accent hover:text-accent-subtle transition-colors"
+          >
+            View all
           </Link>
         </div>
         

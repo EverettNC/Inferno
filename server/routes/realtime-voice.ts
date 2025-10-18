@@ -102,7 +102,7 @@ export function setupRealtimeVoiceWebSocket(server: HTTPServer): void {
         }
 
         // Handle binary audio data
-        if (Buffer.isBuffer(data) || (typeof data === 'object' && data instanceof ArrayBuffer)) {
+        if (Buffer.isBuffer(data)) {
           // Binary audio frame from client - send directly to OpenAI
           const audioBase64 = Buffer.from(data).toString("base64");
           realtimeSession.sendAudio(audioBase64);
