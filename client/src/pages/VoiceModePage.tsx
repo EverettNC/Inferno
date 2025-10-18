@@ -4,7 +4,7 @@
  */
 
 import { useEffect } from "react";
-import { RealtimeVoiceChat } from "@/components/RealtimeVoiceChat";
+import { PollyVoiceChat } from "@/components/PollyVoiceChat";
 import { Volume2, Shield, Brain, Heart } from "lucide-react";
 
 export function VoiceModePage() {
@@ -56,7 +56,7 @@ export function VoiceModePage() {
         </div>
 
         {/* Voice Chat Component */}
-        <RealtimeVoiceChat />
+        <PollyVoiceChat />
 
         {/* Privacy Notice */}
         <div className="mt-8 p-4 rounded-lg bg-black/40 border border-gray-700/30 text-center">

@@ -9,6 +9,7 @@ import {
 import { z } from "zod";
 import aiRoutes from "./routes/ai";
 import healthRoutes from "./routes/health";
+import voiceRoutes from "./routes/voice";
 import { setupRealtimeVoiceWebSocket } from "./routes/realtime-voice";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -17,6 +18,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Mount health check routes
   app.use('/api/health', healthRoutes);
+  
+  // Mount voice synthesis routes (AWS Polly)
+  app.use('/api/voice', voiceRoutes);
   // Auth routes
   app.post("/api/auth/register", async (req: Request, res: Response) => {
     try {

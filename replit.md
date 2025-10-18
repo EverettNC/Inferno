@@ -154,15 +154,27 @@ The platform integrates comprehensive clinical knowledge:
 - Vite for development and build process
 
 ### Voice & Real-Time Features
-- **OpenAI Realtime API** - Speech-to-speech conversation infrastructure (✅ WebSocket handlers ready)
-  - Clinical trauma-informed instructions integrated
-  - Real-time voice interaction with interruption support
-  - WebSocket server on `/api/realtime-voice` endpoint
-- **AWS Polly Integration** - High-quality voice synthesis with trauma-informed SSML (⏳ SDK installation needed)
-  - Neural voices for natural speech
-  - Prosody control for empathetic delivery
+**Cost-Effective Voice Architecture** (AWS Sponsored):
+- **Browser Web Speech API** - Speech recognition (FREE, browser built-in)
+- **OpenAI GPT-4 Text API** - AI responses (~$0.01 per response, much cheaper than Realtime)
+- **AWS Polly Integration** - High-quality voice synthesis (✅ AWS sponsored, implemented)
+  - Neural voices for natural, empathetic speech
+  - Trauma-informed SSML prosody control
   - Recommended voices: Joanna (warm female), Matthew (calm male)
-  - Requires: `@aws-sdk/client-polly`, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
+  - API endpoints: POST `/api/voice/synthesize`, GET `/api/voice/status`
+  - Credentials: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION configured
+
+**Voice Mode Page** (`/voice`):
+- Push-to-talk microphone interface
+- Real-time transcription display
+- Clinical AI responses with natural voice
+- Trauma-informed conversation flow
+- Processing and speaking indicators
+
+**Alternative (Not Implemented):**
+- OpenAI Realtime API - Speech-to-speech ($0.06/min input + $0.24/min output = expensive)
+  - WebSocket infrastructure available at `/api/realtime-voice` if needed
+  - Clinical trauma-informed instructions ready
 
 ### Planned Integrations
 - Vector database for semantic search (embeddings)
