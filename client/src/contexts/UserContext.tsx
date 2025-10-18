@@ -70,6 +70,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
+    // CRITICAL: Clear privacy acceptance flag so modal shows again on next visit
+    sessionStorage.removeItem('privacyAcceptedThisSession');
   };
 
   const updateUser = async (data: Partial<User>) => {
