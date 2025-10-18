@@ -4,23 +4,22 @@ import { useUserContext } from '@/contexts/UserContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Flame, Hand, Brain } from 'lucide-react';
+import { Flame, Hand, User as UserHead, User, RotateCw } from 'lucide-react';
 
 export default function SignInPage() {
   const [, navigate] = useLocation();
   const { login } = useUserContext();
   const { toast } = useToast();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!username || !password) {
+    if (!name) {
       toast({
-        title: "Missing fields",
-        description: "Please enter both username and password.",
+        title: "Name Required",
+        description: "Please enter your name to initialize.",
         variant: "destructive"
       });
       return;
@@ -29,17 +28,19 @@ export default function SignInPage() {
     setIsLoading(true);
     
     try {
-      await login(username, password);
+      // For demo purposes: use name as both username and password
+      // In production, this would be a different flow
+      await login(name.toLowerCase().replace(/\s+/g, ''), 'demo123');
       toast({
         title: "System Initialized",
-        description: "Welcome to Inferno AI.",
+        description: `Welcome, ${name}.`,
       });
       navigate('/');
     } catch (error) {
-      console.error('Sign in error:', error);
+      console.error('Initialization error:', error);
       toast({
         title: "Initialization Failed",
-        description: "Invalid credentials. Please try again.",
+        description: "Unable to initialize system. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -114,109 +115,100 @@ export default function SignInPage() {
         </div>
 
         {/* Ground and Reflect Icons */}
-        <div className="flex justify-center gap-16 mb-8">
+        <div className="flex justify-center gap-24 mb-12">
           <div className="text-center" data-testid="feature-ground">
-            <Hand 
-              className="w-12 h-12 mx-auto mb-2 opacity-80" 
-              style={{ color: '#D85A2E' }}
-              strokeWidth={1.5} 
-              data-testid="icon-ground" 
-            />
-            <p className="text-text-secondary text-sm uppercase tracking-wide">Ground</p>
+            <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
+              <Hand 
+                className="w-14 h-14 opacity-70" 
+                style={{ color: '#FF6A2E' }}
+                strokeWidth={1.5} 
+                data-testid="icon-ground" 
+              />
+            </div>
+            <p className="text-text-secondary text-sm uppercase tracking-wider">Ground</p>
           </div>
           <div className="text-center" data-testid="feature-reflect">
-            <Brain 
-              className="w-12 h-12 mx-auto mb-2 opacity-80" 
-              style={{ color: '#D85A2E' }}
-              strokeWidth={1.5} 
-              data-testid="icon-reflect" 
-            />
-            <p className="text-text-secondary text-sm uppercase tracking-wide">Reflect</p>
+            <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
+              <UserHead 
+                className="w-14 h-14 opacity-70" 
+                style={{ color: '#FF6A2E' }}
+                strokeWidth={1.5} 
+                data-testid="icon-reflect" 
+              />
+            </div>
+            <p className="text-text-secondary text-sm uppercase tracking-wider">Reflect</p>
           </div>
         </div>
 
-        {/* Sign In Form */}
-        <div className="card max-w-md mx-auto">
+        {/* Initialize System Form */}
+        <div 
+          className="max-w-lg mx-auto rounded-xl p-8 border-2"
+          style={{
+            background: 'rgba(6, 6, 8, 0.8)',
+            borderColor: 'rgba(255, 106, 46, 0.2)',
+            boxShadow: '0 0 30px rgba(0, 167, 255, 0.1)'
+          }}
+        >
           <h2 className="text-2xl font-bold text-center mb-6 glow-text tracking-wider" data-testid="text-form-title">
             Initialize System
           </h2>
           
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
+            <div className="space-y-3">
               <label 
-                htmlFor="username" 
-                className="block text-sm font-medium text-electric-cyan tracking-wide uppercase"
-                data-testid="label-username"
+                htmlFor="name" 
+                className="block text-sm font-medium text-center tracking-wide"
+                style={{ color: '#00A7FF' }}
+                data-testid="label-name"
               >
                 User Identification
               </label>
               <div className="relative">
+                <div className="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                  <User className="w-5 h-5" style={{ color: '#00A7FF' }} />
+                </div>
                 <Input
-                  id="username"
+                  id="name"
                   type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="w-full bg-input-bg border-2 border-input-border focus:border-electric-cyan text-text-glow placeholder:text-text-secondary transition-all duration-300"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full pl-12 pr-4 py-4 text-lg rounded-lg border-2 transition-all duration-300"
+                  style={{
+                    background: 'rgba(10, 10, 15, 0.5)',
+                    borderColor: '#FF6A2E',
+                    color: '#E0E6ED'
+                  }}
                   placeholder="Enter your name"
-                  autoComplete="username"
+                  autoComplete="name"
                   disabled={isLoading}
-                  data-testid="input-username"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label 
-                htmlFor="password" 
-                className="block text-sm font-medium text-electric-cyan tracking-wide uppercase"
-                data-testid="label-password"
-              >
-                Security Key
-              </label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-input-bg border-2 border-input-border focus:border-electric-cyan text-text-glow placeholder:text-text-secondary transition-all duration-300"
-                  placeholder="Enter security key"
-                  autoComplete="current-password"
-                  disabled={isLoading}
-                  data-testid="input-password"
+                  data-testid="input-name"
                 />
               </div>
             </div>
             
             <Button
               type="submit"
-              className="w-full bg-button-bg hover:bg-button-hover text-text-glow font-bold py-4 text-lg tracking-wider uppercase transition-all duration-300 transform hover:scale-105"
+              className="w-full font-bold py-4 text-lg tracking-wider transition-all duration-300 transform hover:scale-105 rounded-lg flex items-center justify-center gap-2"
+              style={{
+                background: 'linear-gradient(135deg, #0A3D62 0%, #1E5A8E 100%)',
+                color: '#00A7FF'
+              }}
               disabled={isLoading}
               data-testid="button-submit"
             >
               {isLoading ? (
-                <span className="flex items-center justify-center">
-                  <span className="animate-spin mr-2">⚡</span>
-                  Initializing...
-                </span>
+                <>
+                  <RotateCw className="w-5 h-5 animate-spin" />
+                  <span>Initializing...</span>
+                </>
               ) : (
-                <span className="flex items-center justify-center">
-                  <span className="mr-2">⚡</span>
-                  Initialize
-                </span>
+                <>
+                  <RotateCw className="w-5 h-5" />
+                  <span>Initialize</span>
+                </>
               )}
             </Button>
           </form>
-
-          <div className="mt-6 text-center">
-            <button 
-              type="button" 
-              className="text-accent-teal hover:text-electric-cyan text-sm transition-colors duration-200"
-              data-testid="link-new-user"
-            >
-              New User? Create Access Point
-            </button>
-          </div>
         </div>
 
         {/* Footer */}
