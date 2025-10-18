@@ -1,4 +1,14 @@
 import OpenAI from "openai";
+import { 
+  TRAUMA_THERAPY_PROTOCOLS, 
+  CLINICAL_INTERVENTIONS, 
+  TRAUMA_INFORMED_PRINCIPLES,
+  CRISIS_ASSESSMENT_CLINICAL,
+  PTSD_SYMPTOMS_DSM5,
+  getClinicalGuidance,
+  getTherapyProtocolGuidance
+} from "./clinical-protocols";
+import { getEvidenceBasedGuidance } from "./pubmed";
 
 // Initialize OpenAI client lazily
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
@@ -33,19 +43,61 @@ const CRISIS_RESOURCES = {
 
 export async function generateResponse(input: string, context: string = ""): Promise<string> {
   try {
-    // First, perform crisis detection
+    // First, perform crisis detection with clinical assessment
     const crisisAssessment = await detectCrisis(input);
-    let systemPrompt = `You are Inferno AI, a trauma-informed AI companion for people with PTSD and anxiety.
-    Your responses should be empathetic, supportive, and never dismissive.
-    Always use a calm, reassuring tone and avoid alarming language.
-    ${context}`;
     
-    // Add crisis-specific instructions based on severity
+    // Get clinical guidance based on input
+    const clinicalGuidance = getClinicalGuidance(input);
+    const therapyGuidance = getTherapyProtocolGuidance(input);
+    
+    // Build clinical-grade system prompt
+    let systemPrompt = `You are Inferno AI, a clinical-grade trauma-informed AI companion with masters-level expertise in PTSD and trauma treatment.
+
+CORE CLINICAL PRINCIPLES (SAMHSA Trauma-Informed Care):
+${Object.entries(TRAUMA_INFORMED_PRINCIPLES).map(([key, value]) => `- ${key.charAt(0).toUpperCase() + key.slice(1)}: ${value}`).join('\n')}
+
+EVIDENCE-BASED KNOWLEDGE BASE:
+You have comprehensive knowledge of evidence-based trauma therapies including:
+- Cognitive Processing Therapy (CPT) - ${TRAUMA_THERAPY_PROTOCOLS.CPT.description}
+- Prolonged Exposure (PE) - ${TRAUMA_THERAPY_PROTOCOLS.PE.description}
+- EMDR - ${TRAUMA_THERAPY_PROTOCOLS.EMDR.description}
+- DBT Skills - ${TRAUMA_THERAPY_PROTOCOLS.DBT.description}
+
+${therapyGuidance}
+
+PTSD SYMPTOM AWARENESS (DSM-5):
+You recognize the four clusters of PTSD symptoms:
+1. Intrusion symptoms (flashbacks, nightmares, distressing memories)
+2. Avoidance (of trauma-related thoughts, feelings, or reminders)
+3. Negative alterations in cognition and mood
+4. Alterations in arousal and reactivity
+
+${context}
+
+RESPONSE GUIDELINES:
+- Draw from evidence-based research and clinical protocols
+- Reference specific therapeutic techniques when appropriate
+- Validate experiences through trauma-informed lens
+- Provide psychoeducation about symptoms and coping strategies
+- Normalize trauma responses while encouraging professional support
+- Use clinical language when helpful, but remain accessible and compassionate`;
+    
+    // Add crisis-specific clinical guidance
     if (crisisAssessment.severity >= CRISIS_SEVERITY.MODERATE) {
-      systemPrompt += `\nIMPORTANT: The user may be experiencing a ${crisisAssessment.severityLabel} crisis related to ${crisisAssessment.crisisType}.
-      Use a gentle, supportive approach. Validate their feelings without judgment.
-      Remind them that help is available. Suggest the following resource: ${crisisAssessment.suggestedResource}
-      Focus on immediate grounding and safety rather than long-term solutions.`;
+      systemPrompt += `\n\n⚠️ CRISIS ASSESSMENT: ${crisisAssessment.severityLabel} (Level ${crisisAssessment.severity}/4)
+Crisis Type: ${crisisAssessment.crisisType}
+
+CLINICAL PROTOCOL FOR CRISIS RESPONSE:
+- Prioritize immediate safety and stabilization
+- Use evidence-based safety planning approach (Stanley & Brown, 2012)
+- Assess for: ${CRISIS_ASSESSMENT_CLINICAL.warningSignsImmediate.slice(0, 3).join(', ')}
+- Activate protective factors and resources
+- Provide specific, actionable crisis intervention steps
+- Recommended resource: ${crisisAssessment.suggestedResource}
+
+${clinicalGuidance}
+
+Focus on immediate stabilization before processing or insight.`;
     }
 
     const response = await getOpenAI().chat.completions.create({
@@ -61,14 +113,14 @@ export async function generateResponse(input: string, context: string = ""): Pro
         }
       ],
       temperature: 0.7,
-      max_tokens: 500,
+      max_tokens: 800,
     });
 
     let aiResponse = response.choices[0].message.content || "I'm sorry, I'm having trouble generating a response right now.";
     
-    // For emergency situations, append crisis resources regardless of AI response
+    // For emergency situations, append crisis resources with clinical framing
     if (crisisAssessment.severity === CRISIS_SEVERITY.EMERGENCY) {
-      aiResponse += `\n\nI'm concerned about what you're sharing. Please consider reaching out for immediate help:\n${crisisAssessment.suggestedResource}`;
+      aiResponse += `\n\n🚨 IMMEDIATE SAFETY CONCERN DETECTED\n\nWhat you're sharing indicates you may need immediate support. Please consider:\n\n${crisisAssessment.suggestedResource}\n\nYou don't have to face this alone. Help is available 24/7, and reaching out is a sign of strength.`;
     }
 
     return aiResponse;

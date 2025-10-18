@@ -42,6 +42,23 @@ export const resources = pgTable("resources", {
   category: text("category"),
 });
 
+// Knowledge base for clinical research and evidence-based practices
+export const knowledgeBase = pgTable("knowledge_base", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  source: text("source").notNull(), // pubmed, clinical-protocol, research-paper
+  sourceId: text("source_id"), // PMID for PubMed articles
+  category: text("category").notNull(), // CPT, PE, EMDR, DBT, crisis-intervention, grounding, etc.
+  evidenceLevel: text("evidence_level"), // meta-analysis, RCT, clinical-guideline, expert-consensus
+  publicationDate: text("publication_date"),
+  authors: text("authors").array(),
+  keywords: text("keywords").array(),
+  summary: text("summary"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Define relations
 export const usersRelations = relations(users, ({ many }) => ({
   checkIns: many(checkIns),
@@ -82,6 +99,12 @@ export const insertResourceSchema = createInsertSchema(resources).omit({
   id: true,
 });
 
+export const insertKnowledgeBaseSchema = createInsertSchema(knowledgeBase).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -94,3 +117,6 @@ export type Exercise = typeof exercises.$inferSelect;
 
 export type InsertResource = z.infer<typeof insertResourceSchema>;
 export type Resource = typeof resources.$inferSelect;
+
+export type InsertKnowledgeBase = z.infer<typeof insertKnowledgeBaseSchema>;
+export type KnowledgeBase = typeof knowledgeBase.$inferSelect;

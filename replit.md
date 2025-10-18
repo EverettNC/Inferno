@@ -1,8 +1,24 @@
-# Inferno AI - PTSD and Anxiety Support Application
+# Inferno AI - Clinical-Grade Trauma-Informed AI Platform
 
 ## Overview
 
-Inferno AI is a trauma-informed application designed to help users manage PTSD and anxiety through guided exercises, daily check-ins, and educational resources. The application features voice interaction capabilities, grounding techniques, breathing exercises, and mindfulness practices tailored to support mental well-being.
+Inferno AI is a **clinical-grade, trauma-informed AI platform** with masters-level expertise in PTSD and trauma treatment. The platform combines evidence-based therapeutic exercises with real-time AI support, drawing from peer-reviewed research and clinical protocols to provide comprehensive trauma care.
+
+### Core Differentiators
+
+**Clinical Expertise:**
+- Masters-level knowledge of evidence-based trauma therapies (CPT, PE, EMDR, DBT)
+- Continuous learning from PubMed and medical journals
+- DSM-5 compliant PTSD symptom recognition
+- Clinical-grade crisis assessment and intervention
+- Evidence-based protocols integrated into every response
+
+**Advanced AI Capabilities:**
+- Clinical trauma knowledge base with latest research
+- Real-time emotional analysis and crisis detection
+- Evidence-based therapeutic recommendations
+- Personalized intervention suggestions
+- Trauma-informed conversation design
 
 ## User Preferences
 
@@ -91,6 +107,30 @@ The database design includes the following models:
    - SpeechRecognition API captures user input
    - SpeechSynthesis API provides vocal guidance
 
+## Clinical Knowledge Infrastructure
+
+### Evidence-Based Protocols
+The platform integrates comprehensive clinical knowledge:
+- **Cognitive Processing Therapy (CPT)** - Resick, Monson, Chard protocols
+- **Prolonged Exposure (PE)** - Foa, Hembree, Rothbaum methodology
+- **EMDR** - Shapiro's 8-phase approach with bilateral stimulation
+- **DBT Skills** - Linehan's mindfulness, distress tolerance, emotion regulation, interpersonal effectiveness
+- **Safety Planning** - Stanley & Brown (2012) evidence-based crisis intervention
+- **Grounding Techniques** - Najavits (Seeking Safety) and Van der Kolk (Body Keeps the Score)
+
+### Research Integration
+- **PubMed API** - Fetches latest trauma/PTSD research from medical journals
+- **Knowledge Base** - PostgreSQL table storing clinical protocols and research papers
+- **Continuous Learning** - Automated daily syncing of new trauma research
+- **Evidence Levels** - Categorizes by meta-analysis, RCT, clinical guidelines, expert consensus
+
+### Crisis Assessment System
+- Clinical risk factor analysis (previous attempts, mental health dx, access to means, social isolation)
+- Protective factor identification (social support, treatment engagement, reasons for living)
+- Warning sign detection (DSM-5 compliant)
+- Evidence-based safety planning protocols
+- 24/7 crisis resource recommendations
+
 ## External Dependencies
 
 ### Frontend
@@ -101,12 +141,20 @@ The database design includes the following models:
 - shadcn/ui for pre-built UI components
 - Tailwind CSS for styling
 - Web Speech API for voice functionality
+- Lucide React for modern icon library
 
 ### Backend
 - Express.js for API server
+- OpenAI GPT-4o for clinical-grade AI responses
+- PubMed API (NCBI E-utilities) for medical research
 - Drizzle ORM for database operations
 - Zod for validation
 - Vite for development and build process
+
+### Planned Integrations
+- AWS Polly for high-quality voice synthesis
+- OpenAI Realtime API for true speech-to-speech conversation
+- Vector database for semantic search (embeddings)
 
 ## Deployment Strategy
 

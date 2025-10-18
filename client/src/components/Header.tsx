@@ -21,7 +21,7 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <Link href="/">
-            <a className="flex items-center space-x-3 group" data-testid="link-home">
+            <div className="flex items-center space-x-3 group cursor-pointer" data-testid="link-home">
               <Flame className="w-7 h-7 fire-glow" strokeWidth={1.5} />
               <span 
                 className="font-black text-xl tracking-wider glow-text transition-all" 
@@ -29,7 +29,7 @@ export default function Header() {
               >
                 INFERNO
               </span>
-            </a>
+            </div>
           </Link>
           
           <div className="flex items-center space-x-4">
