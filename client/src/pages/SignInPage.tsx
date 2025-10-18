@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Hand, User as UserHead, User, RotateCw } from 'lucide-react';
-import flameImage from '@assets/generated_images/Sacred_glowing_flame_icon_26de170a.png';
+import flameImage from '@assets/generated_images/Elegant_line-art_flame_curves_3af75516.png';
 import atmosphericBg from '@assets/generated_images/Atmospheric_dark_background_particles_9ac07821.png';
 
 export default function SignInPage() {
