@@ -1,14 +1,10 @@
 /**
  * AWS Polly Text-to-Speech Service
  * High-quality voice synthesis fallback for Inferno AI
+ * 
+ * OPTIONAL: Requires @aws-sdk/client-polly to be installed
+ * Install with: npm install @aws-sdk/client-polly
  */
-
-import { 
-  PollyClient, 
-  SynthesizeSpeechCommand,
-  DescribeVoicesCommand,
-  Voice 
-} from "@aws-sdk/client-polly";
 
 interface PollyConfig {
   region?: string;
@@ -25,8 +21,28 @@ interface SynthesisOptions {
   sampleRate?: string;
 }
 
+// Lazy-load Polly client only when needed
+let PollyClient: any;
+let SynthesizeSpeechCommand: any;
+let DescribeVoicesCommand: any;
+
+async function loadPollySDK() {
+  if (PollyClient) return; // Already loaded
+  
+  try {
+    const sdk = await import("@aws-sdk/client-polly");
+    PollyClient = sdk.PollyClient;
+    SynthesizeSpeechCommand = sdk.SynthesizeSpeechCommand;
+    DescribeVoicesCommand = sdk.DescribeVoicesCommand;
+  } catch (error) {
+    throw new Error(
+      "AWS Polly SDK not installed. Install with: npm install @aws-sdk/client-polly --legacy-peer-deps"
+    );
+  }
+}
+
 export class PollyVoiceService {
-  private client: PollyClient;
+  private client: any;
   private defaultVoice: string = "Joanna"; // Warm, empathetic female voice
   private defaultEngine: "standard" | "neural" = "neural"; // Neural voices sound more natural
 
@@ -39,11 +55,24 @@ export class PollyVoiceService {
       throw new Error("AWS credentials not configured. Set AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables.");
     }
 
+    // Client will be initialized when needed
+    this.client = null;
+  }
+
+  private async ensureClient(config?: PollyConfig) {
+    if (this.client) return;
+    
+    await loadPollySDK();
+    
+    const region = config?.region || process.env.AWS_REGION || "us-east-1";
+    const accessKeyId = config?.accessKeyId || process.env.AWS_ACCESS_KEY_ID;
+    const secretAccessKey = config?.secretAccessKey || process.env.AWS_SECRET_ACCESS_KEY;
+
     this.client = new PollyClient({
       region,
       credentials: {
-        accessKeyId,
-        secretAccessKey
+        accessKeyId: accessKeyId!,
+        secretAccessKey: secretAccessKey!
       }
     });
   }
@@ -54,6 +83,8 @@ export class PollyVoiceService {
    */
   async synthesizeSpeech(options: SynthesisOptions): Promise<Buffer> {
     try {
+      await this.ensureClient();
+      
       const command = new SynthesizeSpeechCommand({
         Text: options.text,
         VoiceId: options.voice || this.defaultVoice,
@@ -88,6 +119,8 @@ export class PollyVoiceService {
    */
   async synthesizeSSML(ssml: string, options?: Partial<SynthesisOptions>): Promise<Buffer> {
     try {
+      await this.ensureClient();
+      
       const command = new SynthesizeSpeechCommand({
         Text: ssml,
         TextType: "ssml",
@@ -119,8 +152,10 @@ export class PollyVoiceService {
   /**
    * Get available voices for a language
    */
-  async getAvailableVoices(languageCode: string = "en-US"): Promise<Voice[]> {
+  async getAvailableVoices(languageCode: string = "en-US"): Promise<any[]> {
     try {
+      await this.ensureClient();
+      
       const command = new DescribeVoicesCommand({
         LanguageCode: languageCode
       });
@@ -170,6 +205,19 @@ export class PollyVoiceService {
       "Salli": "Friendly female voice (US English, Standard)",
       "Joey": "Approachable male voice (US English, Standard)"
     };
+  }
+
+  /**
+   * Check if AWS Polly is available (SDK installed and credentials configured)
+   */
+  static async isAvailable(): Promise<boolean> {
+    try {
+      await loadPollySDK();
+      const hasCredentials = !!(process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY);
+      return hasCredentials;
+    } catch {
+      return false;
+    }
   }
 }
 

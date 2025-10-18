@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { initializeClinicalProtocols, syncLatestResearch } from "./services/knowledge-sync";
 import { startKnowledgeSyncSchedule } from "./services/knowledge-sync";
 
 const app = express();

@@ -119,10 +119,12 @@ The platform integrates comprehensive clinical knowledge:
 - **Grounding Techniques** - Najavits (Seeking Safety) and Van der Kolk (Body Keeps the Score)
 
 ### Research Integration
-- **PubMed API** - Fetches latest trauma/PTSD research from medical journals
-- **Knowledge Base** - PostgreSQL table storing clinical protocols and research papers
-- **Continuous Learning** - Automated daily syncing of new trauma research
+- **PubMed API** - Fetches latest trauma/PTSD research from medical journals (✅ 5 articles synced)
+- **Knowledge Base** - PostgreSQL table storing clinical protocols and research papers (✅ 7 protocols initialized)
+- **Continuous Learning** - Automated daily syncing of new trauma research (✅ Active)
 - **Evidence Levels** - Categorizes by meta-analysis, RCT, clinical guidelines, expert consensus
+- **Automatic Ingestion** - Seed data for core clinical protocols, de-duplication by source ID
+- **Scheduled Sync** - Daily PubMed updates for latest trauma treatment research
 
 ### Crisis Assessment System
 - Clinical risk factor analysis (previous attempts, mental health dx, access to means, social isolation)
@@ -151,10 +153,20 @@ The platform integrates comprehensive clinical knowledge:
 - Zod for validation
 - Vite for development and build process
 
+### Voice & Real-Time Features
+- **OpenAI Realtime API** - Speech-to-speech conversation infrastructure (✅ WebSocket handlers ready)
+  - Clinical trauma-informed instructions integrated
+  - Real-time voice interaction with interruption support
+  - WebSocket server on `/api/realtime-voice` endpoint
+- **AWS Polly Integration** - High-quality voice synthesis with trauma-informed SSML (⏳ SDK installation needed)
+  - Neural voices for natural speech
+  - Prosody control for empathetic delivery
+  - Recommended voices: Joanna (warm female), Matthew (calm male)
+  - Requires: `@aws-sdk/client-polly`, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
+
 ### Planned Integrations
-- AWS Polly for high-quality voice synthesis
-- OpenAI Realtime API for true speech-to-speech conversation
 - Vector database for semantic search (embeddings)
+- Clinical reporting and analytics dashboard
 
 ## Deployment Strategy
 

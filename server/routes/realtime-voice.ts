@@ -94,18 +94,27 @@ export function setupRealtimeVoiceWebSocket(server: HTTPServer): void {
     }
 
     // Handle messages from client
-    clientWs.on("message", (data: Buffer) => {
+    clientWs.on("message", (data: Buffer | string) => {
       try {
-        const message = JSON.parse(data.toString());
-        
         if (!realtimeSession) {
           send(clientWs, { type: "error", error: "Session not initialized" });
           return;
         }
 
+        // Handle binary audio data
+        if (data instanceof Buffer || data instanceof ArrayBuffer) {
+          // Binary audio frame from client - send directly to OpenAI
+          const audioBase64 = Buffer.from(data).toString("base64");
+          realtimeSession.sendAudio(audioBase64);
+          return;
+        }
+
+        // Handle JSON control messages
+        const message = JSON.parse(data.toString());
+
         switch (message.type) {
           case "audio.append":
-            // Client sending audio chunk
+            // Client sending base64 encoded audio chunk
             realtimeSession.sendAudio(message.audio);
             break;
 
