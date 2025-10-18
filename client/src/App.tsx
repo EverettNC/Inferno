@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -13,6 +14,8 @@ import ChatPage from "@/pages/ChatPage";
 import LandingPage from "@/pages/LandingPage";
 import SignInPage from "@/pages/SignInPage";
 import { VoiceModePage } from "@/pages/VoiceModePage";
+import ProfilePage from "@/pages/ProfilePage";
+import SettingsPage from "@/pages/SettingsPage";
 import Header from "@/components/Header";
 import Navigation from "@/components/Navigation";
 import VoiceFeedback from "@/components/VoiceFeedback";
@@ -21,10 +24,17 @@ import { useVoiceContext } from "@/contexts/VoiceContext";
 import { useUserContext } from "@/contexts/UserContext";
 
 function Router() {
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
   const { user } = useUserContext();
   
-  // BYPASS MODE: Allow access to all modules without authentication
+  // Redirect to sign-in if not logged in and not already on sign-in page
+  useEffect(() => {
+    const privacyAccepted = localStorage.getItem("privacyAccepted");
+    if (privacyAccepted && !user && location !== '/signin') {
+      navigate('/signin');
+    }
+  }, [user, location, navigate]);
+  
   return (
     <Switch>
       <Route path="/signin" component={SignInPage} />
@@ -35,6 +45,8 @@ function Router() {
       <Route path="/chat" component={ChatPage} />
       <Route path="/voice" component={VoiceModePage} />
       <Route path="/resources" component={ResourcesPage} />
+      <Route path="/profile" component={ProfilePage} />
+      <Route path="/settings" component={SettingsPage} />
       <Route component={NotFound} />
     </Switch>
   );

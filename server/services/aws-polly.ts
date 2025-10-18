@@ -30,6 +30,7 @@ async function loadPollySDK() {
   if (PollyClient) return; // Already loaded
   
   try {
+    // @ts-expect-error - AWS SDK optional dependency (install with: npm install @aws-sdk/client-polly)
     const sdk = await import("@aws-sdk/client-polly");
     PollyClient = sdk.PollyClient;
     SynthesizeSpeechCommand = sdk.SynthesizeSpeechCommand;
