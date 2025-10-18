@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Hand, User as UserHead, User, RotateCw } from 'lucide-react';
+import flameImage from '@assets/generated_images/Sacred_glowing_flame_icon_26de170a.png';
+import atmosphericBg from '@assets/generated_images/Atmospheric_dark_background_particles_9ac07821.png';
 
 export default function SignInPage() {
   const [, navigate] = useLocation();
@@ -47,50 +49,67 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-nightstorm-black">
-      {/* Atmospheric Background Layers */}
-      <div className="absolute inset-0">
-        {/* Radial gradient overlay */}
-        <div 
-          className="absolute inset-0" 
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Atmospheric Background with Professional Generated Image */}
+      <div 
+        className="absolute inset-0"
+        style={{
+          background: '#060608',
+        }}
+      >
+        {/* Generated atmospheric background layer */}
+        <div
+          className="absolute inset-0 opacity-30"
           style={{
-            background: 'radial-gradient(ellipse at center, rgba(0, 167, 255, 0.08) 0%, rgba(6, 6, 8, 0.9) 50%, #060608 100%)'
+            backgroundImage: `url(${atmosphericBg})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
           }}
         />
         
-        {/* Animated particles */}
+        {/* Additional depth gradient overlay */}
+        <div 
+          className="absolute inset-0" 
+          style={{
+            background: 'radial-gradient(ellipse at center, transparent 0%, rgba(6, 6, 8, 0.3) 50%, rgba(6, 6, 8, 0.7) 100%)'
+          }}
+        />
+        
+        {/* Subtle animated particles for depth */}
         <div className="absolute inset-0 overflow-hidden">
-          {[...Array(40)].map((_, i) => (
+          {[...Array(25)].map((_, i) => (
             <div
               key={`particle-${i}`}
-              className="absolute rounded-full opacity-60"
+              className="absolute rounded-full"
               style={{
-                width: `${Math.random() * 4 + 2}px`,
-                height: `${Math.random() * 4 + 2}px`,
+                width: `${Math.random() * 3 + 1}px`,
+                height: `${Math.random() * 3 + 1}px`,
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
-                background: i % 3 === 0 ? '#00A7FF' : i % 3 === 1 ? '#FF6A2E' : '#4A90E2',
-                boxShadow: `0 0 ${Math.random() * 20 + 10}px currentColor`,
-                animation: `float ${Math.random() * 10 + 15}s ease-in-out ${Math.random() * 5}s infinite alternate`,
+                background: i % 2 === 0 ? '#00A7FF' : '#FF6A2E',
+                boxShadow: `0 0 ${Math.random() * 15 + 8}px currentColor`,
+                animation: `floatGentle ${Math.random() * 15 + 20}s ease-in-out ${Math.random() * 5}s infinite alternate`,
+                opacity: 0.3,
               }}
             />
           ))}
         </div>
 
-        {/* Flame ember particles */}
-        {[...Array(15)].map((_, i) => (
+        {/* Warm ember particles rising from flame */}
+        {[...Array(12)].map((_, i) => (
           <div
             key={`ember-${i}`}
             className="absolute"
             style={{
-              width: '3px',
-              height: '3px',
+              width: '2px',
+              height: '2px',
               borderRadius: '50%',
               background: '#FF6A2E',
-              boxShadow: '0 0 10px #FF6A2E',
-              left: '50%',
+              boxShadow: '0 0 8px #FF6A2E',
+              left: `calc(50% + ${Math.random() * 60 - 30}px)`,
               bottom: '-10px',
-              animation: `riseUp ${3 + Math.random() * 4}s ease-out ${Math.random() * 3}s infinite`,
+              animation: `riseEmber ${4 + Math.random() * 5}s ease-out ${Math.random() * 4}s infinite`,
               opacity: 0,
             }}
           />
@@ -106,29 +125,37 @@ export default function SignInPage() {
               style={{ 
                 fontFamily: 'Orbitron, Rajdhani, sans-serif',
                 color: '#00A7FF',
-                textShadow: '0 0 20px rgba(0, 167, 255, 0.8), 0 0 40px rgba(0, 167, 255, 0.4), 0 0 60px rgba(0, 167, 255, 0.2)',
-                animation: 'pulseGlow 3s ease-in-out infinite'
+                textShadow: '0 0 25px rgba(0, 167, 255, 0.9), 0 0 50px rgba(0, 167, 255, 0.5), 0 0 75px rgba(0, 167, 255, 0.2)',
+                animation: 'titleGlow 4s ease-in-out infinite'
               }}
               data-testid="text-app-title"
             >
               INFERNO
             </h1>
-            {/* Orange underline with glow */}
+            {/* Orange underline with sacred glow */}
             <div 
-              className="h-1 w-full mt-3 rounded-full relative"
+              className="h-1 w-full mt-4 rounded-full relative overflow-hidden"
               style={{ 
-                background: 'linear-gradient(90deg, transparent, #FF6A2E, transparent)',
-                boxShadow: '0 0 20px #FF6A2E, 0 0 40px rgba(255, 106, 46, 0.5)',
-                animation: 'shimmer 2s ease-in-out infinite'
+                background: 'linear-gradient(90deg, transparent, #FF6A2E 30%, #FF8C42 50%, #FF6A2E 70%, transparent)',
+                boxShadow: '0 0 25px rgba(255, 106, 46, 0.8), 0 0 50px rgba(255, 106, 46, 0.3)',
+                animation: 'lineShimmer 3s ease-in-out infinite'
               }}
-            />
+            >
+              <div 
+                className="absolute inset-0"
+                style={{
+                  background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent)',
+                  animation: 'sweep 3s ease-in-out infinite',
+                }}
+              />
+            </div>
           </div>
           
           <p 
-            className="text-sm md:text-base tracking-widest uppercase"
+            className="text-sm md:text-base tracking-widest uppercase font-light mt-6"
             style={{
               color: '#7E8C9E',
-              textShadow: '0 0 10px rgba(126, 140, 158, 0.3)'
+              letterSpacing: '0.3em',
             }}
             data-testid="text-platform-subtitle"
           >
@@ -136,10 +163,10 @@ export default function SignInPage() {
           </p>
           
           <p 
-            className="text-lg md:text-xl italic font-light"
+            className="text-lg md:text-xl italic font-light mt-4"
             style={{
               color: '#B8C5D6',
-              textShadow: '0 0 5px rgba(184, 197, 214, 0.2)'
+              fontFamily: 'Georgia, serif',
             }}
             data-testid="text-tagline"
           >
@@ -147,95 +174,77 @@ export default function SignInPage() {
           </p>
         </div>
 
-        {/* 3D-Style Animated Flame */}
-        <div className="flex justify-center my-12 relative">
-          <div className="relative w-40 h-40 flex items-center justify-center">
-            {/* Flame layers for depth */}
-            <svg
-              viewBox="0 0 200 200"
-              className="absolute inset-0 w-full h-full"
-              style={{
-                filter: 'drop-shadow(0 0 40px rgba(255, 106, 46, 0.8)) drop-shadow(0 0 80px rgba(255, 106, 46, 0.4))',
-              }}
-              data-testid="icon-flame"
-            >
-              {/* Outer flame - orange */}
-              <path
-                d="M100,180 Q80,120 100,60 Q120,120 100,180 Z"
-                fill="url(#flameGradientOuter)"
-                style={{
-                  animation: 'flameFlicker 2s ease-in-out infinite',
-                  transformOrigin: 'center bottom',
-                }}
-              />
-              {/* Inner flame - yellow/white */}
-              <path
-                d="M100,160 Q90,120 100,80 Q110,120 100,160 Z"
-                fill="url(#flameGradientInner)"
-                style={{
-                  animation: 'flameFlicker 1.8s ease-in-out 0.2s infinite',
-                  transformOrigin: 'center bottom',
-                }}
-              />
-              {/* Core - bright white */}
-              <ellipse
-                cx="100"
-                cy="140"
-                rx="12"
-                ry="18"
-                fill="url(#flameGradientCore)"
-                style={{
-                  animation: 'flamePulse 1.5s ease-in-out infinite',
-                }}
-              />
-              
-              <defs>
-                <linearGradient id="flameGradientOuter" x1="0%" y1="100%" x2="0%" y2="0%">
-                  <stop offset="0%" style={{ stopColor: '#FF6A2E', stopOpacity: 1 }} />
-                  <stop offset="50%" style={{ stopColor: '#FF8C42', stopOpacity: 0.8 }} />
-                  <stop offset="100%" style={{ stopColor: '#FFB347', stopOpacity: 0.3 }} />
-                </linearGradient>
-                <linearGradient id="flameGradientInner" x1="0%" y1="100%" x2="0%" y2="0%">
-                  <stop offset="0%" style={{ stopColor: '#FFA500', stopOpacity: 1 }} />
-                  <stop offset="50%" style={{ stopColor: '#FFD700', stopOpacity: 0.9 }} />
-                  <stop offset="100%" style={{ stopColor: '#FFFACD', stopOpacity: 0.5 }} />
-                </linearGradient>
-                <radialGradient id="flameGradientCore">
-                  <stop offset="0%" style={{ stopColor: '#FFFFFF', stopOpacity: 1 }} />
-                  <stop offset="70%" style={{ stopColor: '#FFFACD', stopOpacity: 0.8 }} />
-                  <stop offset="100%" style={{ stopColor: '#FFD700', stopOpacity: 0.3 }} />
-                </radialGradient>
-              </defs>
-            </svg>
-            
-            {/* Glow ring effect */}
+        {/* Sacred Flame - Professional Generated Image */}
+        <div className="flex justify-center my-16 relative">
+          <div className="relative w-48 h-48 md:w-56 md:h-56 flex items-center justify-center">
+            {/* Outer glow rings for depth */}
             <div 
               className="absolute inset-0 rounded-full"
               style={{
-                background: 'radial-gradient(circle, rgba(255, 106, 46, 0.3) 0%, transparent 70%)',
-                animation: 'ringPulse 2s ease-in-out infinite',
+                background: 'radial-gradient(circle, rgba(255, 106, 46, 0.15) 0%, transparent 70%)',
+                animation: 'flameRing1 3s ease-in-out infinite',
+                transformOrigin: 'center',
+              }}
+            />
+            <div 
+              className="absolute inset-0 rounded-full"
+              style={{
+                background: 'radial-gradient(circle, rgba(255, 140, 66, 0.1) 0%, transparent 60%)',
+                animation: 'flameRing2 4s ease-in-out 0.5s infinite',
+                transformOrigin: 'center',
+              }}
+            />
+            
+            {/* Professional Flame Image */}
+            <img
+              src={flameImage}
+              alt="Sacred Flame"
+              className="relative z-10 w-full h-full object-contain"
+              style={{
+                filter: 'drop-shadow(0 0 40px rgba(255, 106, 46, 0.6)) drop-shadow(0 0 80px rgba(255, 140, 66, 0.3))',
+                animation: 'flameFloat 4s ease-in-out infinite',
+              }}
+              data-testid="icon-flame"
+            />
+            
+            {/* Warm ambient glow beneath */}
+            <div 
+              className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-40 h-20 rounded-full opacity-40"
+              style={{
+                background: 'radial-gradient(ellipse, rgba(255, 106, 46, 0.4) 0%, transparent 70%)',
+                filter: 'blur(20px)',
               }}
             />
           </div>
         </div>
 
-        {/* Ground and Reflect Icons with depth */}
+        {/* Ground and Reflect Icons with Sacred Depth */}
         <div className="flex justify-center gap-32 mb-16">
-          <div className="text-center transform transition-all hover:scale-110 hover:-translate-y-2" data-testid="feature-ground">
+          <div 
+            className="text-center transform transition-all duration-500 hover:scale-110 hover:-translate-y-3 cursor-pointer group" 
+            data-testid="feature-ground"
+          >
             <div 
-              className="w-20 h-20 mx-auto mb-4 flex items-center justify-center rounded-full relative"
+              className="w-24 h-24 mx-auto mb-4 flex items-center justify-center rounded-full relative"
               style={{
-                background: 'radial-gradient(circle, rgba(255, 106, 46, 0.2) 0%, transparent 70%)',
-                boxShadow: '0 0 30px rgba(255, 106, 46, 0.3)',
+                background: 'radial-gradient(circle, rgba(255, 106, 46, 0.15) 0%, transparent 70%)',
+                boxShadow: '0 0 30px rgba(255, 106, 46, 0.2), inset 0 0 20px rgba(255, 106, 46, 0.1)',
               }}
             >
+              <div 
+                className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                style={{
+                  background: 'radial-gradient(circle, rgba(255, 106, 46, 0.3) 0%, transparent 70%)',
+                  animation: 'iconPulse 2s ease-in-out infinite',
+                }}
+              />
               <Hand 
-                className="w-16 h-16" 
+                className="w-16 h-16 relative z-10" 
                 style={{ 
                   color: '#FF6A2E',
-                  filter: 'drop-shadow(0 0 10px rgba(255, 106, 46, 0.6))',
+                  filter: 'drop-shadow(0 0 12px rgba(255, 106, 46, 0.7))',
                 }}
-                strokeWidth={1.5} 
+                strokeWidth={1.2} 
                 data-testid="icon-ground" 
               />
             </div>
@@ -243,28 +252,38 @@ export default function SignInPage() {
               className="text-sm uppercase tracking-widest font-medium"
               style={{
                 color: '#7E8C9E',
-                textShadow: '0 0 10px rgba(255, 106, 46, 0.2)'
+                letterSpacing: '0.2em',
               }}
             >
               Ground
             </p>
           </div>
           
-          <div className="text-center transform transition-all hover:scale-110 hover:-translate-y-2" data-testid="feature-reflect">
+          <div 
+            className="text-center transform transition-all duration-500 hover:scale-110 hover:-translate-y-3 cursor-pointer group" 
+            data-testid="feature-reflect"
+          >
             <div 
-              className="w-20 h-20 mx-auto mb-4 flex items-center justify-center rounded-full relative"
+              className="w-24 h-24 mx-auto mb-4 flex items-center justify-center rounded-full relative"
               style={{
-                background: 'radial-gradient(circle, rgba(255, 106, 46, 0.2) 0%, transparent 70%)',
-                boxShadow: '0 0 30px rgba(255, 106, 46, 0.3)',
+                background: 'radial-gradient(circle, rgba(255, 106, 46, 0.15) 0%, transparent 70%)',
+                boxShadow: '0 0 30px rgba(255, 106, 46, 0.2), inset 0 0 20px rgba(255, 106, 46, 0.1)',
               }}
             >
+              <div 
+                className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                style={{
+                  background: 'radial-gradient(circle, rgba(255, 106, 46, 0.3) 0%, transparent 70%)',
+                  animation: 'iconPulse 2s ease-in-out infinite',
+                }}
+              />
               <UserHead 
-                className="w-16 h-16" 
+                className="w-16 h-16 relative z-10" 
                 style={{ 
                   color: '#FF6A2E',
-                  filter: 'drop-shadow(0 0 10px rgba(255, 106, 46, 0.6))',
+                  filter: 'drop-shadow(0 0 12px rgba(255, 106, 46, 0.7))',
                 }}
-                strokeWidth={1.5} 
+                strokeWidth={1.2} 
                 data-testid="icon-reflect" 
               />
             </div>
@@ -272,7 +291,7 @@ export default function SignInPage() {
               className="text-sm uppercase tracking-widest font-medium"
               style={{
                 color: '#7E8C9E',
-                textShadow: '0 0 10px rgba(255, 106, 46, 0.2)'
+                letterSpacing: '0.2em',
               }}
             >
               Reflect
@@ -280,28 +299,38 @@ export default function SignInPage() {
           </div>
         </div>
 
-        {/* Initialize System Form with glassmorphic depth */}
+        {/* Initialize System Form - Sacred Container */}
         <div 
-          className="max-w-lg mx-auto rounded-2xl p-10 border-2 backdrop-blur-xl relative overflow-hidden"
+          className="max-w-lg mx-auto rounded-2xl p-10 md:p-12 border backdrop-blur-xl relative overflow-hidden"
           style={{
-            background: 'linear-gradient(135deg, rgba(6, 6, 8, 0.9) 0%, rgba(10, 10, 15, 0.85) 100%)',
-            borderColor: 'rgba(255, 106, 46, 0.3)',
-            boxShadow: '0 0 60px rgba(0, 167, 255, 0.15), inset 0 0 60px rgba(0, 167, 255, 0.03)',
+            background: 'linear-gradient(135deg, rgba(6, 6, 8, 0.95) 0%, rgba(15, 15, 20, 0.9) 100%)',
+            borderWidth: '2px',
+            borderImage: 'linear-gradient(135deg, rgba(0, 167, 255, 0.4), rgba(255, 106, 46, 0.2)) 1',
+            boxShadow: '0 0 60px rgba(0, 167, 255, 0.15), 0 0 100px rgba(255, 106, 46, 0.08), inset 0 0 40px rgba(0, 167, 255, 0.03)',
           }}
         >
-          {/* Inner glow effect */}
+          {/* Top inner glow */}
           <div 
-            className="absolute inset-0 opacity-30"
+            className="absolute inset-x-0 top-0 h-40 pointer-events-none"
             style={{
-              background: 'radial-gradient(ellipse at top, rgba(0, 167, 255, 0.15) 0%, transparent 60%)',
+              background: 'radial-gradient(ellipse at top, rgba(0, 167, 255, 0.15) 0%, transparent 70%)',
             }}
           />
           
+          {/* Bottom warm glow */}
+          <div 
+            className="absolute inset-x-0 bottom-0 h-32 pointer-events-none"
+            style={{
+              background: 'radial-gradient(ellipse at bottom, rgba(255, 106, 46, 0.08) 0%, transparent 70%)',
+            }}
+          />
+
           <h2 
-            className="text-3xl font-bold text-center mb-8 tracking-wider relative z-10"
+            className="text-3xl md:text-4xl font-bold text-center mb-10 tracking-wide relative z-10"
             style={{
               color: '#00A7FF',
-              textShadow: '0 0 20px rgba(0, 167, 255, 0.6)',
+              textShadow: '0 0 20px rgba(0, 167, 255, 0.7), 0 0 40px rgba(0, 167, 255, 0.3)',
+              fontFamily: 'Orbitron, Rajdhani, sans-serif',
             }}
             data-testid="text-form-title"
           >
@@ -315,6 +344,7 @@ export default function SignInPage() {
                 className="block text-sm font-medium text-center tracking-widest uppercase"
                 style={{ 
                   color: '#00A7FF',
+                  letterSpacing: '0.2em',
                   textShadow: '0 0 10px rgba(0, 167, 255, 0.4)'
                 }}
                 data-testid="label-name"
@@ -323,9 +353,9 @@ export default function SignInPage() {
               </label>
               <div className="relative group">
                 <div 
-                  className="absolute left-5 top-1/2 transform -translate-y-1/2 pointer-events-none z-10"
+                  className="absolute left-5 top-1/2 transform -translate-y-1/2 pointer-events-none z-10 transition-all duration-300"
                   style={{
-                    filter: 'drop-shadow(0 0 5px rgba(0, 167, 255, 0.5))',
+                    filter: 'drop-shadow(0 0 6px rgba(0, 167, 255, 0.6))',
                   }}
                 >
                   <User className="w-6 h-6" style={{ color: '#00A7FF' }} />
@@ -335,12 +365,12 @@ export default function SignInPage() {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full pl-14 pr-5 py-5 text-lg rounded-xl border-2 transition-all duration-300 group-hover:border-electric-cyan focus:border-electric-cyan"
+                  className="w-full pl-14 pr-5 py-6 text-lg rounded-xl border-2 transition-all duration-300 focus:scale-[1.02]"
                   style={{
-                    background: 'rgba(10, 10, 15, 0.7)',
+                    background: 'rgba(10, 10, 15, 0.8)',
                     borderColor: '#FF6A2E',
                     color: '#E0E6ED',
-                    boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 106, 46, 0.2)',
+                    boxShadow: 'inset 0 2px 10px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 106, 46, 0.15)',
                   }}
                   placeholder="Enter your name"
                   autoComplete="name"
@@ -352,34 +382,49 @@ export default function SignInPage() {
             
             <Button
               type="submit"
-              className="w-full font-bold py-5 text-lg tracking-widest uppercase transition-all duration-300 transform hover:scale-105 hover:shadow-2xl rounded-xl flex items-center justify-center gap-3 relative overflow-hidden group"
+              className="w-full font-bold py-6 text-lg tracking-widest uppercase transition-all duration-500 transform hover:scale-105 rounded-xl flex items-center justify-center gap-3 relative overflow-hidden group"
               style={{
-                background: 'linear-gradient(135deg, #0A3D62 0%, #1E5A8E 50%, #2A6FA8 100%)',
+                background: 'linear-gradient(135deg, #0A3D62 0%, #1E5A8E 40%, #2A6FA8 80%, #3D82BD 100%)',
                 color: '#00A7FF',
-                boxShadow: '0 0 30px rgba(0, 167, 255, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.1)',
+                boxShadow: '0 0 40px rgba(0, 167, 255, 0.4), 0 5px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.15)',
               }}
               disabled={isLoading}
               data-testid="button-submit"
             >
-              {/* Button glow on hover */}
+              {/* Animated shimmer overlay */}
               <div 
-                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                 style={{
-                  background: 'linear-gradient(135deg, rgba(0, 167, 255, 0.2) 0%, rgba(30, 90, 142, 0.1) 100%)',
+                  background: 'linear-gradient(135deg, transparent, rgba(0, 167, 255, 0.2), transparent)',
+                  animation: 'buttonShimmer 2s ease-in-out infinite',
+                }}
+              />
+              
+              {/* Glow pulse on hover */}
+              <div 
+                className="absolute inset-0 opacity-0 group-hover:opacity-50 transition-opacity duration-500"
+                style={{
+                  background: 'radial-gradient(circle at center, rgba(0, 167, 255, 0.3) 0%, transparent 70%)',
+                  animation: 'buttonPulse 1.5s ease-in-out infinite',
                 }}
               />
               
               {isLoading ? (
                 <>
-                  <RotateCw className="w-6 h-6 animate-spin relative z-10" />
+                  <RotateCw 
+                    className="w-6 h-6 animate-spin relative z-10" 
+                    style={{
+                      filter: 'drop-shadow(0 0 6px rgba(0, 167, 255, 0.8))',
+                    }}
+                  />
                   <span className="relative z-10">Initializing...</span>
                 </>
               ) : (
                 <>
                   <RotateCw 
-                    className="w-6 h-6 relative z-10 group-hover:rotate-180 transition-transform duration-500" 
+                    className="w-6 h-6 relative z-10 group-hover:rotate-180 transition-transform duration-700" 
                     style={{
-                      filter: 'drop-shadow(0 0 5px rgba(0, 167, 255, 0.6))',
+                      filter: 'drop-shadow(0 0 6px rgba(0, 167, 255, 0.8))',
                     }}
                   />
                   <span className="relative z-10">Initialize</span>
@@ -389,102 +434,137 @@ export default function SignInPage() {
           </form>
         </div>
 
-        {/* Footer with glow */}
+        {/* Footer with Sacred Care */}
         <div className="text-center text-xs space-y-3 mt-12 px-4">
           <p 
+            className="leading-relaxed"
             style={{ color: '#7E8C9E' }}
             data-testid="text-disclaimer"
           >
             Inferno AI is a trauma-informed support tool, not a replacement for professional care.
           </p>
           <p 
-            className="font-medium"
+            className="font-medium leading-relaxed"
             style={{ 
               color: '#00A7FF',
               textShadow: '0 0 10px rgba(0, 167, 255, 0.3)'
             }}
             data-testid="text-crisis"
           >
-            Crisis? Call 988 (Suicide & Crisis Lifeline) | Text HOME to 741741
+            Crisis? Call <strong>988</strong> (Suicide & Crisis Lifeline) | Text <strong>HOME</strong> to <strong>741741</strong>
           </p>
         </div>
       </div>
 
-      {/* Inline styles for animations */}
+      {/* Sacred Animations */}
       <style>{`
-        @keyframes float {
+        @keyframes floatGentle {
           to {
-            transform: translateY(-20px) translateX(10px);
-            opacity: 0.3;
+            transform: translateY(-18px) translateX(10px);
+            opacity: 0.15;
           }
         }
         
-        @keyframes riseUp {
+        @keyframes riseEmber {
           0% {
-            transform: translateY(0) translateX(0);
+            transform: translateY(0) translateX(0) scale(1);
             opacity: 0;
           }
-          20% {
-            opacity: 1;
-          }
-          100% {
-            transform: translateY(-600px) translateX(${Math.random() * 100 - 50}px);
-            opacity: 0;
-          }
-        }
-        
-        @keyframes pulseGlow {
-          0%, 100% {
-            text-shadow: 0 0 20px rgba(0, 167, 255, 0.8), 0 0 40px rgba(0, 167, 255, 0.4), 0 0 60px rgba(0, 167, 255, 0.2);
-          }
-          50% {
-            text-shadow: 0 0 30px rgba(0, 167, 255, 1), 0 0 60px rgba(0, 167, 255, 0.6), 0 0 90px rgba(0, 167, 255, 0.3);
-          }
-        }
-        
-        @keyframes shimmer {
-          0%, 100% {
-            opacity: 1;
-          }
-          50% {
+          15% {
             opacity: 0.6;
           }
+          100% {
+            transform: translateY(-700px) translateX(${Math.random() * 80 - 40}px) scale(0.5);
+            opacity: 0;
+          }
         }
         
-        @keyframes flameFlicker {
+        @keyframes titleGlow {
           0%, 100% {
-            transform: scaleY(1) scaleX(1);
-          }
-          25% {
-            transform: scaleY(0.95) scaleX(1.05);
+            text-shadow: 0 0 25px rgba(0, 167, 255, 0.9), 0 0 50px rgba(0, 167, 255, 0.5), 0 0 75px rgba(0, 167, 255, 0.2);
           }
           50% {
-            transform: scaleY(1.05) scaleX(0.95);
-          }
-          75% {
-            transform: scaleY(0.98) scaleX(1.02);
+            text-shadow: 0 0 35px rgba(0, 167, 255, 1), 0 0 70px rgba(0, 167, 255, 0.7), 0 0 105px rgba(0, 167, 255, 0.3);
           }
         }
         
-        @keyframes flamePulse {
+        @keyframes lineShimmer {
           0%, 100% {
             opacity: 1;
-            transform: scale(1);
           }
           50% {
-            opacity: 0.8;
-            transform: scale(1.1);
+            opacity: 0.7;
           }
         }
         
-        @keyframes ringPulse {
+        @keyframes sweep {
+          0% {
+            transform: translateX(-100%);
+          }
+          100% {
+            transform: translateX(200%);
+          }
+        }
+        
+        @keyframes flameFloat {
+          0%, 100% {
+            transform: translateY(0) scale(1);
+          }
+          50% {
+            transform: translateY(-8px) scale(1.02);
+          }
+        }
+        
+        @keyframes flameRing1 {
           0%, 100% {
             transform: scale(1);
             opacity: 0.5;
           }
           50% {
+            transform: scale(1.15);
+            opacity: 0.3;
+          }
+        }
+        
+        @keyframes flameRing2 {
+          0%, 100% {
+            transform: scale(1);
+            opacity: 0.4;
+          }
+          50% {
             transform: scale(1.2);
             opacity: 0.2;
+          }
+        }
+        
+        @keyframes iconPulse {
+          0%, 100% {
+            transform: scale(1);
+            opacity: 0.5;
+          }
+          50% {
+            transform: scale(1.1);
+            opacity: 0.8;
+          }
+        }
+        
+        @keyframes buttonShimmer {
+          0% {
+            transform: translateX(-100%) skewX(-15deg);
+          }
+          100% {
+            transform: translateX(200%) skewX(-15deg);
+          }
+        }
+        
+        @keyframes buttonPulse {
+          0%, 100% {
+            transform: scale(0.95);
+            opacity: 0.3;
+          }
+          50% {
+            transform: scale(1.05);
+            opacity: 0.6;
           }
         }
       `}</style>
