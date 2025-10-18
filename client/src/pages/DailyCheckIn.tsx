@@ -35,8 +35,8 @@ export default function DailyCheckIn() {
   });
   
   // Fetch streak data if user is logged in
-  const { data: streakData } = useQuery({
-    queryKey: user ? [`/api/users/${user.id}/check-in-streak`] : null,
+  const { data: streakData } = useQuery<{ streak: number; lastCheckIn?: string }>({
+    queryKey: [`/api/users/${user?.id}/check-in-streak`],
     enabled: !!user
   });
   
@@ -53,7 +53,7 @@ export default function DailyCheckIn() {
     if (isVoiceModeEnabled) {
       const selectedOption = moodOptions.find(option => option.id === mood);
       if (selectedOption) {
-        speak(`You selected ${selectedOption.label}. Would you like to share more about how you're feeling?`);
+        speak(`You selected ${selectedOption.label}. Would you like to share more about how you are feeling?`);
       }
     }
   };
@@ -67,7 +67,7 @@ export default function DailyCheckIn() {
     
     if (!selectedMood) {
       if (isVoiceModeEnabled) {
-        speak('Please select how you're feeling today before submitting.');
+        speak('Please select how you are feeling today before submitting.');
       }
       return;
     }
