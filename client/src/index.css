@@ -1,0 +1,505 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* INFERNO CORE SPECTRUM - AlphaVox + Everett Christman Fusion */
+  
+  /* Primary Colors */
+  --core-blue: #00A7FF;           /* Main accent, headers, primary UI */
+  --electric-cyan: #00D6FF;        /* Active states, glows, icons */
+  --flame-orange: #FF6A2E;         /* Alert accent, fire elements, CTAs */
+  --highlight-edge: #4FC3FF;       /* Lightning flares, highlights */
+  --accent-teal: #00BFB3;          /* Subtle accents, harmony elements */
+  
+  /* Depth & Base Colors */
+  --deep-plasma-blue: #003A7C;     /* Gradient depth, core elements */
+  --midnight-black: #0A0A0F;       /* Panel backgrounds */
+  --nightstorm-black: #060608;     /* Pure background, void */
+  
+  /* Text Colors */
+  --text-primary: #C9D8E2;         /* Main body text (ice gray) */
+  --text-secondary: #B7BDC6;       /* Secondary text (steel silver) */
+  --text-glow: #FFFFFF;            /* High emphasis text */
+  
+  /* Semantic Colors */
+  --danger: #FF6A2E;               /* Fire orange for emergencies */
+  --danger-light: #FF8C5A;         /* Lighter variant */
+  --warning: #FFB84D;              /* Warm warning tone */
+  --success: #00BFB3;              /* Teal for success */
+  --info: #4FC3FF;                 /* Azure for information */
+  
+  /* Crisis Levels */
+  --crisis-mild: #00BFB3;          /* Teal - mild concern */
+  --crisis-moderate: #FFB84D;      /* Amber - moderate concern */
+  --crisis-severe: #FF8C5A;        /* Light orange - serious */
+  --crisis-emergency: #FF6A2E;     /* Fire orange - emergency */
+  
+  /* Emotional Intensities */
+  --emotion-low: #00BFB3;          /* Teal for low intensity */
+  --emotion-medium: #4FC3FF;       /* Azure for medium */
+  --emotion-high: #00D6FF;         /* Electric cyan for high */
+  --emotion-extreme: #FF6A2E;      /* Fire orange for extreme */
+  
+  /* Backgrounds */
+  --bg-primary: #0A0A0F;           /* Midnight black main background */
+  --bg-secondary: #060608;         /* Nightstorm black for cards */
+  --bg-tertiary: #003A7C;          /* Deep plasma blue for nested elements */
+  --bg-gradient-start: #060608;    /* Gradient anchor */
+  --bg-gradient-mid: #003A7C;      /* Gradient middle */
+  --bg-gradient-end: #00A7FF;      /* Gradient peak */
+  
+  /* Interface Elements */
+  --border: rgba(0, 167, 255, 0.3);        /* Core blue with transparency */
+  --border-bright: #00A7FF;                /* Solid core blue */
+  --input-bg: rgba(10, 10, 15, 0.8);       /* Semi-transparent midnight */
+  --input-border: rgba(0, 214, 255, 0.4);  /* Electric cyan border */
+  --button-bg: #00A7FF;                    /* Core blue button */
+  --button-hover: #00D6FF;                 /* Electric cyan hover */
+  --button-accent: #FF6A2E;                /* Fire orange accent button */
+  --button-accent-hover: #FF8C5A;          /* Lighter fire hover */
+  
+  /* Shadows & Glows */
+  --glow-blue: 0 0 20px rgba(0, 167, 255, 0.5);
+  --glow-cyan: 0 0 30px rgba(0, 214, 255, 0.6);
+  --glow-orange: 0 0 25px rgba(255, 106, 46, 0.5);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+  
+  /* Transitions */
+  --transition-slow: 0.5s ease-in-out;
+  --transition-normal: 0.3s ease-in-out;
+  --transition-fast: 0.15s ease-in-out;
+}
+
+.dark {
+  color-scheme: dark;
+  /* Same as root - Inferno is always dark */
+}
+
+/* Base styles */
+body {
+  font-family: 'Rajdhani', 'Orbitron', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(145deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
+  background-attachment: fixed;
+  color: var(--text-primary);
+  transition: background-color var(--transition-normal), color var(--transition-normal);
+  min-height: 100vh;
+  letter-spacing: 0.02em;
+  line-height: 1.6;
+}
+
+/* Typography with electric glow */
+h1, h2, h3, h4, h5 {
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
+  color: var(--text-glow);
+  text-shadow: var(--glow-blue);
+}
+
+h1 {
+  font-size: 2.5rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Links with glow effect */
+a {
+  color: var(--electric-cyan);
+  transition: all var(--transition-fast);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--highlight-edge);
+  text-shadow: var(--glow-cyan);
+}
+
+/* Inputs with neon border glow */
+input, textarea, select {
+  background-color: var(--input-bg);
+  border: 2px solid var(--input-border);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  color: var(--text-glow);
+  transition: all var(--transition-fast);
+  font-family: 'Inter', sans-serif;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--electric-cyan);
+  box-shadow: var(--glow-cyan);
+  background-color: rgba(0, 58, 124, 0.2);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--text-secondary);
+}
+
+/* Buttons with electric energy */
+button {
+  background-color: var(--button-bg);
+  color: var(--text-glow);
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: all var(--transition-fast);
+  box-shadow: var(--glow-blue);
+  font-family: 'Rajdhani', sans-serif;
+}
+
+button:hover {
+  background-color: var(--button-hover);
+  box-shadow: var(--glow-cyan);
+  transform: translateY(-2px);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+button.accent {
+  background-color: var(--button-accent);
+  box-shadow: var(--glow-orange);
+}
+
+button.accent:hover {
+  background-color: var(--button-accent-hover);
+}
+
+/* Crisis level utilities */
+.crisis-mild {
+  color: var(--crisis-mild);
+}
+
+.crisis-moderate {
+  color: var(--crisis-moderate);
+}
+
+.crisis-severe {
+  color: var(--crisis-severe);
+}
+
+.crisis-emergency {
+  color: var(--crisis-emergency);
+  text-shadow: var(--glow-orange);
+}
+
+.bg-crisis-mild {
+  background-color: var(--crisis-mild);
+}
+
+.bg-crisis-moderate {
+  background-color: var(--crisis-moderate);
+}
+
+.bg-crisis-severe {
+  background-color: var(--crisis-severe);
+}
+
+.bg-crisis-emergency {
+  background-color: var(--crisis-emergency);
+}
+
+/* Emotion indicators */
+.emotion-indicator {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  box-shadow: 0 0 10px currentColor;
+}
+
+.emotion-low {
+  background-color: var(--emotion-low);
+  box-shadow: var(--glow-cyan);
+}
+
+.emotion-medium {
+  background-color: var(--emotion-medium);
+  box-shadow: var(--glow-cyan);
+}
+
+.emotion-high {
+  background-color: var(--emotion-high);
+  box-shadow: var(--glow-cyan);
+}
+
+.emotion-extreme {
+  background-color: var(--emotion-extreme);
+  box-shadow: var(--glow-orange);
+}
+
+/* Card styles with edge glow */
+.card {
+  background: linear-gradient(135deg, rgba(6, 6, 8, 0.9) 0%, rgba(0, 58, 124, 0.3) 100%);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-normal);
+  backdrop-filter: blur(10px);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg), var(--glow-blue);
+  border-color: var(--border-bright);
+}
+
+/* Neon glow text effect */
+.glow-text {
+  color: var(--electric-cyan);
+  text-shadow: var(--glow-cyan);
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    text-shadow: 0 0 10px rgba(0, 214, 255, 0.5),
+                 0 0 20px rgba(0, 214, 255, 0.3),
+                 0 0 30px rgba(0, 214, 255, 0.2);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(0, 214, 255, 0.8),
+                 0 0 30px rgba(0, 214, 255, 0.5),
+                 0 0 40px rgba(0, 214, 255, 0.3);
+  }
+}
+
+/* Fire glow effect */
+.fire-glow {
+  color: var(--flame-orange);
+  text-shadow: var(--glow-orange);
+  animation: fire-pulse 2s ease-in-out infinite;
+}
+
+@keyframes fire-pulse {
+  0%, 100% {
+    text-shadow: 0 0 10px rgba(255, 106, 46, 0.5),
+                 0 0 20px rgba(255, 106, 46, 0.3);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(255, 106, 46, 0.8),
+                 0 0 30px rgba(255, 106, 46, 0.5);
+  }
+}
+
+/* Breathing animation - slower, deeper */
+@keyframes breatheIn {
+  from { transform: scale(0.98); opacity: 0.9; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes breatheOut {
+  from { transform: scale(1); opacity: 1; }
+  to { transform: scale(0.98); opacity: 0.9; }
+}
+
+.breathe-in {
+  animation: breatheIn 5s ease-in-out;
+}
+
+.breathe-out {
+  animation: breatheOut 5s ease-in-out;
+}
+
+/* Subtle electric pulse */
+@keyframes electricPulse {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+.electric-pulse {
+  animation: electricPulse 3s infinite ease-in-out;
+}
+
+/* Voice feedback indicator */
+.voice-active {
+  position: relative;
+}
+
+.voice-active::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--electric-cyan);
+  box-shadow: var(--glow-cyan);
+  animation: electricPulse 2s infinite;
+}
+
+/* Chat message styles */
+.message {
+  padding: 1rem 1.25rem;
+  border-radius: 1rem;
+  margin-bottom: 1rem;
+  max-width: 85%;
+  backdrop-filter: blur(5px);
+}
+
+.message-user {
+  background: linear-gradient(135deg, rgba(0, 167, 255, 0.2) 0%, rgba(0, 214, 255, 0.1) 100%);
+  border: 1px solid rgba(0, 214, 255, 0.3);
+  color: var(--text-glow);
+  border-bottom-right-radius: 0.25rem;
+  margin-left: auto;
+}
+
+.message-ai {
+  background: linear-gradient(135deg, rgba(0, 58, 124, 0.3) 0%, rgba(6, 6, 8, 0.8) 100%);
+  border: 1px solid rgba(0, 167, 255, 0.2);
+  color: var(--text-primary);
+  border-bottom-left-radius: 0.25rem;
+  margin-right: auto;
+}
+
+/* Emotion tag */
+.emotion-tag {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid currentColor;
+}
+
+/* Custom scrollbar - electric theme */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(10, 10, 15, 0.5);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--core-blue);
+  border-radius: 4px;
+  transition: var(--transition-normal);
+  box-shadow: var(--glow-blue);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--electric-cyan);
+  box-shadow: var(--glow-cyan);
+}
+
+/* Particle effect background elements */
+.spark {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: var(--electric-cyan);
+  border-radius: 50%;
+  box-shadow: var(--glow-cyan);
+  animation: float-up 4s ease-in infinite;
+}
+
+@keyframes float-up {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) scale(0);
+    opacity: 0;
+  }
+}
+
+/* shadcn integration - dark electric theme */
+:root {
+  --background: 240 10% 4%;
+  --foreground: 0 0% 98%;
+  --muted: 240 4% 10%;
+  --muted-foreground: 200 10% 70%;
+  --popover: 240 10% 6%;
+  --popover-foreground: 0 0% 98%;
+  --card: 240 10% 6%;
+  --card-foreground: 0 0% 98%;
+  --border: 198 100% 50%;
+  --input: 198 100% 50%;
+  --primary: 198 100% 50%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 18 100% 59%;
+  --secondary-foreground: 0 0% 100%;
+  --accent: 180 100% 37%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 18 100% 59%;
+  --destructive-foreground: 0 0% 98%;
+  --ring: 198 100% 50%;
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: 240 10% 4%;
+  --foreground: 0 0% 98%;
+  --muted: 240 4% 10%;
+  --muted-foreground: 200 10% 70%;
+  --popover: 240 10% 6%;
+  --popover-foreground: 0 0% 98%;
+  --card: 240 10% 6%;
+  --card-foreground: 0 0% 98%;
+  --border: 198 100% 50%;
+  --input: 198 100% 50%;
+  --primary: 198 100% 50%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 18 100% 59%;
+  --secondary-foreground: 0 0% 100%;
+  --accent: 180 100% 37%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 18 100% 59%;
+  --destructive-foreground: 0 0% 98%;
+  --ring: 198 100% 50%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold;
+  }
+
+  .breathing-animation {
+    animation: breathing 6s ease-in-out infinite;
+  }
+
+  @keyframes breathing {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.05); opacity: 1; }
+  }
+
+  *:focus-visible {
+    outline: 2px solid var(--electric-cyan);
+    outline-offset: 2px;
+    box-shadow: var(--glow-cyan);
+  }
+}
