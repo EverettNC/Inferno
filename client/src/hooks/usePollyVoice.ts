@@ -7,7 +7,6 @@
  */
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { apiRequest } from "@/lib/queryClient";
 
 interface PollyVoiceState {
   isListening: boolean;
@@ -121,13 +120,19 @@ export function usePollyVoice() {
   // Handle AI response
   const handleAIResponse = async (userMessage: string) => {
     try {
-      // Get AI text response
-      const response = await apiRequest("/api/ai/chat", {
+      // Get AI text response using fetch
+      const response = await fetch("/api/ai/chat", {
         method: "POST",
-        body: { message: userMessage }
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: userMessage })
       });
 
-      const aiText = response.response;
+      if (!response.ok) {
+        throw new Error("Failed to get AI response");
+      }
+
+      const data = await response.json();
+      const aiText = data.response;
       setState(prev => ({ ...prev, aiResponse: aiText }));
 
       // Synthesize speech using AWS Polly
