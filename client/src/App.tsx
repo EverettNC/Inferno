@@ -28,10 +28,11 @@ function Router() {
   const [location, navigate] = useLocation();
   const { user } = useUserContext();
   
-  // Redirect to sign-in if not logged in and not already on sign-in page
+  // Redirect to sign-in if not logged in and not already on sign-in page or homepage
   useEffect(() => {
     const privacyAcceptedThisSession = sessionStorage.getItem("privacyAcceptedThisSession");
-    if (privacyAcceptedThisSession && !user && location !== '/signin') {
+    // Don't redirect from homepage (/) or signin page - allow natural navigation
+    if (privacyAcceptedThisSession && !user && location !== '/signin' && location !== '/') {
       navigate('/signin');
     }
   }, [user, location, navigate]);
