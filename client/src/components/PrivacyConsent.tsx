@@ -10,14 +10,24 @@ export default function PrivacyConsent() {
   const { user } = useUserContext();
   
   useEffect(() => {
-    const privacyAccepted = localStorage.getItem("privacyAccepted");
-    if (!privacyAccepted) {
-      setShowPrivacyDialog(true);
+    // CRITICAL FIX: Always show privacy modal BEFORE sign-in
+    // Use sessionStorage (NOT localStorage) so it clears when tab closes
+    // This ensures the modal ALWAYS shows on fresh visits, even for returning users
+    if (!user) {
+      const privacyAcceptedThisSession = sessionStorage.getItem("privacyAcceptedThisSession");
+      if (!privacyAcceptedThisSession) {
+        setShowPrivacyDialog(true);
+      }
+    } else {
+      // User is logged in, they've already seen the privacy modal
+      setShowPrivacyDialog(false);
     }
-  }, []);
+  }, [user]);
   
   const handleAcceptPrivacy = () => {
-    localStorage.setItem("privacyAccepted", "true");
+    // Use sessionStorage (NOT localStorage) so flag only lasts for current tab/session
+    // This flag is ONLY valid until the tab is closed
+    sessionStorage.setItem("privacyAcceptedThisSession", "true");
     setShowPrivacyDialog(false);
     
     // If user is not logged in, redirect to sign-in page

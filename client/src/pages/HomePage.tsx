@@ -17,6 +17,7 @@ export default function HomePage() {
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [checkInText, setCheckInText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasSpokenWelcome, setHasSpokenWelcome] = useState(false);
   
   const { isRecording, lastTranscript, startRecording, stopRecording } = useVoiceMode({
     onTranscript: (text) => setCheckInText(text)
@@ -34,12 +35,13 @@ export default function HomePage() {
     enabled: !!user
   });
   
-  // Welcome user with voice on first load
+  // FIXED: Welcome user with voice ONLY ONCE on first load (prevent infinite loop)
   useEffect(() => {
-    if (isVoiceModeEnabled && user) {
+    if (isVoiceModeEnabled && user && !hasSpokenWelcome) {
       speak(`Hello ${user.firstName || 'there'}. How are you feeling today? I'm here to support you.`);
+      setHasSpokenWelcome(true);
     }
-  }, [isVoiceModeEnabled, user, speak]);
+  }, [isVoiceModeEnabled, user, hasSpokenWelcome]);
   
   const handleMoodSelection = (mood: string) => {
     setSelectedMood(mood);
