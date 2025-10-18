@@ -82,7 +82,16 @@ export class MemStorage implements IStorage {
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.userCurrentId++;
     const now = new Date();
-    const user: User = { ...insertUser, id, createdAt: now };
+    const user: User = {
+      id,
+      username: insertUser.username,
+      password: insertUser.password,
+      firstName: insertUser.firstName ?? null,
+      lastName: insertUser.lastName ?? null,
+      preferredLanguage: insertUser.preferredLanguage ?? null,
+      voiceModeEnabled: insertUser.voiceModeEnabled ?? null,
+      createdAt: now
+    };
     this.users.set(id, user);
     return user;
   }
@@ -105,14 +114,22 @@ export class MemStorage implements IStorage {
     return Array.from(this.checkIns.values())
       .filter(checkIn => checkIn.userId === userId)
       .sort((a, b) => {
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return dateB - dateA;
       });
   }
   
   async createCheckIn(insertCheckIn: InsertCheckIn): Promise<CheckIn> {
     const id = this.checkInCurrentId++;
     const now = new Date();
-    const checkIn: CheckIn = { ...insertCheckIn, id, createdAt: now };
+    const checkIn: CheckIn = {
+      id,
+      createdAt: now,
+      userId: insertCheckIn.userId,
+      mood: insertCheckIn.mood,
+      notes: insertCheckIn.notes ?? null
+    };
     this.checkIns.set(id, checkIn);
     return checkIn;
   }
@@ -126,14 +143,24 @@ export class MemStorage implements IStorage {
     return Array.from(this.exercises.values())
       .filter(exercise => exercise.userId === userId)
       .sort((a, b) => {
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return dateB - dateA;
       });
   }
   
   async createExercise(insertExercise: InsertExercise): Promise<Exercise> {
     const id = this.exerciseCurrentId++;
     const now = new Date();
-    const exercise: Exercise = { ...insertExercise, id, createdAt: now };
+    const exercise: Exercise = {
+      id,
+      createdAt: now,
+      type: insertExercise.type,
+      userId: insertExercise.userId,
+      duration: insertExercise.duration ?? null,
+      subtype: insertExercise.subtype ?? null,
+      completed: insertExercise.completed ?? null
+    };
     this.exercises.set(id, exercise);
     return exercise;
   }
@@ -163,7 +190,15 @@ export class MemStorage implements IStorage {
   
   async createResource(insertResource: InsertResource): Promise<Resource> {
     const id = this.resourceCurrentId++;
-    const resource: Resource = { ...insertResource, id };
+    const resource: Resource = {
+      id,
+      title: insertResource.title,
+      type: insertResource.type,
+      icon: insertResource.icon ?? null,
+      url: insertResource.url ?? null,
+      description: insertResource.description ?? null,
+      category: insertResource.category ?? null
+    };
     this.resources.set(id, resource);
     return resource;
   }
@@ -174,16 +209,19 @@ export class MemStorage implements IStorage {
     if (userCheckIns.length === 0) return 0;
     
     // Sort by date (newest first)
-    userCheckIns.sort((a, b) => 
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
+    userCheckIns.sort((a, b) => {
+      const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      return dateB - dateA;
+    });
     
     let streak = 1;
-    let currentDate = new Date(userCheckIns[0].createdAt);
+    let currentDate = userCheckIns[0].createdAt ? new Date(userCheckIns[0].createdAt) : new Date();
     currentDate.setHours(0, 0, 0, 0);
     
     for (let i = 1; i < userCheckIns.length; i++) {
-      const checkInDate = new Date(userCheckIns[i].createdAt);
+      if (!userCheckIns[i].createdAt) continue;
+      const checkInDate = new Date(userCheckIns[i].createdAt!);
       checkInDate.setHours(0, 0, 0, 0);
       
       const prevDate = new Date(currentDate);
@@ -205,11 +243,13 @@ export class MemStorage implements IStorage {
     if (userCheckIns.length === 0) return undefined;
     
     // Sort by date (newest first)
-    userCheckIns.sort((a, b) => 
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
+    userCheckIns.sort((a, b) => {
+      const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      return dateB - dateA;
+    });
     
-    return new Date(userCheckIns[0].createdAt);
+    return userCheckIns[0].createdAt ? new Date(userCheckIns[0].createdAt) : undefined;
   }
   
   // Initialize default resources
@@ -275,7 +315,16 @@ export class MemStorage implements IStorage {
     
     defaultResources.forEach(resource => {
       const id = this.resourceCurrentId++;
-      this.resources.set(id, { ...resource, id });
+      const fullResource: Resource = {
+        id,
+        title: resource.title,
+        type: resource.type,
+        icon: resource.icon ?? null,
+        url: resource.url ?? null,
+        description: resource.description ?? null,
+        category: resource.category ?? null
+      };
+      this.resources.set(id, fullResource);
     });
   }
 }
@@ -397,7 +446,7 @@ export class DatabaseStorage implements IStorage {
     for (let i = 1; i < userCheckIns.length; i++) {
       if (!userCheckIns[i].createdAt) continue;
       
-      const checkInDate = new Date(userCheckIns[i].createdAt);
+      const checkInDate = new Date(userCheckIns[i].createdAt!);
       checkInDate.setHours(0, 0, 0, 0);
       
       const prevDate = new Date(currentDate);
