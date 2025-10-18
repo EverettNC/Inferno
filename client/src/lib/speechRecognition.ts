@@ -1,3 +1,11 @@
+// Type declarations for browser Web Speech API
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
+}
+
 // Function to check if browser supports the Web Speech API
 export function isSpeechRecognitionSupported(): boolean {
   return 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window;
@@ -5,7 +13,7 @@ export function isSpeechRecognitionSupported(): boolean {
 
 // Speech recognition class
 export class SpeechRecognizer {
-  private recognition: SpeechRecognition | null = null;
+  private recognition: any | null = null;
   private isListening = false;
   private onResultCallback: ((text: string) => void) | null = null;
   private onErrorCallback: ((error: Error) => void) | null = null;
@@ -22,7 +30,7 @@ export class SpeechRecognizer {
       this.recognition.lang = 'en-US'; // Default to English
       
       // Set up event handlers
-      this.recognition.onresult = (event) => {
+      this.recognition.onresult = (event: any) => {
         const result = event.results[0];
         const transcript = result[0].transcript;
         
@@ -31,7 +39,7 @@ export class SpeechRecognizer {
         }
       };
       
-      this.recognition.onerror = (event) => {
+      this.recognition.onerror = (event: any) => {
         if (this.onErrorCallback) {
           this.onErrorCallback(new Error(`Speech recognition error: ${event.error}`));
         }

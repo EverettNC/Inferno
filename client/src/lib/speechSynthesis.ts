@@ -56,7 +56,7 @@ export class SpeechSynthesizer {
       defaultVoice = voices[0];
     }
     
-    this.voice = defaultVoice;
+    this.voice = defaultVoice || null;
   }
 
   public getVoices(): SpeechSynthesisVoice[] {
