@@ -8,11 +8,15 @@ import {
 } from "@shared/schema";
 import { z } from "zod";
 import aiRoutes from "./routes/ai";
+import healthRoutes from "./routes/health";
 import { setupRealtimeVoiceWebSocket } from "./routes/realtime-voice";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Mount AI routes
   app.use('/api/ai', aiRoutes);
+  
+  // Mount health check routes
+  app.use('/api/health', healthRoutes);
   // Auth routes
   app.post("/api/auth/register", async (req: Request, res: Response) => {
     try {
