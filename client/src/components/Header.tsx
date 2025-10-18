@@ -13,8 +13,13 @@ import {
 
 export default function Header() {
   const { toggleVoiceMode, isVoiceModeEnabled } = useVoiceContext();
-  const { user } = useUserContext();
+  const { user, logout } = useUserContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const handleSignOut = () => {
+    logout();
+    setIsMenuOpen(false);
+  };
 
   return (
     <header className="border-b border-border backdrop-blur-md sticky top-0 z-50" style={{ background: 'rgba(6, 6, 8, 0.9)' }}>
@@ -23,22 +28,22 @@ export default function Header() {
           <Link href="/">
             <div className="flex items-center space-x-3 group cursor-pointer" data-testid="link-home">
               <Flame className="w-7 h-7 fire-glow" strokeWidth={1.5} />
-              <span 
-                className="font-black text-xl tracking-wider glow-text transition-all" 
+              <span
+                className="font-black text-xl tracking-wider glow-text transition-all"
                 style={{ fontFamily: 'Orbitron, Rajdhani, sans-serif' }}
               >
                 INFERNO
               </span>
             </div>
           </Link>
-          
+
           <div className="flex items-center space-x-4">
             {/* Voice Mode Toggle */}
-            <button 
-              aria-label="Toggle voice mode" 
+            <button
+              aria-label="Toggle voice mode"
               className={`p-3 rounded-lg transition-all ${
-                isVoiceModeEnabled 
-                  ? 'bg-button-bg text-text-glow' 
+                isVoiceModeEnabled
+                  ? 'bg-button-bg text-text-glow'
                   : 'text-text-secondary hover:bg-bg-tertiary hover:text-electric-cyan'
               }`}
               onClick={toggleVoiceMode}
@@ -50,12 +55,12 @@ export default function Header() {
                 <MicOff className="w-5 h-5" />
               )}
             </button>
-            
+
             {/* User Menu */}
             <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
               <DropdownMenuTrigger asChild>
-                <button 
-                  aria-label="Open user menu" 
+                <button
+                  aria-label="Open user menu"
                   className="flex items-center space-x-2 p-2 rounded-lg hover:bg-bg-tertiary transition-all"
                   data-testid="button-user-menu"
                 >
@@ -64,8 +69,8 @@ export default function Header() {
                   </div>
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent 
-                className="w-48 border-border" 
+              <DropdownMenuContent
+                className="w-48 border-border"
                 style={{ background: 'rgba(10, 10, 15, 0.95)', backdropFilter: 'blur(10px)' }}
               >
                 <DropdownMenuItem asChild>
@@ -96,7 +101,10 @@ export default function Header() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="bg-border" />
-                <DropdownMenuItem className="cursor-pointer text-flame-orange hover:text-button-accent">
+                <DropdownMenuItem 
+                  className="cursor-pointer text-flame-orange hover:text-button-accent"
+                  onClick={handleSignOut}
+                >
                   Sign out
                 </DropdownMenuItem>
               </DropdownMenuContent>
