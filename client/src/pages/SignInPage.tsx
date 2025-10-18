@@ -222,7 +222,7 @@ export default function SignInPage() {
               }}
             />
             
-            {/* Professional Flame Image */}
+            {/* Professional Flame Image - Blended seamlessly */}
             <img
               src={flameImage}
               alt="Sacred Flame"
@@ -230,6 +230,8 @@ export default function SignInPage() {
               style={{
                 filter: 'drop-shadow(0 0 40px rgba(255, 106, 46, 0.6)) drop-shadow(0 0 80px rgba(255, 140, 66, 0.3))',
                 animation: 'flameFloat 4s ease-in-out infinite',
+                mixBlendMode: 'screen',
+                opacity: 0.95,
               }}
               data-testid="icon-flame"
             />
