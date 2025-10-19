@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { useVoiceContext } from "@/contexts/VoiceContext";
 import { useUserContext } from "@/contexts/UserContext";
 import { useState } from "react";
-import { Flame, Mic, MicOff, User } from "lucide-react";
+import { Flame, Mic, MicOff, User, HelpCircle } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -68,6 +68,21 @@ export default function Header() {
               )}
             </button>
 
+            {/* Help Icon */}
+            <Link href="/help">
+              <button
+                aria-label="Get help"
+                className="p-3 rounded-lg text-text-secondary hover:bg-bg-tertiary hover:text-electric-cyan transition-all"
+                data-testid="button-help"
+              >
+                <img 
+                  src="/generated-icon.png" 
+                  alt="Help" 
+                  className="w-5 h-5 opacity-70 hover:opacity-100 transition-opacity"
+                />
+              </button>
+            </Link>
+
             {/* User Menu */}
             <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
               <DropdownMenuTrigger asChild>
@@ -91,16 +106,7 @@ export default function Header() {
                     className="w-full cursor-pointer text-text-primary hover:text-electric-cyan"
                     data-testid="menu-profile"
                   >
-                    Profile
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link 
-                    href="/settings"
-                    className="w-full cursor-pointer text-text-primary hover:text-electric-cyan"
-                    data-testid="menu-settings"
-                  >
-                    Settings
+                    Profile & Settings
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>

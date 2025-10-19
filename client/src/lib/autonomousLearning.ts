@@ -243,6 +243,120 @@ class AutonomousLearningEngine {
         credibility: 0.89,
         updateFrequency: 'weekly',
         lastCrawled: new Date()
+      },
+      
+      // 🛡️ COMPREHENSIVE TRAUMA THERAPY RESEARCH SOURCES 🛡️
+      {
+        name: 'APA PTSD Treatment Guidelines',
+        url: 'https://www.apa.org/ptsd-guideline/treatments',
+        type: 'organization',
+        credibility: 0.98,
+        updateFrequency: 'monthly',
+        lastCrawled: new Date()
+      },
+      {
+        name: 'NHS PTSD Treatment Resources',
+        url: 'https://www.nhs.uk/mental-health/conditions/post-traumatic-stress-disorder-ptsd/treatment/',
+        type: 'organization',
+        credibility: 0.95,
+        updateFrequency: 'monthly',
+        lastCrawled: new Date()
+      },
+      {
+        name: 'Palo Alto University Trauma Techniques',
+        url: 'https://paloaltou.edu/resources/business-of-practice-blog/trauma-focused-therapy-techniques',
+        type: 'journal',
+        credibility: 0.91,
+        updateFrequency: 'weekly',
+        lastCrawled: new Date()
+      },
+      {
+        name: 'VA PTSD Professional Resources',
+        url: 'https://www.ptsd.va.gov/professional/treat/txessentials/overview_therapy.asp',
+        type: 'organization',
+        credibility: 0.96,
+        updateFrequency: 'weekly',
+        lastCrawled: new Date()
+      },
+      {
+        name: 'Cleveland Clinic EMDR Research',
+        url: 'https://my.clevelandclinic.org/health/treatments/22641-emdr-therapy',
+        type: 'organization',
+        credibility: 0.94,
+        updateFrequency: 'monthly',
+        lastCrawled: new Date()
+      },
+      {
+        name: 'HelpGuide Trauma Coping',
+        url: 'https://www.helpguide.org/mental-health/ptsd-trauma/coping-with-emotional-and-psychological-trauma',
+        type: 'organization',
+        credibility: 0.87,
+        updateFrequency: 'monthly',
+        lastCrawled: new Date()
+      },
+      {
+        name: 'VA Coping with Traumatic Stress',
+        url: 'https://www.ptsd.va.gov/gethelp/coping_stress_reactions.asp',
+        type: 'organization',
+        credibility: 0.96,
+        updateFrequency: 'monthly',
+        lastCrawled: new Date()
+      },
+      {
+        name: 'NIMH Traumatic Events Coping',
+        url: 'https://www.nimh.nih.gov/health/topics/coping-with-traumatic-events',
+        type: 'organization',
+        credibility: 0.98,
+        updateFrequency: 'monthly',
+        lastCrawled: new Date()
+      },
+      {
+        name: 'NAMI Traumatic Stress Management',
+        url: 'https://www.nami.org/Blogs/NAMI-Blog/October-2020/7-Tools-for-Managing-Traumatic-Stress',
+        type: 'organization',
+        credibility: 0.92,
+        updateFrequency: 'monthly',
+        lastCrawled: new Date()
+      },
+      {
+        name: 'Serenity Grove Trauma Therapy',
+        url: 'https://www.serenitygrove.com/news/what-therapy-is-best-for-trauma/',
+        type: 'organization',
+        credibility: 0.85,
+        updateFrequency: 'monthly',
+        lastCrawled: new Date()
+      },
+      {
+        name: 'Psych Central Trauma Therapy Types',
+        url: 'https://psychcentral.com/health/best-types-of-therapy-for-trauma',
+        type: 'organization',
+        credibility: 0.88,
+        updateFrequency: 'weekly',
+        lastCrawled: new Date()
+      },
+      {
+        name: 'Mayo Clinic PTSD Treatment',
+        url: 'https://www.mayoclinic.org/diseases-conditions/post-traumatic-stress-disorder/diagnosis-treatment/drc-20355973',
+        type: 'organization',
+        credibility: 0.97,
+        updateFrequency: 'monthly',
+        lastCrawled: new Date()
+      },
+      {
+        name: 'PMC PTSD Treatment Review',
+        url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8672952/',
+        type: 'database',
+        credibility: 0.96,
+        updateFrequency: 'monthly',
+        lastCrawled: new Date()
+      },
+      {
+        name: 'Cleveland Clinic Trauma Healing',
+        url: 'https://health.clevelandclinic.org/how-to-heal-from-trauma',
+        type: 'organization',
+        credibility: 0.94,
+        updateFrequency: 'monthly',
+        lastCrawled: new Date()
       }
     ];
   }

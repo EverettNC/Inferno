@@ -7,7 +7,22 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle, Info } from 'lucide-react';
+import { 
+  AlertCircle, 
+  Info, 
+  Heart, 
+  Smile, 
+  MessageCircle, 
+  Mic, 
+  MicOff,
+  Volume2,
+  VolumeX,
+  Sparkles,
+  Music,
+  Brain,
+  Camera,
+  Headphones
+} from 'lucide-react';
 import useVoiceMode from '@/hooks/useVoiceMode';
 import { apiRequest } from '@/lib/queryClient';
 
@@ -30,18 +45,33 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: 'Hello, I\'m Inferno AI, your trauma-informed support companion. How can I help you today?',
+      content: '🌟 Hey there! I\'m Inferno, your friendly companion in this healing journey. I\'m here to chat, listen, and walk alongside you. What\'s on your heart today? ✨',
       sender: 'ai',
       timestamp: new Date()
     }
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
+  const [speechToSpeechMode, setSpeechToSpeechMode] = useState(false);
+  const [currentUserEmotion, setCurrentUserEmotion] = useState('calm');
+  const [behavioralContext, setBehavioralContext] = useState({
+    recentTopics: ['anxiety', 'grounding'],
+    engagementLevel: 0.8,
+    preferredInteractionStyle: 'conversational',
+    sessionDuration: 0
+  });
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const apiKeyMissing = false; // We have the API key set up in the environment
   
   const { isRecording, lastTranscript, startRecording, stopRecording } = useVoiceMode({
-    onTranscript: (text) => setInputMessage(text)
+    onTranscript: (text) => {
+      if (speechToSpeechMode) {
+        setInputMessage(text);
+        handleSendMessage(text);
+      } else {
+        setInputMessage(text);
+      }
+    }
   });
 
   // Scroll to bottom of messages when new ones arrive
@@ -56,25 +86,26 @@ export default function ChatPage() {
     }
   }, [isVoiceModeEnabled, messages, speak]);
 
-  const handleSendMessage = async () => {
-    if (!inputMessage.trim()) return;
+  const handleSendMessage = async (messageText?: string) => {
+    const messageToSend = messageText || inputMessage;
+    if (!messageToSend.trim()) return;
     
     // Add user message
     const userMessage: Message = {
       id: Date.now().toString(),
-      content: inputMessage,
+      content: messageToSend,
       sender: 'user',
       timestamp: new Date()
     };
     
     setMessages(prev => [...prev, userMessage]);
-    setInputMessage('');
+    if (!messageText) setInputMessage(''); // Only clear if it came from input field
     setIsSending(true);
     
     try {
       // First, analyze the emotion and crisis potential
       const emotionResponse = await apiRequest('POST', '/api/ai/analyze-emotion', {
-        message: inputMessage
+        message: messageToSend
       });
       
       const emotionData = await emotionResponse.json();
@@ -96,7 +127,7 @@ export default function ChatPage() {
       
       // Make API call to get AI response with the emotional context
       const response = await apiRequest('POST', '/api/ai/chat', {
-        message: inputMessage,
+        message: messageToSend,
         context: user 
           ? `The user's name is ${user.firstName || 'Friend'}. Their primary emotion appears to be ${emotionData?.primaryEmotion || 'unknown'} with intensity ${emotionData?.intensity || 'unknown'}.`
           : `The user's primary emotion appears to be ${emotionData?.primaryEmotion || 'unknown'} with intensity ${emotionData?.intensity || 'unknown'}.`
@@ -142,16 +173,108 @@ export default function ChatPage() {
     }
   };
 
+  const handleClickSend = () => {
+    handleSendMessage();
+  };
+
+  // Generate dynamic helpful topics based on behavioral context
+  const generateDynamicTopics = () => {
+    const baseTopics = [
+      {
+        title: "🌟 Feeling Check-In",
+        description: "Let's explore what you're experiencing right now",
+        prompt: "How are you feeling today? I'm here to listen ✨"
+      },
+      {
+        title: "🎵 Music & Healing",
+        description: "Discover healing through music and sound",
+        prompt: "Can you help me find some healing music? 🎶"
+      },
+      {
+        title: "🧘‍♀️ Grounding Together",
+        description: "Gentle techniques to feel more present",
+        prompt: "I'd love to try a grounding exercise with you"
+      }
+    ];
+
+    // Add emotion-specific topics
+    const emotionBasedTopics = {
+      anxious: {
+        title: "🌬️ Calming Breaths",
+        description: "Breathing exercises for anxiety relief",
+        prompt: "I'm feeling anxious, can you guide me through some breathing?"
+      },
+      sad: {
+        title: "💙 Gentle Support",
+        description: "Comfort and understanding for difficult emotions",
+        prompt: "I'm feeling down and could use some gentle support"
+      },
+      overwhelmed: {
+        title: "🌊 Breaking It Down",
+        description: "Making overwhelming feelings more manageable",
+        prompt: "Everything feels overwhelming right now, can you help?"
+      }
+    };
+
+    const dynamicTopics = [...baseTopics];
+    
+    // Add emotion-based topic if applicable
+    const emotionTopic = emotionBasedTopics[currentUserEmotion as keyof typeof emotionBasedTopics];
+    if (emotionTopic) {
+      dynamicTopics.push(emotionTopic);
+    }
+
+    // Add behavioral context topics
+    if (behavioralContext.recentTopics.includes('anxiety')) {
+      dynamicTopics.push({
+        title: "🌈 Anxiety Toolkit",
+        description: "More tools for managing anxious moments",
+        prompt: "What are some other ways to handle anxiety?"
+      });
+    }
+
+    if (behavioralContext.engagementLevel > 0.7) {
+      dynamicTopics.push({
+        title: "🚀 Deeper Conversation",
+        description: "Ready to explore more together",
+        prompt: "I'm ready to dive deeper into my healing journey"
+      });
+    }
+
+    return dynamicTopics;
+  };
+
   return (
     <div className="max-w-5xl mx-auto px-4 pt-8 pb-24">
-      <div className="flex items-center mb-6">
-        <Link href="/">
-          <div className="mr-3 p-2 rounded-full hover:bg-bg-tertiary transition cursor-pointer" aria-label="Go back">
-            <i className="fas fa-arrow-left text-text-secondary"></i>
+      {/* Friendly Header */}
+      <Card className="mb-6 bg-gradient-to-r from-purple-500 via-blue-500 to-teal-500 text-white border-0">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Link href="/">
+                <div className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition cursor-pointer" aria-label="Go back">
+                  <i className="fas fa-arrow-left text-white"></i>
+                </div>
+              </Link>
+              <div>
+                <div className="flex items-center gap-3">
+                  <Heart className="w-8 h-8 text-pink-200 animate-pulse" />
+                  <h1 className="text-3xl font-bold">Let's Chat Together ✨</h1>
+                  <Smile className="w-8 h-8 text-yellow-200" />
+                </div>
+                <p className="text-purple-100 mt-1">
+                  I'm here to listen, support, and walk alongside you in your healing journey 💜
+                </p>
+              </div>
+            </div>
+            
+            <div className="text-right">
+              <div className="text-sm text-purple-200">Your friendly companion</div>
+              <div className="text-2xl">🌟 Inferno AI 🌟</div>
+            </div>
           </div>
-        </Link>
-        <h1 className="text-2xl font-bold">Chat with Inferno AI</h1>
-      </div>
+        </CardContent>
+      </Card>
       
       {apiKeyMissing ? (
         <Card className="mb-6 bg-bg-secondary border-border">
@@ -267,7 +390,7 @@ export default function ChatPage() {
                   />
                   <Button 
                     className="ml-2 px-4 py-3 bg-button-bg hover:bg-button-hover text-text-primary rounded-lg self-end"
-                    onClick={handleSendMessage}
+                    onClick={handleClickSend}
                     disabled={isSending || !inputMessage.trim()}
                   >
                     {isSending ? (
@@ -304,7 +427,7 @@ export default function ChatPage() {
                       <div className="flex justify-end">
                         <Button 
                           className="px-4 py-2 bg-button-bg hover:bg-button-hover text-text-primary rounded-lg" 
-                          onClick={handleSendMessage}
+                          onClick={handleClickSend}
                           disabled={isSending}
                         >
                           {isSending ? (
@@ -323,37 +446,106 @@ export default function ChatPage() {
         </div>
       )}
       
-      <div className="bg-bg-secondary rounded-lg p-4 mb-8 border border-border">
-        <h2 className="font-medium mb-2">Helpful Topics to Chat About</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-          {/* Grounding Techniques card */}
-          <button 
-            className="text-left p-4 bg-bg-tertiary rounded-lg border border-border hover:border-accent-subtle transition card"
-            onClick={() => setInputMessage("Can you help me with a grounding exercise?")}
-          >
-            <h3 className="font-medium mb-1">Grounding Techniques</h3>
-            <p className="text-xs text-text-secondary">Learn methods to stay present during anxiety</p>
-          </button>
+      {/* Speech-to-Speech Mode Toggle */}
+      <Card className="mb-6 bg-gradient-to-r from-purple-50 via-blue-50 to-teal-50 border-purple-200">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-purple-100 rounded-full">
+                {speechToSpeechMode ? <Headphones className="w-5 h-5 text-purple-600" /> : <MessageCircle className="w-5 h-5 text-purple-600" />}
+              </div>
+              <div>
+                <div className="font-medium text-gray-800">
+                  {speechToSpeechMode ? '🎙️ Voice Conversation Mode' : '💬 Text Chat Mode'}
+                </div>
+                <div className="text-sm text-gray-600">
+                  {speechToSpeechMode ? 'Speak naturally - I\'ll respond with voice' : 'Type or speak to start our conversation'}
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSpeechToSpeechMode(!speechToSpeechMode)}
+                className={speechToSpeechMode ? 'bg-purple-100 border-purple-300' : ''}
+              >
+                {speechToSpeechMode ? <VolumeX className="w-4 h-4 mr-1" /> : <Volume2 className="w-4 h-4 mr-1" />}
+                {speechToSpeechMode ? 'Switch to Text' : 'Voice Mode'}
+              </Button>
+              
+              {isRecording ? (
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={stopRecording}
+                >
+                  <MicOff className="w-4 h-4 mr-1" />
+                  Stop Listening
+                </Button>
+              ) : (
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={startRecording}
+                  className="bg-green-500 hover:bg-green-600"
+                >
+                  <Mic className="w-4 h-4 mr-1" />
+                  Listen
+                </Button>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Dynamic Helpful Topics - Based on Behavior */}
+      <Card className="mb-8 bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 border-pink-200">
+        <CardContent className="p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Sparkles className="w-6 h-6 text-purple-500" />
+            <h2 className="text-xl font-semibold text-gray-800">Let's Talk About... ✨</h2>
+          </div>
+          <p className="text-gray-600 mb-4">
+            Based on our conversation, here are some things we could explore together:
+          </p>
           
-          {/* Coping Strategies card */}
-          <button 
-            className="text-left p-4 bg-bg-tertiary rounded-lg border border-border hover:border-accent-subtle transition card"
-            onClick={() => setInputMessage("What are some coping strategies for PTSD triggers?")}
-          >
-            <h3 className="font-medium mb-1">Coping with Triggers</h3>
-            <p className="text-xs text-text-secondary">Strategies to manage triggering situations</p>
-          </button>
-          
-          {/* Communication Tips card */}
-          <button 
-            className="text-left p-4 bg-bg-tertiary rounded-lg border border-border hover:border-accent-subtle transition card"
-            onClick={() => setInputMessage("How can I explain my PTSD to family members?")}
-          >
-            <h3 className="font-medium mb-1">Communication Tips</h3>
-            <p className="text-xs text-text-secondary">Help explaining your experience to others</p>
-          </button>
-        </div>
-      </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {generateDynamicTopics().map((topic, index) => (
+              <button 
+                key={index}
+                className="group text-left p-4 bg-white rounded-lg border-2 border-purple-100 hover:border-purple-300 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1"
+                onClick={() => handleSendMessage(topic.prompt)}
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-lg">{topic.title.split(' ')[0]}</span>
+                  <h3 className="font-semibold text-gray-800 group-hover:text-purple-700 transition-colors">
+                    {topic.title.substring(topic.title.indexOf(' ') + 1)}
+                  </h3>
+                </div>
+                <p className="text-sm text-gray-600 group-hover:text-gray-700 transition-colors">
+                  {topic.description}
+                </p>
+                <div className="mt-2 text-xs text-purple-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                  Click to start this conversation →
+                </div>
+              </button>
+            ))}
+          </div>
+
+          {/* Behavioral Context Indicator */}
+          <div className="mt-4 p-3 bg-white/60 rounded-lg border border-purple-100">
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <Brain className="w-4 h-4 text-purple-500" />
+              <span>Personalized for you based on:</span>
+              <Badge variant="outline" className="text-xs">Current mood: {currentUserEmotion}</Badge>
+              <Badge variant="outline" className="text-xs">Engagement: {Math.round(behavioralContext.engagementLevel * 100)}%</Badge>
+              <Badge variant="outline" className="text-xs">Session: {Math.round(behavioralContext.sessionDuration)}min</Badge>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
       
       <div className="text-xs text-text-secondary text-center">
         <p>Inferno AI is a trauma-informed support tool, not a replacement for professional care.</p>
