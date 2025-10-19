@@ -43,8 +43,8 @@ export function PollyVoiceChat() {
         <CardTitle className="text-2xl font-bold text-white flex items-center gap-2">
           <Volume2 className="w-6 h-6 text-[#00A7FF]" />
           Voice Conversation
-          <span className="ml-auto text-xs font-normal px-3 py-1 rounded-full bg-green-500/10 border border-green-500/30 text-green-400">
-            AWS Powered
+          <span className="ml-auto text-xs font-normal px-3 py-1 rounded-full bg-[#00A7FF]/10 border border-[#00A7FF]/30 text-[#00A7FF]">
+            Browser Powered (Free)
           </span>
         </CardTitle>
         <CardDescription className="text-gray-400">
