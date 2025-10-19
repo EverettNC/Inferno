@@ -16,6 +16,7 @@ import SignInPage from "@/pages/SignInPage";
 import { VoiceModePage } from "@/pages/VoiceModePage";
 import ProfilePage from "@/pages/ProfilePage";
 import SettingsPage from "@/pages/SettingsPage";
+import HelpPage from "@/pages/HelpPage";
 import Header from "@/components/Header";
 import Navigation from "@/components/Navigation";
 import VoiceFeedback from "@/components/VoiceFeedback";
@@ -27,10 +28,11 @@ function Router() {
   const [location, navigate] = useLocation();
   const { user } = useUserContext();
   
-  // Redirect to sign-in if not logged in and not already on sign-in page
+  // Redirect to sign-in if not logged in and not already on sign-in page or homepage
   useEffect(() => {
-    const privacyAccepted = localStorage.getItem("privacyAccepted");
-    if (privacyAccepted && !user && location !== '/signin') {
+    const privacyAcceptedThisSession = sessionStorage.getItem("privacyAcceptedThisSession");
+    // Don't redirect from homepage (/) or signin page - allow natural navigation
+    if (privacyAcceptedThisSession && !user && location !== '/signin' && location !== '/') {
       navigate('/signin');
     }
   }, [user, location, navigate]);
@@ -47,6 +49,7 @@ function Router() {
       <Route path="/resources" component={ResourcesPage} />
       <Route path="/profile" component={ProfilePage} />
       <Route path="/settings" component={SettingsPage} />
+      <Route path="/help" component={HelpPage} />
       <Route component={NotFound} />
     </Switch>
   );
