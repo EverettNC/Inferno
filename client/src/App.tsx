@@ -19,6 +19,7 @@ import HelpPage from "@/pages/HelpPage";
 import EmotionTonePage from "@/pages/EmotionTonePage";
 import LearningHubPage from "@/pages/LearningHubPage";
 import ProfessionalTrainingPage from "@/pages/ProfessionalTrainingPage";
+import CommunityPage from "@/pages/CommunityPage";
 import Header from "@/components/Header";
 import Navigation from "@/components/Navigation";
 import VoiceFeedback from "@/components/VoiceFeedback";
@@ -49,6 +50,7 @@ function Router() {
       <Route path="/chat" component={ChatPage} />
       <Route path="/voice" component={VoiceModePage} />
       <Route path="/emotion" component={EmotionTonePage} />
+      <Route path="/community" component={CommunityPage} />
       <Route path="/learning" component={LearningHubPage} />
       <Route path="/training" component={ProfessionalTrainingPage} />
       <Route path="/resources" component={ResourcesPage} />

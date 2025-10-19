@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Home, Hand, UserCircle, Mic2, Heart, GraduationCap } from "lucide-react";
+import { Home, Hand, UserCircle, Mic2, Heart, GraduationCap, Shield } from "lucide-react";
 
 export default function Navigation() {
   const [location] = useLocation();
@@ -9,6 +9,7 @@ export default function Navigation() {
     { href: "/grounding", icon: Hand, label: "Ground", testId: "nav-grounding" },
     { href: "/voice", icon: Mic2, label: "Voice", testId: "nav-voice" },
     { href: "/emotion", icon: Heart, label: "Emotion", testId: "nav-emotion" },
+    { href: "/community", icon: Shield, label: "Community", testId: "nav-community" },
     { href: "/training", icon: GraduationCap, label: "Training", testId: "nav-training" },
     { href: "/profile", icon: UserCircle, label: "Profile", testId: "nav-profile" }
   ];
