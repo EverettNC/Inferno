@@ -133,7 +133,7 @@ export default function SettingsPage() {
             <Switch
               checked={localVoiceMode}
               onCheckedChange={setLocalVoiceMode}
-              className="ml-4"
+              className={`ml-4 ${localVoiceMode ? 'bg-electric-cyan' : 'bg-input-bg'}`}
               data-testid="switch-voice-mode"
             />
           </div>
