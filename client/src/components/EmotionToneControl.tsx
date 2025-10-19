@@ -142,32 +142,32 @@ export function EmotionToneControl({
     return emojiMap[emotion] || '🤔';
   };
 
-  const getEmotionColor = (emotion: EmotionType): string => {
-    const colorMap: { [key in EmotionType]: string } = {
-      [EmotionType.JOY]: 'text-yellow-600',
-      [EmotionType.SADNESS]: 'text-blue-600',
-      [EmotionType.ANGER]: 'text-red-600',
-      [EmotionType.FEAR]: 'text-purple-600',
-      [EmotionType.ANXIETY]: 'text-orange-600',
-      [EmotionType.DEPRESSION]: 'text-gray-600',
-      [EmotionType.CONTENTMENT]: 'text-green-600',
-      [EmotionType.NEUTRAL]: 'text-gray-500',
-      [EmotionType.SURPRISE]: 'text-pink-600',
-      [EmotionType.DISGUST]: 'text-brown-600',
-      [EmotionType.EXCITEMENT]: 'text-red-500',
-      [EmotionType.FRUSTRATION]: 'text-red-700',
-      [EmotionType.HOPE]: 'text-blue-500',
-      [EmotionType.SHAME]: 'text-red-800',
-      [EmotionType.GUILT]: 'text-gray-700',
-      [EmotionType.RELIEF]: 'text-green-500',
-      [EmotionType.HYPERVIGILANCE]: 'text-yellow-700',
-      [EmotionType.DISSOCIATION]: 'text-gray-400',
-      [EmotionType.EMOTIONAL_NUMBNESS]: 'text-gray-300',
-      [EmotionType.TRIGGER_RESPONSE]: 'text-red-900',
-      [EmotionType.CONFUSED]: 'text-purple-500',
-      [EmotionType.MIXED]: 'text-indigo-600'
+    const getEmotionColor = (emotion: EmotionType): string => {
+    const colorMap: Record<EmotionType, string> = {
+      [EmotionType.JOY]: 'text-highlight',           // Sky Glow Teal for positive emotions
+      [EmotionType.SADNESS]: 'text-primary',        // Electric Cyan for calm emotions
+      [EmotionType.ANGER]: 'text-red-400',          // Softer red for intensity
+      [EmotionType.FEAR]: 'text-purple-400',        // Softer purple
+      [EmotionType.ANXIETY]: 'text-orange-400',     // Softer orange
+      [EmotionType.DEPRESSION]: 'text-iceblue/60',  // Muted ice blue
+      [EmotionType.CONTENTMENT]: 'text-highlight',  // Sky Glow Teal for positive states
+      [EmotionType.NEUTRAL]: 'text-iceblue',        // Neon Ice Blue for neutral
+      [EmotionType.SURPRISE]: 'text-primary',       // Electric Cyan for surprise
+      [EmotionType.DISGUST]: 'text-yellow-600',     // Yellow-brown for disgust
+      [EmotionType.EXCITEMENT]: 'text-highlight',   // Sky Glow Teal for excitement
+      [EmotionType.FRUSTRATION]: 'text-red-500',    // Red for frustration
+      [EmotionType.HOPE]: 'text-primary',           // Electric Cyan for hope
+      [EmotionType.SHAME]: 'text-red-600',          // Deeper red for shame
+      [EmotionType.GUILT]: 'text-iceblue/70',       // Muted ice blue for guilt
+      [EmotionType.RELIEF]: 'text-highlight',       // Sky Glow Teal for relief
+      [EmotionType.HYPERVIGILANCE]: 'text-yellow-500', // Yellow for hypervigilance
+      [EmotionType.DISSOCIATION]: 'text-iceblue/50',   // Very muted ice blue
+      [EmotionType.EMOTIONAL_NUMBNESS]: 'text-iceblue/40', // Barely visible ice blue
+      [EmotionType.TRIGGER_RESPONSE]: 'text-red-700',      // Deep red for triggers
+      [EmotionType.CONFUSED]: 'text-primary/70',           // Muted electric cyan
+      [EmotionType.MIXED]: 'text-highlight/80'             // Muted sky glow teal
     };
-    return colorMap[emotion] || 'text-gray-500';
+    return colorMap[emotion] || 'text-iceblue';
   };
 
   const renderCurrentEmotion = () => {
@@ -176,71 +176,90 @@ export function EmotionToneControl({
     return (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Primary Emotion */}
-        <Card>
+        <Card className="bg-indigo/60 border-primary/20 backdrop-blur-lg shadow-power">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm flex items-center gap-2">
-              <Heart className="h-4 w-4" />
-              Primary Emotion
+            <CardTitle className="text-sm flex items-center gap-2 text-iceblue">
+              <div className="relative">
+                <div className="absolute inset-0 bg-primary blur-sm opacity-40 rounded-full"></div>
+                <Heart className="h-4 w-4 text-primary relative z-10" />
+              </div>
+              Current Emotion
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="bg-darkbg/30 rounded-lg">
             <div className="flex items-center gap-3">
-              <span className="text-4xl">
-                {getEmotionEmoji(currentEmotion.primaryEmotion)}
-              </span>
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-highlight/20 blur-xl rounded-full animate-christman-pulse"></div>
+                <span className="text-4xl relative z-10" style={{ filter: 'drop-shadow(0 0 8px currentColor)' }}>
+                  {getEmotionEmoji(currentEmotion.primaryEmotion)}
+                </span>
+              </div>
               <div>
-                <div className={`text-lg font-medium capitalize ${getEmotionColor(currentEmotion.primaryEmotion)}`}>
+                <div className={`text-lg font-medium capitalize ${getEmotionColor(currentEmotion.primaryEmotion)} drop-shadow-lg`}
+                     style={{ textShadow: '0 0 4px currentColor' }}>
                   {currentEmotion.primaryEmotion.replace('_', ' ')}
                 </div>
-                <div className="text-sm text-gray-600">
-                  {(currentEmotion.emotionIntensity * 100).toFixed(0)}% intensity
+                <div className="text-sm text-iceblue/70">
+                  Confidence: {Math.round(currentEmotion.confidence * 100)}%
                 </div>
-                <div className="text-xs text-gray-500">
-                  {(currentEmotion.emotionConfidence * 100).toFixed(0)}% confidence
+                <div className="text-xs text-iceblue/50">
+                  Last updated: {new Date(currentEmotion.timestamp).toLocaleTimeString()}
                 </div>
               </div>
             </div>
             
-            {/* Intensity Progress */}
             <div className="mt-3">
               <Progress 
-                value={currentEmotion.emotionIntensity * 100} 
-                className="h-2"
+                value={currentEmotion.confidence * 100} 
+                className="h-3 bg-indigo/50"
+                style={{
+                  background: 'linear-gradient(to right, rgba(55, 200, 255, 0.2), rgba(53, 228, 185, 0.2))'
+                }}
               />
             </div>
           </CardContent>
         </Card>
-
+        
         {/* Emotional Stability */}
-        <Card>
+        <Card className="bg-indigo/60 border-highlight/20 backdrop-blur-lg shadow-glow">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm flex items-center gap-2">
-              <Activity className="h-4 w-4" />
+            <CardTitle className="text-sm flex items-center gap-2 text-iceblue">
+              <div className="relative">
+                <div className="absolute inset-0 bg-highlight blur-sm opacity-40 rounded-full animate-pulse"></div>
+                <Activity className="h-4 w-4 text-highlight relative z-10" />
+              </div>
               Emotional State
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="bg-darkbg/30 rounded-lg">
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-sm">Stability</span>
-                <Badge variant={currentEmotion.emotionStability > 0.7 ? 'default' : 'destructive'}>
+                <span className="text-sm text-iceblue/80">Stability</span>
+                <Badge 
+                  variant={currentEmotion.emotionStability > 0.7 ? 'default' : 'destructive'}
+                  className={currentEmotion.emotionStability > 0.7 
+                    ? 'bg-highlight/20 text-highlight border-highlight/30' 
+                    : 'bg-red-500/20 text-red-400 border-red-400/30'
+                  }
+                >
                   {(currentEmotion.emotionStability * 100).toFixed(0)}%
                 </Badge>
               </div>
               
               <div className="flex justify-between items-center">
-                <span className="text-sm">Trend</span>
+                <span className="text-sm text-iceblue/80">Trend</span>
                 <div className="flex items-center gap-1">
-                  {currentEmotion.emotionTrend === 'rising' && <TrendingUp className="h-3 w-3 text-green-500" />}
-                  {currentEmotion.emotionTrend === 'falling' && <TrendingUp className="h-3 w-3 text-red-500 rotate-180" />}
-                  {currentEmotion.emotionTrend === 'stable' && <Meh className="h-3 w-3 text-gray-500" />}
-                  <span className="text-sm capitalize">{currentEmotion.emotionTrend}</span>
+                  {currentEmotion.emotionTrend === 'rising' && <TrendingUp className="h-3 w-3 text-highlight" style={{ filter: 'drop-shadow(0 0 4px #35E4B9)' }} />}
+                  {currentEmotion.emotionTrend === 'falling' && <TrendingUp className="h-3 w-3 text-red-400 rotate-180" style={{ filter: 'drop-shadow(0 0 4px #f87171)' }} />}
+                  {currentEmotion.emotionTrend === 'stable' && <Meh className="h-3 w-3 text-primary" style={{ filter: 'drop-shadow(0 0 4px #37C8FF)' }} />}
+                  <span className="text-sm capitalize text-iceblue/70">{currentEmotion.emotionTrend}</span>
                 </div>
               </div>
 
               {currentEmotion.rapidChanges && (
-                <Badge variant="outline" className="w-full text-center">
-                  ⚡ Rapid emotional changes detected
+                <Badge variant="outline" className="w-full text-center bg-indigo/30 border-primary/30 text-primary animate-pulse">
+                  <Zap className="h-3 w-3 mr-1" />
+                  Rapid emotional changes detected
                 </Badge>
               )}
             </div>
@@ -248,17 +267,20 @@ export function EmotionToneControl({
         </Card>
 
         {/* Session Phase */}
-        <Card>
+        <Card className="bg-indigo/60 border-primary/20 backdrop-blur-lg shadow-christman">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm flex items-center gap-2">
-              <Zap className="h-4 w-4" />
+            <CardTitle className="text-sm flex items-center gap-2 text-iceblue">
+              <div className="relative">
+                <div className="absolute inset-0 bg-primary blur-sm opacity-40 rounded-full animate-christman-pulse"></div>
+                <Zap className="h-4 w-4 text-primary relative z-10" />
+              </div>
               Session Context
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="bg-darkbg/30 rounded-lg">
             <div className="space-y-2">
               <div>
-                <span className="text-sm text-gray-600">Phase:</span>
+                <span className="text-sm text-iceblue/60">Phase:</span>
                 <div className="font-medium capitalize">
                   {currentEmotion.sessionPhase.replace('_', ' ')}
                 </div>
@@ -380,23 +402,38 @@ export function EmotionToneControl({
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto space-y-6">
+    <div className="w-full max-w-6xl mx-auto space-y-6 relative">
+      {/* Christman AI Background Effect */}
+      <div className="absolute inset-0 bg-gradient-to-br from-darkbg via-indigo to-darkbg rounded-3xl opacity-50 blur-3xl -z-10"></div>
+      
       {/* Header */}
-      <Card>
+      <Card className="bg-indigo/80 border-primary/30 backdrop-blur-xl shadow-christman">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Heart className="h-6 w-6 text-red-500" />
-            Emotion & Tone Management
+          <CardTitle className="flex items-center gap-2 text-iceblue">
+            <div className="relative">
+              <div className="absolute inset-0 bg-primary blur-lg opacity-50 rounded-full animate-christman-pulse"></div>
+              <Heart className="h-6 w-6 text-primary relative z-10" style={{ filter: 'drop-shadow(0 0 8px #37C8FF)' }} />
+            </div>
+            <span className="bg-gradient-to-r from-primary to-highlight bg-clip-text text-transparent font-bold">
+              Emotion & Tone Management
+            </span>
           </CardTitle>
-          <CardDescription>
-            Multi-modal emotional intelligence and adaptive tone control
+          <CardDescription className="text-iceblue/70">
+            Multi-modal emotional intelligence powered by <span className="text-highlight font-semibold">The Christman AI Project</span>
           </CardDescription>
         </CardHeader>
         
-        <CardContent>
+        <CardContent className="bg-darkbg/50 rounded-lg backdrop-blur-sm">
           <div className="flex items-center gap-4">
             {!isActive ? (
-              <Button onClick={handleStartMonitoring} className="bg-red-500 hover:bg-red-600">
+              <Button 
+                onClick={handleStartMonitoring} 
+                className="bg-power-gradient hover:shadow-glow text-white border-0 rounded-xl transition-all duration-300 transform hover:scale-105"
+                style={{ 
+                  boxShadow: '0 10px 20px rgba(55, 200, 255, 0.4)', 
+                  textShadow: '0 0 4px #37C8FF' 
+                }}
+              >
                 <Heart className="h-4 w-4 mr-2" />
                 Start Emotion Monitoring
               </Button>

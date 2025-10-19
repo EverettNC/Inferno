@@ -22,17 +22,23 @@ export default function Header() {
   };
 
   return (
-    <header className="border-b border-border backdrop-blur-md sticky top-0 z-50" style={{ background: 'rgba(6, 6, 8, 0.9)' }}>
+    <header className="border-b border-primary/20 backdrop-blur-md sticky top-0 z-50 shadow-christman" style={{ background: 'rgba(8, 12, 24, 0.95)' }}>
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <Link href="/">
             <div className="flex items-center space-x-3 group cursor-pointer" data-testid="link-home">
-              <Flame className="w-7 h-7 fire-glow" strokeWidth={1.5} />
+              <div className="relative">
+                <div className="absolute inset-0 bg-primary blur-lg opacity-40 rounded-full animate-christman-pulse"></div>
+                <Flame className="w-7 h-7 text-primary relative z-10" strokeWidth={1.5} style={{ filter: 'drop-shadow(0 0 8px #37C8FF)' }} />
+              </div>
               <span
-                className="font-black text-xl tracking-wider glow-text transition-all"
-                style={{ fontFamily: 'Orbitron, Rajdhani, sans-serif' }}
+                className="font-black text-xl tracking-wider bg-christman-glow bg-clip-text text-transparent transition-all"
+                style={{ 
+                  fontFamily: 'Orbitron, Rajdhani, sans-serif',
+                  textShadow: '0 0 20px rgba(55, 200, 255, 0.3)'
+                }}
               >
-                INFERNO
+                THE CHRISTMAN AI PROJECT
               </span>
             </div>
           </Link>
@@ -42,9 +48,13 @@ export default function Header() {
             {isSpeaking && (
               <button
                 aria-label="Emergency stop speech"
-                className="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all animate-pulse"
+                className="p-2 bg-red-600/80 text-white rounded-lg hover:bg-red-700 transition-all animate-pulse backdrop-blur-sm border border-red-400/30"
                 onClick={stopSpeaking}
                 data-testid="button-emergency-stop"
+                style={{ 
+                  boxShadow: '0 0 20px rgba(239, 68, 68, 0.4)',
+                  filter: 'drop-shadow(0 0 8px rgba(239, 68, 68, 0.6))'
+                }}
               >
                 🛑
               </button>
@@ -53,16 +63,20 @@ export default function Header() {
             {/* Voice Mode Toggle */}
             <button
               aria-label="Toggle voice mode"
-              className={`p-3 rounded-lg transition-all ${
+              className={`p-3 rounded-lg transition-all backdrop-blur-sm border ${
                 isVoiceModeEnabled
-                  ? 'bg-button-bg text-text-glow'
-                  : 'text-text-secondary hover:bg-bg-tertiary hover:text-electric-cyan'
+                  ? 'bg-power-gradient text-iceblue border-primary/30 shadow-christman animate-christman-pulse'
+                  : 'text-iceblue/70 hover:bg-indigo/30 hover:text-primary border-primary/20'
               }`}
               onClick={toggleVoiceMode}
               data-testid="button-voice-toggle"
+              style={isVoiceModeEnabled ? { 
+                filter: 'drop-shadow(0 0 12px #37C8FF)',
+                boxShadow: '0 10px 20px rgba(55, 200, 255, 0.4)'
+              } : {}}
             >
               {isVoiceModeEnabled ? (
-                <Mic className="w-5 h-5 electric-pulse" />
+                <Mic className="w-5 h-5" style={{ filter: 'drop-shadow(0 0 6px #B5E6FF)' }} />
               ) : (
                 <MicOff className="w-5 h-5" />
               )}
@@ -72,11 +86,12 @@ export default function Header() {
             <Link href="/help">
               <button
                 aria-label="Get help"
-                className="p-3 rounded-lg text-text-secondary hover:bg-bg-tertiary hover:text-electric-cyan transition-all"
+                className="p-3 rounded-lg text-iceblue/70 hover:bg-indigo/30 hover:text-highlight transition-all backdrop-blur-sm border border-primary/20"
                 data-testid="button-help"
+                style={{ filter: 'drop-shadow(0 0 8px rgba(53, 228, 185, 0.3))' }}
               >
                 <img 
-                  src="/generated-icon.png" 
+                  src="/HelpButton.png" 
                   alt="Help" 
                   className="w-5 h-5 opacity-70 hover:opacity-100 transition-opacity"
                 />
@@ -88,22 +103,30 @@ export default function Header() {
               <DropdownMenuTrigger asChild>
                 <button
                   aria-label="Open user menu"
-                  className="flex items-center space-x-2 p-2 rounded-lg hover:bg-bg-tertiary transition-all"
+                  className="flex items-center space-x-2 p-2 rounded-lg hover:bg-indigo/30 transition-all backdrop-blur-sm"
                   data-testid="button-user-menu"
                 >
-                  <div className="w-9 h-9 rounded-full flex items-center justify-center border-2 border-electric-cyan" style={{ background: 'rgba(0, 214, 255, 0.1)' }}>
-                    <User className="w-5 h-5 text-electric-cyan" />
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center border-2 border-primary animate-christman-pulse" 
+                       style={{ 
+                         background: 'rgba(55, 200, 255, 0.1)',
+                         boxShadow: '0 0 15px rgba(55, 200, 255, 0.3)'
+                       }}>
+                    <User className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 4px #37C8FF)' }} />
                   </div>
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                className="w-48 border-border"
-                style={{ background: 'rgba(10, 10, 15, 0.95)', backdropFilter: 'blur(10px)' }}
+                className="w-48 border-primary/20 shadow-christman"
+                style={{ 
+                  background: 'rgba(17, 24, 40, 0.95)', 
+                  backdropFilter: 'blur(15px)',
+                  borderColor: 'rgba(55, 200, 255, 0.2)'
+                }}
               >
                 <DropdownMenuItem asChild>
                   <Link 
                     href="/profile"
-                    className="w-full cursor-pointer text-text-primary hover:text-electric-cyan"
+                    className="w-full cursor-pointer text-iceblue hover:text-primary transition-colors"
                     data-testid="menu-profile"
                   >
                     Profile & Settings
@@ -112,15 +135,15 @@ export default function Header() {
                 <DropdownMenuItem asChild>
                   <Link 
                     href="/help"
-                    className="w-full cursor-pointer text-text-primary hover:text-electric-cyan"
+                    className="w-full cursor-pointer text-iceblue hover:text-highlight transition-colors"
                     data-testid="menu-help"
                   >
                     Help
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-border" />
+                <DropdownMenuSeparator className="bg-primary/20" />
                 <DropdownMenuItem 
-                  className="cursor-pointer text-flame-orange hover:text-button-accent"
+                  className="cursor-pointer text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
                   onClick={handleSignOut}
                 >
                   Sign out

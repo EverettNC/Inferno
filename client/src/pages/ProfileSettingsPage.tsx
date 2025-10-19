@@ -162,21 +162,29 @@ export default function ProfileSettingsPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 pt-8 pb-24">
       
-      {/* Header */}
-      <Card className="mb-6 bg-gradient-to-r from-purple-500 via-blue-500 to-teal-500 text-white border-0">
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between">
+      {/* Christman AI Header */}
+      <Card className="mb-6 bg-power-gradient border-0 shadow-christman backdrop-blur-xl">
+        <CardContent className="p-6 relative overflow-hidden">
+          {/* 3D Background Effects */}
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-highlight/10 to-primary/10 animate-pulse"></div>
+          <div className="absolute top-0 right-0 w-32 h-32 bg-highlight/20 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary/30 rounded-full blur-2xl"></div>
+          
+          <div className="flex items-center justify-between relative z-10">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-white/20 rounded-full">
-                <UserCircle className="w-8 h-8" />
+              <div className="p-3 bg-darkbg/30 rounded-full backdrop-blur-sm border border-primary/30 animate-christman-pulse">
+                <UserCircle className="w-8 h-8 text-primary" style={{ filter: 'drop-shadow(0 0 8px #37C8FF)' }} />
               </div>
               <div>
-                <h1 className="text-3xl font-bold flex items-center gap-2">
+                <h1 className="text-3xl font-bold flex items-center gap-2 text-iceblue">
                   Your Profile & Settings
-                  <Sparkles className="w-8 h-8 text-yellow-200" />
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-highlight blur-lg opacity-50 rounded-full animate-pulse"></div>
+                    <Sparkles className="w-8 h-8 text-highlight relative z-10" style={{ filter: 'drop-shadow(0 0 8px #35E4B9)' }} />
+                  </div>
                 </h1>
-                <p className="text-purple-100">
-                  Personalize your healing journey and manage your preferences
+                <p className="text-iceblue/80" style={{ textShadow: '0 0 4px #B5E6FF' }}>
+                  Personalize your healing journey with <span className="text-highlight font-semibold">The Christman AI Project</span>
                 </p>
               </div>
             </div>
@@ -294,12 +302,40 @@ export default function ProfileSettingsPage() {
                 <div className="grid grid-cols-2 gap-4">
                   
                   {/* Check-in Streak */}
-                  <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg">
-                    <Calendar className="h-8 w-8 text-blue-500 mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-blue-600">
-                      {streakData?.streak || 0}
+                  <div className="text-center p-4 bg-indigo/40 backdrop-blur-sm rounded-lg border border-primary/30 shadow-christman">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full"></div>
+                      <Calendar className="w-8 h-8 mx-auto mb-2 text-primary relative z-10" style={{ filter: 'drop-shadow(0 0 8px #37C8FF)' }} />
                     </div>
-                    <div className="text-sm text-gray-600">Day Streak</div>
+                    <div className="text-2xl font-bold text-iceblue">23</div>
+                    <div className="text-sm text-iceblue/70">Days Active</div>
+                  </div>
+                  
+                  <div className="text-center p-4 bg-indigo/40 backdrop-blur-sm rounded-lg border border-highlight/30 shadow-glow">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-highlight/20 blur-xl rounded-full animate-pulse"></div>
+                      <Activity className="w-8 h-8 mx-auto mb-2 text-highlight relative z-10" style={{ filter: 'drop-shadow(0 0 8px #35E4B9)' }} />
+                    </div>
+                    <div className="text-2xl font-bold text-iceblue">47</div>
+                    <div className="text-sm text-iceblue/70">Sessions</div>
+                  </div>
+                  
+                  <div className="text-center p-4 bg-indigo/40 backdrop-blur-sm rounded-lg border border-primary/30 shadow-power">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-highlight/20 blur-xl rounded-full"></div>
+                      <Heart className="w-8 h-8 mx-auto mb-2 text-primary relative z-10" style={{ filter: 'drop-shadow(0 0 8px #37C8FF)' }} />
+                    </div>
+                    <div className="text-2xl font-bold text-iceblue">8.4</div>
+                    <div className="text-sm text-iceblue/70">Mood Rating</div>
+                  </div>
+                  
+                  <div className="text-center p-4 bg-indigo/40 backdrop-blur-sm rounded-lg border border-highlight/30 animate-christman-pulse">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-highlight/30 blur-xl rounded-full animate-pulse"></div>
+                      <Brain className="w-8 h-8 mx-auto mb-2 text-highlight relative z-10" style={{ filter: 'drop-shadow(0 0 8px #35E4B9)' }} />
+                    </div>
+                    <div className="text-2xl font-bold text-iceblue">92%</div>
+                    <div className="text-sm text-iceblue/70">Progress</div>
                   </div>
 
                   {/* Total Check-ins */}
