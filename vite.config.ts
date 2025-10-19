@@ -29,3 +29,11 @@ export default defineConfig({
     emptyOutDir: true,
   },
 });
+export default defineConfig({
+  server: {
+    allowedHosts: ['christmanaipinferno.ngrok.app'],
+    // If you want to allow all subdomains (optional)
+    // allowedHosts: ['.ngrok.app']
+  },
+});
+
