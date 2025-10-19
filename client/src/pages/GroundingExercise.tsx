@@ -3,48 +3,90 @@ import { Link, useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useVoiceContext } from '@/contexts/VoiceContext';
 import { useUserContext } from '@/contexts/UserContext';
 import useVoiceMode from '@/hooks/useVoiceMode';
 import { apiRequest } from '@/lib/queryClient';
+import { Brain, Heart, Eye, Hand, Ear, Wind, Coffee, Zap, Target, Timer } from 'lucide-react';
 
 interface GroundingStep {
   title: string;
   instruction: string;
   count: number;
   verb: string;
+  icon: React.ReactNode;
+  color: string;
 }
 
 const groundingSteps: GroundingStep[] = [
   {
     title: "Step 1: Acknowledge 5 things you see around you",
-    instruction: "Look around and name 5 things you can see right now. Take your time to notice details.",
+    instruction: "Look around and name 5 things you can see right now. Notice colors, shapes, textures, and details.",
     count: 5,
-    verb: "see"
+    verb: "see",
+    icon: <Eye className="w-6 h-6" />,
+    color: "text-blue-400"
   },
   {
     title: "Step 2: Touch 4 things around you",
-    instruction: "Pay attention to how they feel: texture, temperature, smoothness.",
+    instruction: "Pay attention to how they feel: texture, temperature, weight, smoothness or roughness.",
     count: 4,
-    verb: "touch"
+    verb: "touch",
+    icon: <Hand className="w-6 h-6" />,
+    color: "text-green-400"
   },
   {
     title: "Step 3: Listen for 3 sounds",
-    instruction: "Notice sounds nearby or in the distance. What do you hear?",
+    instruction: "Notice sounds nearby or in the distance. What do you hear? Focus on both obvious and subtle sounds.",
     count: 3,
-    verb: "hear"
+    verb: "hear",
+    icon: <Ear className="w-6 h-6" />,
+    color: "text-purple-400"
   },
   {
     title: "Step 4: Identify 2 things you can smell",
-    instruction: "Notice any scents or smells in your environment.",
+    instruction: "Notice any scents or smells in your environment. Take a gentle breath and be aware.",
     count: 2,
-    verb: "smell"
+    verb: "smell",
+    icon: <Wind className="w-6 h-6" />,
+    color: "text-yellow-400"
   },
   {
     title: "Step 5: Acknowledge 1 thing you can taste",
-    instruction: "Notice the taste in your mouth right now.",
+    instruction: "Notice the taste in your mouth right now. It might be subtle, but it's there.",
     count: 1,
-    verb: "taste"
+    verb: "taste",
+    icon: <Coffee className="w-6 h-6" />,
+    color: "text-red-400"
+  }
+];
+
+// Additional grounding techniques
+const alternativeGroundingTechniques = [
+  {
+    title: "Box Breathing",
+    description: "Inhale for 4, hold for 4, exhale for 4, hold for 4",
+    icon: <Wind className="w-5 h-5" />,
+    duration: "2-5 minutes"
+  },
+  {
+    title: "Progressive Muscle Relaxation",
+    description: "Tense and release muscle groups starting from your toes",
+    icon: <Zap className="w-5 h-5" />,
+    duration: "5-10 minutes"
+  },
+  {
+    title: "Mental Math",
+    description: "Count backwards from 100 by 7s, or multiply small numbers",
+    icon: <Brain className="w-5 h-5" />,
+    duration: "2-3 minutes"
+  },
+  {
+    title: "Mindful Observation",
+    description: "Focus intensely on one object for 2-3 minutes",
+    icon: <Target className="w-5 h-5" />,
+    duration: "2-3 minutes"
   }
 ];
 

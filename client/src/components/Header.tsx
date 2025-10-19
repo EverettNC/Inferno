@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export default function Header() {
-  const { toggleVoiceMode, isVoiceModeEnabled } = useVoiceContext();
+  const { toggleVoiceMode, isVoiceModeEnabled, stopSpeaking, isSpeaking } = useVoiceContext();
   const { user, logout } = useUserContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -38,6 +38,18 @@ export default function Header() {
           </Link>
 
           <div className="flex items-center space-x-4">
+            {/* Emergency Stop Button */}
+            {isSpeaking && (
+              <button
+                aria-label="Emergency stop speech"
+                className="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all animate-pulse"
+                onClick={stopSpeaking}
+                data-testid="button-emergency-stop"
+              >
+                🛑
+              </button>
+            )}
+
             {/* Voice Mode Toggle */}
             <button
               aria-label="Toggle voice mode"
