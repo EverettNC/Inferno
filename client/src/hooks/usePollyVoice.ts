@@ -3,7 +3,7 @@
  * Cost-effective voice synthesis using AWS Polly
  * Uses browser's Web Speech API for recognition (FREE)
  * + OpenAI text API for responses (cheap)
- * + AWS Polly for synthesis (AWS sponsored)
+ * + AWS Polly for synthesis (AWS sponsored, falls back to browser)
  */
 
 import { useState, useEffect, useRef, useCallback } from "react";
@@ -33,8 +33,8 @@ export function usePollyVoice() {
   // Initialize speech recognition
   useEffect(() => {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      setState(prev => ({ 
-        ...prev, 
+      setState(prev => ({
+        ...prev,
         error: "Speech recognition not supported in this browser"
       }));
       return;
@@ -64,8 +64,8 @@ export function usePollyVoice() {
 
     recognition.onerror = (event: any) => {
       console.error('Speech recognition error:', event.error);
-      setState(prev => ({ 
-        ...prev, 
+      setState(prev => ({
+        ...prev,
         isListening: false,
         error: `Speech recognition error: ${event.error}`
       }));
@@ -92,19 +92,19 @@ export function usePollyVoice() {
     }
 
     try {
-      setState(prev => ({ 
-        ...prev, 
-        isListening: true, 
-        error: null, 
-        transcript: "" 
+      setState(prev => ({
+        ...prev,
+        isListening: true,
+        error: null,
+        transcript: ""
       }));
       recognitionRef.current.start();
     } catch (error: any) {
       console.error("Error starting recognition:", error);
-      setState(prev => ({ 
-        ...prev, 
-        isListening: false, 
-        error: error.message 
+      setState(prev => ({
+        ...prev,
+        isListening: false,
+        error: error.message
       }));
     }
   }, []);
@@ -135,25 +135,64 @@ export function usePollyVoice() {
       const aiText = data.response;
       setState(prev => ({ ...prev, aiResponse: aiText }));
 
-      // Synthesize speech using AWS Polly
+      // Synthesize speech
       await speakText(aiText);
 
     } catch (error: any) {
       console.error("Error getting AI response:", error);
-      setState(prev => ({ 
-        ...prev, 
+      setState(prev => ({
+        ...prev,
         error: error.message || "Failed to get AI response",
         isProcessing: false
       }));
     }
   };
 
+  // Speak text using browser speech synthesis (reliable fallback)
+  const speakWithBrowser = (text: string): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      if (!('speechSynthesis' in window)) {
+        reject(new Error("Browser speech synthesis not available"));
+        return;
+      }
+
+      // Cancel any ongoing speech
+      window.speechSynthesis.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.9;
+      utterance.pitch = 1.0;
+      utterance.volume = 1.0;
+
+      // Get a natural-sounding voice if available
+      const voices = window.speechSynthesis.getVoices();
+      const preferredVoice = voices.find(v => v.name.includes('Samantha') || v.name.includes('Google US English Female'));
+      if (preferredVoice) {
+        utterance.voice = preferredVoice;
+      }
+
+      utterance.onend = () => {
+        console.log("Browser speech synthesis completed");
+        resolve();
+      };
+
+      utterance.onerror = (event) => {
+        console.error("Browser speech synthesis error:", event);
+        reject(new Error("Speech synthesis failed"));
+      };
+
+      console.log("Speaking with browser synthesis...");
+      window.speechSynthesis.speak(utterance);
+    });
+  };
+
   // Speak text using AWS Polly (falls back to browser speech if unavailable)
   const speakText = async (text: string) => {
-    try {
-      setState(prev => ({ ...prev, isSpeaking: true, isProcessing: false }));
+    setState(prev => ({ ...prev, isSpeaking: true, isProcessing: false }));
 
+    try {
       // Try AWS Polly first
+      console.log("Attempting AWS Polly synthesis...");
       const response = await fetch("/api/voice/synthesize", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -161,6 +200,7 @@ export function usePollyVoice() {
       });
 
       if (response.ok) {
+        console.log("AWS Polly synthesis successful");
         // AWS Polly available - use it
         const audioBlob = await response.blob();
         const audioUrl = URL.createObjectURL(audioBlob);
@@ -179,58 +219,37 @@ export function usePollyVoice() {
 
         audio.onerror = (error) => {
           console.error("Audio playback error:", error);
-          setState(prev => ({ 
-            ...prev, 
-            isSpeaking: false,
-            error: "Audio playback failed"
-          }));
           URL.revokeObjectURL(audioUrl);
+          // Fallback to browser speech
+          speakWithBrowser(text).then(() => {
+            setState(prev => ({ ...prev, isSpeaking: false }));
+          }).catch((err) => {
+            console.error("Browser speech fallback failed:", err);
+            setState(prev => ({ ...prev, isSpeaking: false, error: "Voice playback failed" }));
+          });
         };
 
         await audio.play();
       } else {
-        // AWS Polly not available - fall back to browser speech synthesis
-        console.log("AWS Polly unavailable, using browser speech synthesis");
-        
-        if ('speechSynthesis' in window) {
-          const utterance = new SpeechSynthesisUtterance(text);
-          utterance.rate = 0.9;
-          utterance.pitch = 1.0;
-          
-          utterance.onend = () => {
-            setState(prev => ({ ...prev, isSpeaking: false }));
-          };
-          
-          utterance.onerror = (error) => {
-            console.error("Speech synthesis error:", error);
-            setState(prev => ({ 
-              ...prev, 
-              isSpeaking: false,
-              error: "Speech synthesis failed"
-            }));
-          };
-          
-          window.speechSynthesis.speak(utterance);
-        } else {
-          throw new Error("No voice synthesis available");
-        }
+        // AWS Polly not available - use browser speech synthesis
+        console.log("AWS Polly unavailable (status:", response.status, "), using browser speech");
+        await speakWithBrowser(text);
+        setState(prev => ({ ...prev, isSpeaking: false }));
       }
 
     } catch (error: any) {
-      console.error("Error speaking text:", error);
-      // Try browser speech as last resort
-      if ('speechSynthesis' in window) {
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.onend = () => {
-          setState(prev => ({ ...prev, isSpeaking: false, isProcessing: false }));
-        };
-        window.speechSynthesis.speak(utterance);
-      } else {
-        setState(prev => ({ 
-          ...prev, 
+      console.error("Error in speakText:", error);
+      // Final fallback to browser speech
+      try {
+        console.log("Final fallback to browser speech");
+        await speakWithBrowser(text);
+        setState(prev => ({ ...prev, isSpeaking: false }));
+      } catch (browserError: any) {
+        console.error("All speech methods failed:", browserError);
+        setState(prev => ({
+          ...prev,
           isSpeaking: false,
-          isProcessing: false,
-          error: error.message || "Failed to speak"
+          error: "Voice synthesis unavailable"
         }));
       }
     }
@@ -241,6 +260,9 @@ export function usePollyVoice() {
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
+    }
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
     }
     setState(prev => ({ ...prev, isSpeaking: false }));
   }, []);
