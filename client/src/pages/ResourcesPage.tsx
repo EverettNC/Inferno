@@ -61,9 +61,19 @@ export default function ResourcesPage() {
                     <p className="text-neutral-600 text-sm mb-3">
                       {resource.description}
                     </p>
-                    <a href={resource.url || '#'} target="_blank" rel="noopener noreferrer" className="text-primary-600 text-sm font-medium hover:text-primary-700 transition">
-                      Read article <i className="fas fa-arrow-right ml-1"></i>
-                    </a>
+                    {resource.url && resource.url !== '#' ? (
+                      <a 
+                        href={resource.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="text-electric-cyan text-sm font-medium hover:opacity-80 transition inline-flex items-center gap-1"
+                        data-testid={`link-resource-${resource.id}`}
+                      >
+                        Read article →
+                      </a>
+                    ) : (
+                      <span className="text-text-tertiary text-sm">Link unavailable</span>
+                    )}
                   </div>
                 </div>
               ))}
@@ -130,9 +140,19 @@ export default function ResourcesPage() {
                   <p className="text-neutral-600 text-sm mb-2">
                     {support.description}
                   </p>
-                  <a href={support.url || '#'} target="_blank" rel="noopener noreferrer" className="text-primary-600 text-sm hover:text-primary-700 transition">
-                    Visit website <i className="fas fa-external-link-alt ml-1"></i>
-                  </a>
+                  {support.url && support.url !== '#' ? (
+                    <a 
+                      href={support.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="text-electric-cyan text-sm hover:opacity-80 transition inline-flex items-center gap-1"
+                      data-testid={`link-support-${support.id}`}
+                    >
+                      Visit website →
+                    </a>
+                  ) : (
+                    <span className="text-text-tertiary text-sm">Link unavailable</span>
+                  )}
                 </div>
               ))}
               

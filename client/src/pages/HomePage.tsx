@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import useVoiceMode from '@/hooks/useVoiceMode';
 import { format } from 'date-fns';
+import { Mic, MicOff } from 'lucide-react';
 
 export default function HomePage() {
   const { user } = useUserContext();
@@ -99,7 +100,36 @@ export default function HomePage() {
   };
   
   return (
-    <div className="max-w-5xl mx-auto px-4 pt-8">
+    <div className="max-w-5xl mx-auto px-4 pt-8 pb-24">
+      {/* Voice Mode Status Banner */}
+      {!isVoiceModeEnabled && (
+        <div 
+          className="mb-6 p-4 rounded-lg border-2 border-electric-cyan/30 flex items-center gap-3"
+          style={{ background: 'rgba(0, 167, 255, 0.08)' }}
+          data-testid="voice-status-banner"
+        >
+          <MicOff className="w-6 h-6 text-electric-cyan flex-shrink-0" />
+          <div className="flex-1">
+            <p className="font-semibold text-electric-cyan">Voice Mode Available</p>
+            <p className="text-sm text-text-secondary">Click the mic icon in the top-right to enable hands-free voice interaction</p>
+          </div>
+        </div>
+      )}
+      
+      {isVoiceModeEnabled && (
+        <div 
+          className="mb-6 p-4 rounded-lg border-2 border-electric-cyan flex items-center gap-3"
+          style={{ background: 'rgba(0, 167, 255, 0.12)' }}
+          data-testid="voice-active-banner"
+        >
+          <Mic className="w-6 h-6 text-electric-cyan electric-pulse flex-shrink-0" />
+          <div className="flex-1">
+            <p className="font-semibold text-electric-cyan">Voice Mode Active</p>
+            <p className="text-sm text-text-secondary">I can hear and speak with you. All interactions are voice-enabled.</p>
+          </div>
+        </div>
+      )}
+      
       {/* Welcome Message */}
       <section className="mb-8">
         <h1 className="font-display text-2xl sm:text-3xl font-bold mb-2">

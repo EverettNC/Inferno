@@ -1,5 +1,7 @@
 # Inferno AI - Clinical-Grade Trauma-Informed AI Platform
 
+**GitHub Repository:** https://github.com/EverettNC/Inferno.git
+
 ## Overview
 
 Inferno AI is a **clinical-grade, trauma-informed AI platform** with masters-level expertise in PTSD and trauma treatment. The platform combines evidence-based therapeutic exercises with real-time AI support, drawing from peer-reviewed research and clinical protocols to provide comprehensive trauma care.
