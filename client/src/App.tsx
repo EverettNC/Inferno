@@ -14,9 +14,12 @@ import ChatPage from "@/pages/ChatPage";
 import LandingPage from "@/pages/LandingPage";
 import SignInPage from "@/pages/SignInPage";
 import { VoiceModePage } from "@/pages/VoiceModePage";
-import ProfilePage from "@/pages/ProfilePage";
-import SettingsPage from "@/pages/SettingsPage";
+import ProfileSettingsPage from "@/pages/ProfileSettingsPage";
 import HelpPage from "@/pages/HelpPage";
+import EmotionTonePage from "@/pages/EmotionTonePage";
+import LearningHubPage from "@/pages/LearningHubPage";
+import ProfessionalTrainingPage from "@/pages/ProfessionalTrainingPage";
+import CommunityPage from "@/pages/CommunityPage";
 import Header from "@/components/Header";
 import Navigation from "@/components/Navigation";
 import VoiceFeedback from "@/components/VoiceFeedback";
@@ -46,9 +49,12 @@ function Router() {
       <Route path="/mindfulness" component={MindfulnessExercise} />
       <Route path="/chat" component={ChatPage} />
       <Route path="/voice" component={VoiceModePage} />
+      <Route path="/emotion" component={EmotionTonePage} />
+      <Route path="/community" component={CommunityPage} />
+      <Route path="/learning" component={LearningHubPage} />
+      <Route path="/training" component={ProfessionalTrainingPage} />
       <Route path="/resources" component={ResourcesPage} />
-      <Route path="/profile" component={ProfilePage} />
-      <Route path="/settings" component={SettingsPage} />
+      <Route path="/profile" component={ProfileSettingsPage} />
       <Route path="/help" component={HelpPage} />
       <Route component={NotFound} />
     </Switch>

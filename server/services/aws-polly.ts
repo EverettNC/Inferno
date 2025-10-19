@@ -28,17 +28,16 @@ let DescribeVoicesCommand: any;
 
 async function loadPollySDK() {
   if (PollyClient) return; // Already loaded
-  
+
   try {
-    // @ts-expect-error - AWS SDK optional dependency (install with: npm install @aws-sdk/client-polly)
-    const sdk = await import("@aws-sdk/client-polly");
-    PollyClient = sdk.PollyClient;
-    SynthesizeSpeechCommand = sdk.SynthesizeSpeechCommand;
-    DescribeVoicesCommand = sdk.DescribeVoicesCommand;
+    // Load AWS SDK dynamically
+    const pollyModule = await import("@aws-sdk/client-polly");
+    PollyClient = pollyModule.PollyClient;
+    SynthesizeSpeechCommand = pollyModule.SynthesizeSpeechCommand;
+    DescribeVoicesCommand = pollyModule.DescribeVoicesCommand;
   } catch (error) {
-    throw new Error(
-      "AWS Polly SDK not installed. Install with: npm install @aws-sdk/client-polly --legacy-peer-deps"
-    );
+    console.error("Failed to load AWS Polly SDK:", error);
+    throw new Error("AWS Polly SDK not available. Install with: npm install @aws-sdk/client-polly");
   }
 }
 
@@ -171,7 +170,7 @@ export class PollyVoiceService {
 
   /**
    * Create trauma-informed SSML for empathetic delivery
-   * Uses prosody, pauses, and gentle pacing
+   * Uses basic prosody that works with both neural and standard engines
    */
   createTraumaInformedSSML(text: string): string {
     // Clean text and prepare for SSML
@@ -182,10 +181,10 @@ export class PollyVoiceService {
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&apos;");
 
-    // Add trauma-informed prosody
-    // Slower rate, softer volume, calm pitch
+    // Use basic SSML that works across all engines
+    // Avoid neural-specific features
     return `<speak>
-      <prosody rate="slow" volume="soft" pitch="medium">
+      <prosody rate="95%">
         ${cleanText}
       </prosody>
     </speak>`;
@@ -245,17 +244,22 @@ export async function synthesizeText(
 }
 
 /**
- * Trauma-informed synthesis with SSML
+ * Trauma-informed synthesis with voice selection
  */
-export async function synthesizeTraumaInformed(text: string): Promise<Buffer> {
+export async function synthesizeTraumaInformed(text: string, voice: string = "Joanna"): Promise<Buffer> {
   try {
     const polly = createPollyService();
-    const ssml = polly.createTraumaInformedSSML(text);
-    return await polly.synthesizeSSML(ssml, {
-      voice: "Joanna", // Warm, empathetic voice
-      engine: "neural"
+    
+    // Start with plain text synthesis - most reliable
+    console.log(`Attempting plain text synthesis with voice: ${voice}...`);
+    return await polly.synthesizeSpeech({
+      text,
+      voice,
+      engine: "standard"
     });
+    
   } catch (error: any) {
+    console.error("All synthesis methods failed:", error);
     throw new Error(`Trauma-informed synthesis failed: ${error.message}`);
   }
 }

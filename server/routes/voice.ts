@@ -12,8 +12,8 @@ const router = Router();
 // Request validation schema
 const synthesizeRequestSchema = z.object({
   text: z.string().min(1).max(3000),
-  voice: z.string().optional(),
-  engine: z.enum(["standard", "neural"]).optional()
+  voice: z.enum(["Joanna", "Matthew"]).optional().default("Joanna"),
+  engine: z.enum(["standard", "neural"]).optional().default("standard")
 });
 
 /**
@@ -34,8 +34,8 @@ router.post("/synthesize", async (req: Request, res: Response) => {
       });
     }
 
-    // Synthesize speech with trauma-informed SSML
-    const audioBuffer = await synthesizeTraumaInformed(text);
+    // Synthesize speech with selected voice
+    const audioBuffer = await synthesizeTraumaInformed(text, voice);
 
     // Set response headers for audio
     res.set({

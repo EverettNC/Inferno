@@ -1,9 +1,9 @@
 // Function to check if browser supports the Web Speech API Synthesis
 export function isSpeechSynthesisSupported(): boolean {
-  return 'speechSynthesis' in window;
+  return 'speechSynthesis' in window || true; // Always return true since we have server-side fallback
 }
 
-// Speech synthesis class
+// Speech synthesis class with server-side fallback
 export class SpeechSynthesizer {
   private synth: SpeechSynthesis | null = null;
   private voice: SpeechSynthesisVoice | null = null;
@@ -14,6 +14,10 @@ export class SpeechSynthesizer {
   private onStartCallback: (() => void) | null = null;
   private onEndCallback: (() => void) | null = null;
   private onErrorCallback: ((error: Error) => void) | null = null;
+  private currentAudio: HTMLAudioElement | null = null;
+  private selectedVoice: "Joanna" | "Matthew" = "Joanna"; // Default voice
+  private lastSpeakTime = 0;
+  private debounceMs = 1000; // Prevent rapid-fire requests
 
   constructor() {
     if (isSpeechSynthesisSupported()) {
@@ -81,6 +85,79 @@ export class SpeechSynthesizer {
   }
 
   public speak(text: string): boolean {
+    // Emergency stop if already speaking
+    if (this.isSpeaking) {
+      console.log("Already speaking, stopping current speech first");
+      this.stop();
+      return false;
+    }
+
+    // Debounce rapid requests
+    const now = Date.now();
+    if (now - this.lastSpeakTime < this.debounceMs) {
+      console.log("Speech request debounced - too soon after last request");
+      return false;
+    }
+    this.lastSpeakTime = now;
+
+    // Try server-side synthesis first (AWS Polly), then fallback to browser
+    this.speakWithServer(text).catch(() => {
+      // Fallback to browser synthesis
+      this.speakWithBrowser(text);
+    });
+    return true;
+  }
+
+  private async speakWithServer(text: string): Promise<void> {
+    try {
+      const response = await fetch('/api/voice/synthesize', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          text, 
+          voice: this.selectedVoice, // Use selected voice
+          engine: 'standard'
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Server synthesis failed');
+      }
+
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      
+      this.currentAudio = new Audio(audioUrl);
+      
+      this.currentAudio.onplay = () => {
+        this.isSpeaking = true;
+        if (this.onStartCallback) this.onStartCallback();
+      };
+      
+      this.currentAudio.onended = () => {
+        this.isSpeaking = false;
+        if (this.onEndCallback) this.onEndCallback();
+        URL.revokeObjectURL(audioUrl);
+      };
+      
+      this.currentAudio.onerror = () => {
+        this.isSpeaking = false;
+        if (this.onErrorCallback) {
+          this.onErrorCallback(new Error('Audio playback failed'));
+        }
+      };
+      
+      this.currentAudio.volume = this.volume;
+      await this.currentAudio.play();
+      
+    } catch (error) {
+      throw new Error(`Server synthesis failed: ${error}`);
+    }
+  }
+
+  private speakWithBrowser(text: string): boolean {
     if (!this.synth) {
       if (this.onErrorCallback) {
         this.onErrorCallback(new Error("Speech synthesis not supported"));
@@ -90,6 +167,12 @@ export class SpeechSynthesizer {
 
     // Cancel any current speech
     this.synth.cancel();
+    
+    // Stop any server audio
+    if (this.currentAudio) {
+      this.currentAudio.pause();
+      this.currentAudio = null;
+    }
 
     const utterance = new SpeechSynthesisUtterance(text);
     
@@ -127,9 +210,25 @@ export class SpeechSynthesizer {
   }
 
   public stop(): void {
+    console.log("🛑 STOPPING ALL SPEECH");
+    
+    // Stop browser synthesis
     if (this.synth) {
       this.synth.cancel();
-      this.isSpeaking = false;
+    }
+    
+    // Stop server audio
+    if (this.currentAudio) {
+      this.currentAudio.pause();
+      this.currentAudio.currentTime = 0;
+      this.currentAudio = null;
+    }
+    
+    this.isSpeaking = false;
+    
+    // Call end callback
+    if (this.onEndCallback) {
+      this.onEndCallback();
     }
   }
 
@@ -137,16 +236,37 @@ export class SpeechSynthesizer {
     if (this.synth) {
       this.synth.pause();
     }
+    if (this.currentAudio) {
+      this.currentAudio.pause();
+    }
   }
 
   public resume(): void {
     if (this.synth) {
       this.synth.resume();
     }
+    if (this.currentAudio) {
+      this.currentAudio.play();
+    }
   }
 
   public isSpeakingNow(): boolean {
     return this.isSpeaking;
+  }
+
+  public setPollyVoice(voice: "Joanna" | "Matthew"): void {
+    this.selectedVoice = voice;
+  }
+
+  public getPollyVoice(): "Joanna" | "Matthew" {
+    return this.selectedVoice;
+  }
+
+  public getAvailablePollyVoices(): Array<{id: string, name: string, gender: string}> {
+    return [
+      { id: "Joanna", name: "Joanna", gender: "Female" },
+      { id: "Matthew", name: "Matthew", gender: "Male" }
+    ];
   }
 
   public onStart(callback: () => void): void {

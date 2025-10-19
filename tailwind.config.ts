@@ -15,6 +15,14 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       colors: {
+        // The Christman AI Project — Signature Brand Colors
+        primary: '#37C8FF',         // Electric Cyan - Primary accent / Logo lightning
+        darkbg: '#080C18',          // Deep Night Blue - Background / foundation  
+        indigo: '#111828',          // Indigo Black - Card & modal backgrounds
+        highlight: '#35E4B9',       // Sky Glow Teal - Highlight for interaction
+        iceblue: '#B5E6FF',         // Neon Ice Blue - Secondary text / description
+        
+        // Standard shadcn colors for compatibility
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
@@ -24,10 +32,6 @@ export default {
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
-        },
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -66,6 +70,16 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
       },
+      backgroundImage: {
+        'power-gradient': 'linear-gradient(145deg, #28A6F5, #2B6CFF)',
+        'christman-glow': 'linear-gradient(to right, #37C8FF, #35E4B9)',
+        'neon-flow': 'linear-gradient(135deg, #37C8FF, #B5E6FF, #35E4B9)',
+      },
+      boxShadow: {
+        'christman': '0 10px 20px rgba(55, 200, 255, 0.4)',
+        'power': '0 8px 32px rgba(40, 166, 245, 0.3)',
+        'glow': '0 0 20px rgba(53, 228, 185, 0.5)',
+      },
       keyframes: {
         "accordion-down": {
           from: {
@@ -83,10 +97,19 @@ export default {
             height: "0",
           },
         },
+        "christman-pulse": {
+          "0%, 100%": {
+            boxShadow: "0 0 20px rgba(55, 200, 255, 0.3)"
+          },
+          "50%": {
+            boxShadow: "0 0 40px rgba(53, 228, 185, 0.6)"
+          }
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "christman-pulse": "christman-pulse 2s ease-in-out infinite",
       },
     },
   },
