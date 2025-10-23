@@ -14,6 +14,7 @@ import {
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, gte } from "drizzle-orm";
+import bcrypt from 'bcryptjs';
 
 export interface IStorage {
   // User methods
@@ -80,12 +81,14 @@ export class MemStorage implements IStorage {
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
+    // Hash password before storing
     const id = this.userCurrentId++;
     const now = new Date();
+    const hashed = await bcrypt.hash(insertUser.password, 10);
     const user: User = {
       id,
       username: insertUser.username,
-      password: insertUser.password,
+      password: hashed,
       firstName: insertUser.firstName ?? null,
       lastName: insertUser.lastName ?? null,
       preferredLanguage: insertUser.preferredLanguage ?? null,
@@ -342,7 +345,10 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const [user] = await db.insert(users).values(insertUser).returning();
+    // Hash password server-side before inserting into DB
+    const hashedPassword = await bcrypt.hash(insertUser.password, 10);
+    const insertWithHashed = { ...insertUser, password: hashedPassword } as InsertUser;
+    const [user] = await db.insert(users).values(insertWithHashed).returning();
     return user;
   }
   

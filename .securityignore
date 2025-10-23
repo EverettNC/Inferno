@@ -1,0 +1,35 @@
+# .securityignore
+
+# Security audit configuration
+# This file defines paths and patterns to exclude from security scans
+
+# Development and build artifacts
+node_modules/
+dist/
+build/
+.cache/
+*.log
+
+# Environment files (already in .gitignore but explicitly listed)
+.env
+.env.local
+.env.production
+.env.development
+
+# Generated files
+*.min.js
+*.bundle.js
+
+# Third-party libraries with known dev-only vulnerabilities
+**/esbuild/**
+**/drizzle-kit/**
+
+# Test files (if they contain mock credentials)
+**/*.test.ts
+**/*.test.js
+**/*.spec.ts
+**/*.spec.js
+
+# Documentation with example credentials
+examples/
+docs/api-examples/

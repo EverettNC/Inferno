@@ -13,6 +13,7 @@ export default function SignInPage() {
   const { login } = useUserContext();
   const { toast } = useToast();
   const [name, setName] = useState('');
+  const [passwordInput, setPasswordInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -31,8 +32,12 @@ export default function SignInPage() {
     
     try {
       const username = name.toLowerCase().replace(/\s+/g, '');
-      const password = 'inferno2024';
-      
+      const password = passwordInput;
+
+      if (!password) {
+        throw new Error('Please enter a password to initialize your account');
+      }
+
       try {
         await login(username, password);
       } catch (loginError) {
@@ -420,6 +425,39 @@ export default function SignInPage() {
                   disabled={isLoading}
                   data-testid="input-name"
                 />
+              </div>
+              <div className="space-y-4">
+                <label 
+                  htmlFor="password" 
+                  className="block text-sm font-medium text-center tracking-widest uppercase"
+                  style={{ 
+                    color: '#00A7FF',
+                    letterSpacing: '0.2em',
+                    textShadow: '0 0 10px rgba(0, 167, 255, 0.4)'
+                  }}
+                  data-testid="label-password"
+                >
+                  Choose a Password
+                </label>
+                <div className="relative group">
+                  <Input
+                    id="password"
+                    type="password"
+                    value={passwordInput}
+                    onChange={(e) => setPasswordInput(e.target.value)}
+                    className="w-full pl-6 pr-5 py-6 text-lg rounded-xl border-2 transition-all duration-300 focus:scale-[1.02]"
+                    style={{
+                      background: 'rgba(10, 10, 15, 0.8)',
+                      borderColor: '#FF6A2E',
+                      color: '#E0E6ED',
+                      boxShadow: 'inset 0 2px 10px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 106, 46, 0.15)',
+                    }}
+                    placeholder="Create a secure password"
+                    autoComplete="new-password"
+                    disabled={isLoading}
+                    data-testid="input-password"
+                  />
+                </div>
               </div>
             </div>
             

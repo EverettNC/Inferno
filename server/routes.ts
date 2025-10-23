@@ -1,5 +1,6 @@
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
+import bcrypt from 'bcryptjs';
 import { storage } from "./storage";
 import { 
   insertUserSchema, 
@@ -32,7 +33,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(409).json({ message: "Username already exists" });
       }
       
-      const user = await storage.createUser(validatedData);
+  const user = await storage.createUser(validatedData);
       
       // Don't send password back
       const { password, ...userWithoutPassword } = user;
@@ -55,8 +56,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const user = await storage.getUserByUsername(username);
-      
-      if (!user || user.password !== password) {
+
+      if (!user) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+
+      const match = await bcrypt.compare(password, user.password);
+      if (!match) {
         return res.status(401).json({ message: "Invalid credentials" });
       }
       

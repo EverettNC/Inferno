@@ -1,13 +1,69 @@
 import 'dotenv/config';
 import express, { type Request, Response, NextFunction } from "express";
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import cors from 'cors';
+import session from 'express-session';
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { initializeClinicalProtocols, syncLatestResearch } from "./services/knowledge-sync";
 import { startKnowledgeSyncSchedule } from "./services/knowledge-sync";
+import SessionManager from "./services/session-manager";
+import SecurityAuditLogger from "./services/security-audit";
+import EncryptionService from "./services/encryption";
+import MFAService from "./services/mfa";
+import DataPrivacyService from "./services/data-privacy";
 
 const app = express();
+
+// Initialize security services
+async function initializeSecurityServices() {
+  try {
+    // Initialize encryption service
+    await EncryptionService.initialize();
+    
+    // Log security service initialization
+    await SecurityAuditLogger.logEvent({
+      eventType: 'SYSTEM_STARTUP',
+      details: {
+        services: ['encryption', 'session-management', 'mfa', 'data-privacy'],
+        timestamp: new Date().toISOString()
+      },
+      severity: 'INFO'
+    });
+
+    log('Security services initialized successfully');
+  } catch (error) {
+    log(`Failed to initialize security services: ${error}`);
+    process.exit(1);
+  }
+}
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Security middlewares
+app.use(helmet());
+
+// CORS: restrict origins in production. Configure via CORS_ORIGIN env var.
+const corsOrigin = process.env.CORS_ORIGIN || (app.get("env") === "development" ? "http://localhost:5173" : false);
+app.use(cors({ origin: corsOrigin }));
+
+// Session management with Redis
+const sessionMiddleware = SessionManager.getSessionMiddleware();
+app.use(sessionMiddleware);
+
+// CSRF protection middleware
+app.use('/api', SessionManager.csrfProtection);
+
+// Rate limiting on API routes to mitigate abuse
+const apiLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: Number(process.env.RATE_LIMIT_MAX || 60), // default 60 requests per minute
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use('/api', apiLimiter);
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -59,23 +115,13 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-<<<<<<< HEAD
-  // ALWAYS serve the app on port 5000
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = 5173;
-  server.listen({
-    port,
-    host: "127.0.0.1",
-=======
   // ALWAYS serve the app on port 5173
-  // this serves both the API and the client.
-  // Updated to support ngrok and external access
+  // this serves both the API and the client
   const port = 5173;
+  const host = process.env.NODE_ENV === "production" ? "0.0.0.0" : "127.0.0.1";
   server.listen({
     port,
-    host: "0.0.0.0",
->>>>>>> 74b91febd984123f151d2c1eff666b1fc1c59ac6
+    host,
     
   }, () => {
     log(`serving on port ${port}`);
