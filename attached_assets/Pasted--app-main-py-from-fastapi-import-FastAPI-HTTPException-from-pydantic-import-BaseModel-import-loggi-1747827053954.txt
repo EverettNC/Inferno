@@ -1,0 +1,93 @@
+# app/main.py
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+import logging
+from typing import Optional
+import nltk
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+import random
+
+# Initialize FastAPI app
+app = FastAPI(
+    title="Inferno AI Backend",
+    description="Trauma-informed AI for PTSD and anxiety support",
+    version="0.1.0"
+)
+
+# Configure logging for CloudWatch
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Download NLTK data (for local dev; in production, pre-download)
+try:
+    nltk.data.find('vader_lexicon')
+except LookupError:
+    nltk.download('vader_lexicon')
+
+# Initialize sentiment analyzer
+sid = SentimentIntensityAnalyzer()
+
+# Grounding exercises (sample; expand with therapist input)
+GROUNDING_EXERCISES = [
+    "Let’s ground together. Name 5 things you can see, 4 you can touch, 3 you can hear, 2 you can smell, and 1 you can taste.",
+    "Take a deep breath in for 4 seconds, hold for 4, and exhale for 4. Let’s do it together.",
+    "Focus on your feet. Feel them on the ground. Wiggle your toes. You’re here, and I’m with you."
+]
+
+# Request model
+class UserInput(BaseModel):
+    text: str
+    user_id: Optional[str] = None  # For future auth integration
+
+# Response model
+class GroundingResponse(BaseModel):
+    message: str
+    exercise: str
+    sentiment_score: dict
+
+@app.post("/grounding", response_model=GroundingResponse)
+async def provide_grounding(input: UserInput):
+    """
+    Analyzes user input for sentiment and returns a grounding exercise.
+    In production, integrate with fine-tuned BERT or Llama-based NLP models.
+    """
+    try:
+        # Log input (anonymized for HIPAA)
+        logger.info(f"Processing input for user_id: {input.user_id or 'anonymous'}")
+        
+        # Analyze sentiment
+        sentiment = sid.polarity_scores(input.text)
+        compound_score = sentiment['compound']
+        
+        # Determine response tone based on sentiment
+        if compound_score < -0.3:
+            message = "I hear you’re struggling. I’m here to help you through this."
+        elif compound_score > 0.3:
+            message = "It sounds like you’re feeling strong. Let’s keep that going."
+        else:
+            message = "I’m here with you. Let’s try something to stay grounded."
+        
+        # Select a grounding exercise
+        exercise = random.choice(GROUNDING_EXERCISES)
+        
+        # Log response (for CloudWatch monitoring)
+        logger.info(f"Sentiment: {sentiment}, Exercise: {exercise}")
+        
+        return {
+            "message": message,
+            "exercise": exercise,
+            "sentiment_score": sentiment
+        }
+    
+    except Exception as e:
+        logger.error(f"Error processing input: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for ECS/CloudWatch."""
+    return {"status": "healthy"}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
