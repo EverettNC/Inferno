@@ -9,7 +9,7 @@ import { setupVite, serveStatic, log } from "./vite";
 import { initializeClinicalProtocols, syncLatestResearch } from "./services/knowledge-sync";
 import { startKnowledgeSyncSchedule } from "./services/knowledge-sync";
 import SessionManager from "./services/session-manager";
-import SecurityAuditLogger from "./services/security-audit";
+import SecurityAuditLogger, { SecurityEventType, LogLevel } from "./services/security-audit";
 import EncryptionService from "./services/encryption";
 import MFAService from "./services/mfa";
 import DataPrivacyService from "./services/data-privacy";
@@ -24,12 +24,12 @@ async function initializeSecurityServices() {
     
     // Log security service initialization
     await SecurityAuditLogger.logEvent({
-      eventType: 'SYSTEM_STARTUP',
+      eventType: SecurityEventType.SYSTEM_STARTUP,
+      level: LogLevel.INFO,
       details: {
         services: ['encryption', 'session-management', 'mfa', 'data-privacy'],
         timestamp: new Date().toISOString()
-      },
-      severity: 'INFO'
+      }
     });
 
     log('Security services initialized successfully');
@@ -96,6 +96,9 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Initialize security services first
+  await initializeSecurityServices();
+  
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

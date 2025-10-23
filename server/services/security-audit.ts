@@ -24,6 +24,19 @@ export enum SecurityEventType {
   SUSPICIOUS_ACTIVITY = 'suspicious_activity',
   CONFIG_CHANGE = 'config_change',
   ERROR_SECURITY = 'error_security',
+  SYSTEM_STARTUP = 'system_startup',
+  CONSENT_GRANTED = 'consent_granted',
+  CONSENT_WITHDRAWN = 'consent_withdrawn',
+  DATA_EXPORT_REQUESTED = 'data_export_requested',
+  DATA_EXPORT_COMPLETED = 'data_export_completed',
+  DATA_EXPORT_FAILED = 'data_export_failed',
+  DATA_DELETION_REQUESTED = 'data_deletion_requested',
+  DATA_DELETION_VERIFICATION_FAILED = 'data_deletion_verification_failed',
+  DATA_DELETION_BLOCKED_LEGAL_HOLD = 'data_deletion_blocked_legal_hold',
+  DATA_DELETION_SCHEDULED = 'data_deletion_scheduled',
+  DATA_DELETION_COMPLETED = 'data_deletion_completed',
+  DATA_DELETION_FAILED = 'data_deletion_failed',
+  DATA_RETENTION_EVALUATED = 'data_retention_evaluated'
 }
 
 export enum LogLevel {

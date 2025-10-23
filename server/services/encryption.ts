@@ -113,8 +113,8 @@ export class EncryptionService {
     }
   }
 
-  /**
-   * Decrypt sensitive data using AES-256-GCM
+    /**
+   * Decrypt data using AES-256-CBC with HMAC verification
    */
   static decrypt(encryptedData: EncryptedData): string {
     if (!encryptedData.encrypted || !encryptedData.iv || !encryptedData.salt) {
@@ -124,20 +124,30 @@ export class EncryptionService {
     try {
       const masterKey = this.getMasterKey();
       
+      // Verify HMAC first
+      const hmacKey = CryptoJS.PBKDF2(masterKey + '_hmac', encryptedData.salt, {
+        keySize: 8, // 256 bits for HMAC
+        iterations: 100000,
+        hasher: CryptoJS.algo.SHA256
+      });
+      
+      const expectedHmac = CryptoJS.HmacSHA256(
+        encryptedData.encrypted + encryptedData.iv + encryptedData.salt, 
+        hmacKey
+      ).toString();
+      
+      if (expectedHmac !== encryptedData.tag) {
+        throw new Error('HMAC verification failed - data may be corrupted or tampered');
+      }
+      
       // Derive the same encryption key
       const derivedKey = this.deriveKey(masterKey, encryptedData.salt);
       
-      // Prepare the encrypted object for decryption
-      const encryptedObject = {
-        ciphertext: CryptoJS.enc.Hex.parse(encryptedData.encrypted),
-        tag: encryptedData.tag ? CryptoJS.enc.Hex.parse(encryptedData.tag) : undefined
-      };
-
-      // Decrypt using AES-256-GCM
-      const decrypted = CryptoJS.AES.decrypt(encryptedObject as any, derivedKey, {
+      // Decrypt using AES-256-CBC
+      const decrypted = CryptoJS.AES.decrypt(encryptedData.encrypted, derivedKey, {
         iv: CryptoJS.enc.Hex.parse(encryptedData.iv),
-        mode: CryptoJS.mode.GCM,
-        padding: CryptoJS.pad.NoPadding
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
       });
 
       const plaintext = decrypted.toString(CryptoJS.enc.Utf8);

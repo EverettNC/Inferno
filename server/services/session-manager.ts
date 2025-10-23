@@ -205,29 +205,27 @@ export class SessionManager {
   /**
    * CSRF protection middleware
    */
-  csrfProtection() {
-    return (req: Request, res: Response, next: NextFunction) => {
-      // Skip CSRF for GET, HEAD, OPTIONS
-      if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
-        return next();
-      }
+  static csrfProtection(req: Request, res: Response, next: NextFunction) {
+    // Skip CSRF for GET, HEAD, OPTIONS
+    if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
+      return next();
+    }
 
-      // Skip for API endpoints that use other auth methods
-      if (req.path.startsWith('/api/auth/') || req.path.startsWith('/api/realtime-voice')) {
-        return next();
-      }
+    // Skip for API endpoints that use other auth methods
+    if (req.path.startsWith('/api/auth/') || req.path.startsWith('/api/realtime-voice')) {
+      return next();
+    }
 
-      const token = req.body._csrf || req.headers['x-csrf-token'] || req.headers['csrf-token'];
-      
-      if (!token || !this.verifyCSRFToken(req, token as string)) {
-        return res.status(403).json({ 
-          error: 'Invalid CSRF token',
-          code: 'CSRF_MISMATCH' 
-        });
-      }
+    const token = req.body._csrf || req.headers['x-csrf-token'] || req.headers['csrf-token'];
+    
+    if (!token || !SessionManager.verifyCSRFToken(req, token as string)) {
+      return res.status(403).json({ 
+        error: 'Invalid CSRF token',
+        code: 'CSRF_MISMATCH' 
+      });
+    }
 
-      next();
-    };
+    next();
   }
 
   /**
@@ -398,6 +396,55 @@ export class SessionManager {
       console.error('Error cleaning up expired sessions:', error);
       return 0;
     }
+  }
+
+  // Static instance for global access
+  private static instance: SessionManager;
+
+  /**
+   * Initialize the global session manager instance
+   */
+  static initialize(config?: SessionConfig): SessionManager {
+    if (!this.instance) {
+      const defaultConfig: SessionConfig = {
+        secret: process.env.SESSION_SECRET || 'your-secret-key-change-this',
+        redisUrl: process.env.REDIS_URL,
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        secure: process.env.NODE_ENV === 'production'
+      };
+      this.instance = new SessionManager({ ...defaultConfig, ...config });
+    }
+    return this.instance;
+  }
+
+  /**
+   * Get the global session middleware
+   */
+  static getSessionMiddleware() {
+    if (!this.instance) {
+      this.initialize();
+    }
+    return this.instance.getSessionMiddleware();
+  }
+
+  /**
+   * Get the session manager instance
+   */
+  static getInstance(): SessionManager {
+    if (!this.instance) {
+      this.initialize();
+    }
+    return this.instance;
+  }
+
+  /**
+   * Verify CSRF token statically
+   */
+  static verifyCSRFToken(req: Request, token: string): boolean {
+    if (!this.instance) {
+      this.initialize();
+    }
+    return this.instance.verifyCSRFToken(req, token);
   }
 }
 

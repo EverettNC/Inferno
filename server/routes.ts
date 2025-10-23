@@ -12,6 +12,7 @@ import aiRoutes from "./routes/ai";
 import healthRoutes from "./routes/health";
 import voiceRoutes from "./routes/voice";
 import { setupRealtimeVoiceWebSocket } from "./routes/realtime-voice";
+import SecurityAuditLogger, { SecurityEventType, LogLevel } from "./services/security-audit";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Mount AI routes
@@ -24,21 +25,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/voice', voiceRoutes);
   // Auth routes
   app.post("/api/auth/register", async (req: Request, res: Response) => {
+    const startTime = Date.now();
+    let userId: number | undefined;
+    
     try {
       const validatedData = insertUserSchema.parse(req.body);
       
       // Check if username already exists
       const existingUser = await storage.getUserByUsername(validatedData.username);
       if (existingUser) {
+        await SecurityAuditLogger.logEvent({
+          eventType: SecurityEventType.AUTH_FAILURE,
+          level: LogLevel.WARN,
+          username: validatedData.username,
+          ipAddress: req.ip,
+          userAgent: req.get('User-Agent'),
+          details: {
+            reason: 'username_already_exists',
+            action: 'register',
+            duration: Date.now() - startTime
+          }
+        });
         return res.status(409).json({ message: "Username already exists" });
       }
       
-  const user = await storage.createUser(validatedData);
+      const user = await storage.createUser(validatedData);
+      userId = user.id;
+      
+      // Log successful registration
+      await SecurityAuditLogger.logEvent({
+        eventType: SecurityEventType.AUTH_SUCCESS,
+        level: LogLevel.INFO,
+        userId: user.id,
+        username: user.username,
+        ipAddress: req.ip,
+        userAgent: req.get('User-Agent'),
+        details: {
+          action: 'register',
+          duration: Date.now() - startTime
+        }
+      });
       
       // Don't send password back
       const { password, ...userWithoutPassword } = user;
       res.status(201).json(userWithoutPassword);
     } catch (error) {
+      await SecurityAuditLogger.logEvent({
+        eventType: SecurityEventType.AUTH_FAILURE,
+        level: LogLevel.ERROR,
+        userId,
+        ipAddress: req.ip,
+        userAgent: req.get('User-Agent'),
+        details: {
+          action: 'register',
+          error: error instanceof Error ? error.message : 'Unknown error',
+          duration: Date.now() - startTime
+        }
+      });
+      
       if (error instanceof z.ZodError) {
         res.status(400).json({ message: "Invalid data", errors: error.format() });
       } else {
@@ -48,64 +92,227 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   app.post("/api/auth/login", async (req: Request, res: Response) => {
+    const startTime = Date.now();
+    let userId: number | undefined;
+    
     try {
       const { username, password } = req.body;
       
       if (!username || !password) {
+        await SecurityAuditLogger.logEvent({
+          eventType: SecurityEventType.AUTH_FAILURE,
+          level: LogLevel.WARN,
+          ipAddress: req.ip,
+          userAgent: req.get('User-Agent'),
+          details: {
+            reason: 'missing_credentials',
+            action: 'login',
+            duration: Date.now() - startTime
+          }
+        });
         return res.status(400).json({ message: "Username and password required" });
       }
       
       const user = await storage.getUserByUsername(username);
 
       if (!user) {
+        await SecurityAuditLogger.logEvent({
+          eventType: SecurityEventType.AUTH_FAILURE,
+          level: LogLevel.WARN,
+          username,
+          ipAddress: req.ip,
+          userAgent: req.get('User-Agent'),
+          details: {
+            reason: 'user_not_found',
+            action: 'login',
+            duration: Date.now() - startTime
+          }
+        });
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
+      userId = user.id;
       const match = await bcrypt.compare(password, user.password);
       if (!match) {
+        await SecurityAuditLogger.logEvent({
+          eventType: SecurityEventType.AUTH_FAILURE,
+          level: LogLevel.WARN,
+          userId: user.id,
+          username: user.username,
+          ipAddress: req.ip,
+          userAgent: req.get('User-Agent'),
+          details: {
+            reason: 'invalid_password',
+            action: 'login',
+            duration: Date.now() - startTime
+          }
+        });
         return res.status(401).json({ message: "Invalid credentials" });
       }
+      
+      // Log successful login
+      await SecurityAuditLogger.logEvent({
+        eventType: SecurityEventType.AUTH_SUCCESS,
+        level: LogLevel.INFO,
+        userId: user.id,
+        username: user.username,
+        ipAddress: req.ip,
+        userAgent: req.get('User-Agent'),
+        details: {
+          action: 'login',
+          duration: Date.now() - startTime
+        }
+      });
       
       // Don't send password back
       const { password: _, ...userWithoutPassword } = user;
       res.status(200).json(userWithoutPassword);
     } catch (error) {
+      await SecurityAuditLogger.logEvent({
+        eventType: SecurityEventType.ERROR_SECURITY,
+        level: LogLevel.ERROR,
+        userId,
+        ipAddress: req.ip,
+        userAgent: req.get('User-Agent'),
+        details: {
+          action: 'login',
+          error: error instanceof Error ? error.message : 'Unknown error',
+          duration: Date.now() - startTime
+        }
+      });
       res.status(500).json({ message: "Failed to login" });
     }
   });
   
   // User routes
   app.get("/api/users/:id", async (req: Request, res: Response) => {
+    const startTime = Date.now();
+    
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
+        await SecurityAuditLogger.logEvent({
+          eventType: SecurityEventType.DATA_ACCESS,
+          level: LogLevel.WARN,
+          ipAddress: req.ip,
+          userAgent: req.get('User-Agent'),
+          resource: 'user_profile',
+          details: {
+            reason: 'invalid_user_id',
+            requestedId: req.params.id,
+            duration: Date.now() - startTime
+          }
+        });
         return res.status(400).json({ message: "Invalid user ID" });
       }
       
       const user = await storage.getUser(id);
       if (!user) {
+        await SecurityAuditLogger.logEvent({
+          eventType: SecurityEventType.DATA_ACCESS,
+          level: LogLevel.WARN,
+          userId: id,
+          ipAddress: req.ip,
+          userAgent: req.get('User-Agent'),
+          resource: 'user_profile',
+          details: {
+            reason: 'user_not_found',
+            requestedId: id,
+            duration: Date.now() - startTime
+          }
+        });
         return res.status(404).json({ message: "User not found" });
       }
+      
+      // Log successful data access
+      await SecurityAuditLogger.logEvent({
+        eventType: SecurityEventType.DATA_ACCESS,
+        level: LogLevel.INFO,
+        userId: id,
+        username: user.username,
+        ipAddress: req.ip,
+        userAgent: req.get('User-Agent'),
+        resource: 'user_profile',
+        action: 'read',
+        details: {
+          duration: Date.now() - startTime
+        }
+      });
       
       // Don't send password back
       const { password, ...userWithoutPassword } = user;
       res.status(200).json(userWithoutPassword);
     } catch (error) {
+      await SecurityAuditLogger.logEvent({
+        eventType: SecurityEventType.ERROR_SECURITY,
+        level: LogLevel.ERROR,
+        ipAddress: req.ip,
+        userAgent: req.get('User-Agent'),
+        resource: 'user_profile',
+        details: {
+          action: 'read',
+          error: error instanceof Error ? error.message : 'Unknown error',
+          duration: Date.now() - startTime
+        }
+      });
       res.status(500).json({ message: "Failed to fetch user" });
     }
   });
   
   app.patch("/api/users/:id", async (req: Request, res: Response) => {
+    const startTime = Date.now();
+    
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
+        await SecurityAuditLogger.logEvent({
+          eventType: SecurityEventType.DATA_MODIFY,
+          level: LogLevel.WARN,
+          ipAddress: req.ip,
+          userAgent: req.get('User-Agent'),
+          resource: 'user_profile',
+          details: {
+            reason: 'invalid_user_id',
+            requestedId: req.params.id,
+            duration: Date.now() - startTime
+          }
+        });
         return res.status(400).json({ message: "Invalid user ID" });
       }
       
       const user = await storage.getUser(id);
       if (!user) {
+        await SecurityAuditLogger.logEvent({
+          eventType: SecurityEventType.DATA_MODIFY,
+          level: LogLevel.WARN,
+          userId: id,
+          ipAddress: req.ip,
+          userAgent: req.get('User-Agent'),
+          resource: 'user_profile',
+          details: {
+            reason: 'user_not_found',
+            requestedId: id,
+            duration: Date.now() - startTime
+          }
+        });
         return res.status(404).json({ message: "User not found" });
       }
+      
+      // Log the modification attempt
+      await SecurityAuditLogger.logEvent({
+        eventType: SecurityEventType.DATA_MODIFY,
+        level: LogLevel.INFO,
+        userId: id,
+        username: user.username,
+        ipAddress: req.ip,
+        userAgent: req.get('User-Agent'),
+        resource: 'user_profile',
+        action: 'update',
+        details: {
+          modifiedFields: Object.keys(req.body),
+          duration: Date.now() - startTime
+        }
+      });
       
       const updatedUser = await storage.updateUser(id, req.body);
       if (!updatedUser) {
@@ -116,6 +323,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { password, ...userWithoutPassword } = updatedUser;
       res.status(200).json(userWithoutPassword);
     } catch (error) {
+      await SecurityAuditLogger.logEvent({
+        eventType: SecurityEventType.ERROR_SECURITY,
+        level: LogLevel.ERROR,
+        ipAddress: req.ip,
+        userAgent: req.get('User-Agent'),
+        resource: 'user_profile',
+        details: {
+          action: 'update',
+          error: error instanceof Error ? error.message : 'Unknown error',
+          duration: Date.now() - startTime
+        }
+      });
       res.status(500).json({ message: "Failed to update user" });
     }
   });
