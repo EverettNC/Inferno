@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Environment
 .env
 .env.local
@@ -52,3 +53,11 @@ npm-debug.log*
 # Database
 *.db
 *.sqlite
+=======
+node_modules
+dist
+.DS_Store
+server/public
+vite.config.ts.*
+*.tar.gz
+>>>>>>> 74b91febd984123f151d2c1eff666b1fc1c59ac6
