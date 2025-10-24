@@ -11,6 +11,7 @@ import { z } from "zod";
 import aiRoutes from "./routes/ai";
 import healthRoutes from "./routes/health";
 import voiceRoutes from "./routes/voice";
+import securityRoutes from "./routes/security";
 import { setupRealtimeVoiceWebSocket } from "./routes/realtime-voice";
 import SecurityAuditLogger, { SecurityEventType, LogLevel } from "./services/security-audit";
 
@@ -23,6 +24,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Mount voice synthesis routes (AWS Polly)
   app.use('/api/voice', voiceRoutes);
+  
+  // Mount security routes (MFA, privacy, audit)
+  app.use('/api/security', securityRoutes);
   // Auth routes
   app.post("/api/auth/register", async (req: Request, res: Response) => {
     const startTime = Date.now();

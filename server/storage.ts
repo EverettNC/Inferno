@@ -15,6 +15,8 @@ import {
 import { db } from "./db";
 import { eq, desc, and, gte } from "drizzle-orm";
 import bcrypt from 'bcryptjs';
+import EncryptionService from './services/encryption';
+import SecurityAuditLogger, { SecurityEventType, LogLevel } from './services/security-audit';
 
 export interface IStorage {
   // User methods
@@ -551,8 +553,332 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-// Create and initialize database storage
-export const storage = new DatabaseStorage();
+/**
+ * Encrypted Storage Wrapper
+ * Automatically encrypts/decrypts sensitive fields for HIPAA compliance
+ */
+export class EncryptedStorage implements IStorage {
+  private baseStorage: IStorage;
+  
+  // Define which fields should be encrypted for each entity
+  private static readonly ENCRYPTED_FIELDS = {
+    users: ['email', 'fullName'], // Encrypt PII
+    checkIns: ['notes'], // Encrypt sensitive notes
+    exercises: ['notes'], // Encrypt sensitive exercise notes
+    resources: [] // Resources typically don't contain PII
+  };
+
+  constructor(baseStorage: IStorage) {
+    this.baseStorage = baseStorage;
+  }
+
+  /**
+   * Encrypt sensitive fields in an object
+   */
+  private encryptFields<T extends Record<string, any>>(
+    data: T, 
+    fieldNames: string[]
+  ): T {
+    if (!EncryptionService.isInitialized()) {
+      throw new Error('Encryption service not initialized');
+    }
+
+    const encrypted = { ...data } as Record<string, any>;
+    
+    for (const fieldName of fieldNames) {
+      if (encrypted[fieldName] && typeof encrypted[fieldName] === 'string') {
+        try {
+          encrypted[fieldName] = EncryptionService.encrypt(encrypted[fieldName]);
+        } catch (error) {
+          console.error(`Failed to encrypt field ${fieldName}:`, error);
+          throw new Error(`Encryption failed for field ${fieldName}`);
+        }
+      }
+    }
+    
+    return encrypted as T;
+  }
+
+  /**
+   * Decrypt sensitive fields in an object
+   */
+  private decryptFields<T extends Record<string, any>>(
+    data: T, 
+    fieldNames: string[]
+  ): T {
+    if (!EncryptionService.isInitialized()) {
+      throw new Error('Encryption service not initialized');
+    }
+
+    const decrypted = { ...data } as Record<string, any>;
+    
+    for (const fieldName of fieldNames) {
+      if (decrypted[fieldName] && typeof decrypted[fieldName] === 'object') {
+        try {
+          // Check if this looks like encrypted data (has encrypted, iv, salt, tag properties)
+          const encryptedData = decrypted[fieldName];
+          if (encryptedData.encrypted && encryptedData.iv && encryptedData.salt && encryptedData.tag) {
+            decrypted[fieldName] = EncryptionService.decrypt(encryptedData);
+          }
+        } catch (error) {
+          console.error(`Failed to decrypt field ${fieldName}:`, error);
+          // In production, you might want to handle this differently
+          decrypted[fieldName] = '[DECRYPTION_FAILED]';
+        }
+      }
+    }
+    
+    return decrypted as T;
+  }
+
+  // ===== USER METHODS =====
+  
+  async getUser(id: number): Promise<User | undefined> {
+    const user = await this.baseStorage.getUser(id);
+    if (!user) return undefined;
+    
+    const decrypted = this.decryptFields(user, EncryptedStorage.ENCRYPTED_FIELDS.users);
+    
+    await SecurityAuditLogger.logEvent({
+      eventType: SecurityEventType.DATA_ACCESS,
+      level: LogLevel.INFO,
+      userId: id,
+      resource: 'user_profile',
+      action: 'read',
+      details: { encrypted: true }
+    });
+    
+    return decrypted;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const user = await this.baseStorage.getUserByUsername(username);
+    if (!user) return undefined;
+    
+    const decrypted = this.decryptFields(user, EncryptedStorage.ENCRYPTED_FIELDS.users);
+    
+    await SecurityAuditLogger.logEvent({
+      eventType: SecurityEventType.DATA_ACCESS,
+      level: LogLevel.INFO,
+      username,
+      resource: 'user_profile',
+      action: 'read_by_username',
+      details: { encrypted: true }
+    });
+    
+    return decrypted;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const encrypted = this.encryptFields(insertUser, EncryptedStorage.ENCRYPTED_FIELDS.users);
+    const user = await this.baseStorage.createUser(encrypted);
+    const decrypted = this.decryptFields(user, EncryptedStorage.ENCRYPTED_FIELDS.users);
+    
+    await SecurityAuditLogger.logEvent({
+      eventType: SecurityEventType.DATA_MODIFY,
+      level: LogLevel.INFO,
+      userId: user.id,
+      username: user.username,
+      resource: 'user_profile',
+      action: 'create',
+      details: { encrypted: true }
+    });
+    
+    return decrypted;
+  }
+
+  async updateUser(id: number, data: Partial<InsertUser>): Promise<User | undefined> {
+    const fieldsToEncrypt = EncryptedStorage.ENCRYPTED_FIELDS.users.filter(
+      field => field in data
+    );
+    
+    const encrypted = fieldsToEncrypt.length > 0 
+      ? this.encryptFields(data, fieldsToEncrypt)
+      : data;
+      
+    const user = await this.baseStorage.updateUser(id, encrypted);
+    if (!user) return undefined;
+    
+    const decrypted = this.decryptFields(user, EncryptedStorage.ENCRYPTED_FIELDS.users);
+    
+    await SecurityAuditLogger.logEvent({
+      eventType: SecurityEventType.DATA_MODIFY,
+      level: LogLevel.INFO,
+      userId: id,
+      username: user.username,
+      resource: 'user_profile',
+      action: 'update',
+      details: { 
+        encrypted: true,
+        modifiedFields: Object.keys(data)
+      }
+    });
+    
+    return decrypted;
+  }
+
+  // ===== CHECK-IN METHODS =====
+  
+  async getCheckIn(id: number): Promise<CheckIn | undefined> {
+    const checkIn = await this.baseStorage.getCheckIn(id);
+    if (!checkIn) return undefined;
+    
+    return this.decryptFields(checkIn, EncryptedStorage.ENCRYPTED_FIELDS.checkIns);
+  }
+
+  async getCheckInsByUserId(userId: number): Promise<CheckIn[]> {
+    const checkIns = await this.baseStorage.getCheckInsByUserId(userId);
+    
+    await SecurityAuditLogger.logEvent({
+      eventType: SecurityEventType.DATA_ACCESS,
+      level: LogLevel.INFO,
+      userId,
+      resource: 'check_ins',
+      action: 'read_multiple',
+      details: { 
+        encrypted: true,
+        count: checkIns.length 
+      }
+    });
+    
+    return checkIns.map(checkIn => 
+      this.decryptFields(checkIn, EncryptedStorage.ENCRYPTED_FIELDS.checkIns)
+    );
+  }
+
+  async createCheckIn(insertCheckIn: InsertCheckIn): Promise<CheckIn> {
+    const encrypted = this.encryptFields(insertCheckIn, EncryptedStorage.ENCRYPTED_FIELDS.checkIns);
+    const checkIn = await this.baseStorage.createCheckIn(encrypted);
+    const decrypted = this.decryptFields(checkIn, EncryptedStorage.ENCRYPTED_FIELDS.checkIns);
+    
+    await SecurityAuditLogger.logEvent({
+      eventType: SecurityEventType.DATA_MODIFY,
+      level: LogLevel.INFO,
+      userId: checkIn.userId,
+      resource: 'check_ins',
+      action: 'create',
+      details: { encrypted: true }
+    });
+    
+    return decrypted;
+  }
+
+  // ===== EXERCISE METHODS =====
+  
+  async getExercise(id: number): Promise<Exercise | undefined> {
+    const exercise = await this.baseStorage.getExercise(id);
+    if (!exercise) return undefined;
+    
+    return this.decryptFields(exercise, EncryptedStorage.ENCRYPTED_FIELDS.exercises);
+  }
+
+  async getExercisesByUserId(userId: number): Promise<Exercise[]> {
+    const exercises = await this.baseStorage.getExercisesByUserId(userId);
+    
+    await SecurityAuditLogger.logEvent({
+      eventType: SecurityEventType.DATA_ACCESS,
+      level: LogLevel.INFO,
+      userId,
+      resource: 'exercises',
+      action: 'read_multiple',
+      details: { 
+        encrypted: true,
+        count: exercises.length 
+      }
+    });
+    
+    return exercises.map(exercise => 
+      this.decryptFields(exercise, EncryptedStorage.ENCRYPTED_FIELDS.exercises)
+    );
+  }
+
+  async createExercise(insertExercise: InsertExercise): Promise<Exercise> {
+    const encrypted = this.encryptFields(insertExercise, EncryptedStorage.ENCRYPTED_FIELDS.exercises);
+    const exercise = await this.baseStorage.createExercise(encrypted);
+    const decrypted = this.decryptFields(exercise, EncryptedStorage.ENCRYPTED_FIELDS.exercises);
+    
+    await SecurityAuditLogger.logEvent({
+      eventType: SecurityEventType.DATA_MODIFY,
+      level: LogLevel.INFO,
+      userId: exercise.userId,
+      resource: 'exercises',
+      action: 'create',
+      details: { encrypted: true }
+    });
+    
+    return decrypted;
+  }
+
+  async updateExercise(id: number, data: Partial<InsertExercise>): Promise<Exercise | undefined> {
+    const fieldsToEncrypt = EncryptedStorage.ENCRYPTED_FIELDS.exercises.filter(
+      field => field in data
+    );
+    
+    const encrypted = fieldsToEncrypt.length > 0 
+      ? this.encryptFields(data, fieldsToEncrypt)
+      : data;
+      
+    const exercise = await this.baseStorage.updateExercise(id, encrypted);
+    if (!exercise) return undefined;
+    
+    const decrypted = this.decryptFields(exercise, EncryptedStorage.ENCRYPTED_FIELDS.exercises);
+    
+    await SecurityAuditLogger.logEvent({
+      eventType: SecurityEventType.DATA_MODIFY,
+      level: LogLevel.INFO,
+      userId: exercise.userId,
+      resource: 'exercises',
+      action: 'update',
+      details: { 
+        encrypted: true,
+        modifiedFields: Object.keys(data)
+      }
+    });
+    
+    return decrypted;
+  }
+
+  // ===== RESOURCE METHODS (No encryption needed) =====
+  
+  async getResource(id: number): Promise<Resource | undefined> {
+    return this.baseStorage.getResource(id);
+  }
+
+  async getResourcesByCategory(category: string): Promise<Resource[]> {
+    return this.baseStorage.getResourcesByCategory(category);
+  }
+
+  async getAllResources(): Promise<Resource[]> {
+    return this.baseStorage.getAllResources();
+  }
+
+  async createResource(insertResource: InsertResource): Promise<Resource> {
+    return this.baseStorage.createResource(insertResource);
+  }
+
+  // ===== STATISTICS METHODS =====
+  
+  async getCheckInStreak(userId: number): Promise<number> {
+    return this.baseStorage.getCheckInStreak(userId);
+  }
+
+  async getLastCheckInDate(userId: number): Promise<Date | undefined> {
+    return this.baseStorage.getLastCheckInDate(userId);
+  }
+
+  // ===== DATABASE INITIALIZATION =====
+  
+  async initializeResourcesIfEmpty(): Promise<void> {
+    // Delegate to the base storage if it has this method
+    if ('initializeResourcesIfEmpty' in this.baseStorage && 
+        typeof this.baseStorage.initializeResourcesIfEmpty === 'function') {
+      await (this.baseStorage as any).initializeResourcesIfEmpty();
+    }
+  }
+}
+
+// Create and initialize encrypted database storage
+export const storage = new EncryptedStorage(new DatabaseStorage());
 
 // Initialize default resources
 (async () => {
