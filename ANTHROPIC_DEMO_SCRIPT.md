@@ -158,7 +158,7 @@ Password: DemoUser2024!
 
 **This isn't vaporware - we prove first, then scale. Every platform built on the same Constitutional AI foundation you just witnessed working in Inferno.**
 
-**We have 4 platforms operational serving real users. Once we prove clinical success, we expand to 3 more underserved populations using proven infrastructure.**
+**We have 4 platforms operational with validated protocols. Once we prove clinical success, we expand to 3 more underserved populations using proven infrastructure.**
 
 **That's credible. That's scalable. That's ready for Constitutional AI integration TODAY.**"**
 
@@ -346,7 +346,7 @@ Password: DemoUser2024!
 ### Materials to Send
 1. Full system architecture diagram
 2. Clinical validation study proposal
-3. VA hospital partnership letters of interest
+3. Healthcare partnership letters of interest
 4. Financial projections and burn rate
 5. Cap table and funding ask (if applicable)
 

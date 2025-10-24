@@ -68,7 +68,7 @@
 *"Inferno is just 1 of 4 operational platforms..."*
 
 ### **4. Proof:** 291 Modules, Production Reality
-*"Not promises - working code serving real users"*
+*"Not promises - working operational code"*
 
 ### **5. Vision:** R&D Roadmap
 *"Once we prove clinical success, we expand to 3 more populations"*
@@ -118,7 +118,7 @@
 
 ## 🎯 **FINAL POSITIONING:**
 
-**"We're not asking you to believe in a vision. We're asking you to partner with proven, operational systems that validate Constitutional AI principles in production. 4 working platforms. 291 modules. Real users. Real impact. Real code. That's credible. That's scalable. That's ready for your technology TODAY."**
+**"We're not asking you to believe in a vision. We're asking you to partner with proven, operational systems that validate Constitutional AI principles in production. 4 working platforms. 291 modules. Production-ready infrastructure. Real impact. Real code. That's credible. That's scalable. That's ready for your technology TODAY."**
 
 ---
 

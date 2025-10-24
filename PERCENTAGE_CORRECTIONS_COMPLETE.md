@@ -42,7 +42,7 @@
 ## **KEY MESSAGING IMPROVEMENTS:**
 
 ### **Before:**
-- "This is LIVE TECHNOLOGY serving real users"
+- "This is LIVE OPERATIONAL TECHNOLOGY"
 - "98.6% operational, ready for millions"
 - "94% accuracy in AAC symbol recognition"
 

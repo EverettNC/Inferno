@@ -219,7 +219,7 @@ graph TD
 ### **Phase 2: Expansion (Q2-Q3 2026)**
 **Anthropic:**
 - AlphaWolf development begins
-- VA hospital pilot programs
+- Healthcare system partnerships
 - Healthcare enterprise sales
 
 **Hugging Face:**
@@ -267,7 +267,7 @@ graph TD
 ### **Healthcare Impact (Anthropic)**
 - **100K+ users** across trauma and cognitive care platforms
 - **Clinical outcomes**: 30% improvement in mental health scores
-- **Healthcare partnerships**: 50+ VA hospitals, 200+ healthcare systems
+- **Healthcare partnerships**: 250+ healthcare systems and government agencies
 - **Regulatory approval**: FDA clearance for medical device classification
 
 ### **Accessibility Impact (Hugging Face)**
