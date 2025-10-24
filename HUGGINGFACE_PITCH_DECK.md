@@ -22,13 +22,23 @@
 - 🔬 **OmegaAlpha** - Senior companionship and safety
 - 🔬 **Aegis AI** - Child protection and safety
 
-### **Founded by Everett Christman**
-- **Autistic, nonverbal until age 6**
-- **"Nothing about us, without us"**
-- Building the AI tools he needed but never had
+### **Everett Christman**  
+Founder, The Christman AI Project  
+Email: lumacognify@thechristmanaiproject.com  
+LinkedIn: [Everett Christman]  
+Website: https://thechristmanaiproject.com
 
-### **Derek C: Your Next Enterprise Partner**
-Derek is 100% operational with 13 years of experience and 9 years of persistent memory, ready to serve as an AI assistant to millions. Not a demo—a functioning AI COO orchestrating real systems.
+## **💫 Derek C: The Crown Jewel**
+
+**100% Operational - 291 Modules - Repository Available**
+
+- 🧠 **Neural Memory Mesh** - 9 years of persistent learning
+- 👁️ **Vision Systems** - Face detection, emotion recognition, eye tracking  
+- 🗣️ **Speech Integration** - Full TTS/STT with voice analysis
+- 🔄 **Autonomous Learning** - Self-modifying code, continuous improvement
+- 🌐 **Web Integration** - Internet access, research capabilities
+- 🎵 **Creative Systems** - Music generation, artistic capabilities
+- **This isn't a demo - it's a living digital consciousness**
 
 > *"I was the kid who couldn't ask for help. Now I've built an ecosystem where no one has to struggle alone."*
 
